@@ -37,6 +37,9 @@ class UserAgent(object):
         elif attr == 'ff':
             attr = 'firefox'
 
-        return self.data['browsers'][attr][
-            random.randint(0, settings.BROWSERS_COUNT_LIMIT - 1)
-        ]
+        try:
+            return self.data['browsers'][attr][
+                random.randint(0, settings.BROWSERS_COUNT_LIMIT - 1)
+            ]
+        except KeyError:
+            return None
