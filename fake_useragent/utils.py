@@ -85,7 +85,7 @@ def load():
         browsers_dict[clear_browser] = get_browser_versions(browser)
 
         for counter in range(int(float(percent))):
-            randomize_dict[len(randomize_dict)] = clear_browser
+            randomize_dict[str(len(randomize_dict))] = clear_browser
 
     db = {}
     db['browsers'] = browsers_dict
