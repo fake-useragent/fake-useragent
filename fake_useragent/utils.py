@@ -30,7 +30,7 @@ def get_browsers():
     browsers = re.findall(r'\.asp">(.+?)<', html, re.UNICODE)
     browsers_statistics = re.findall(r'"right">(.+?)\s', html, re.UNICODE)
 
-    # TODO: unsure encoding
+    # TODO: ensure encoding
     # browsers = list(map(
     #     lambda stat: stat.encode('utf-8', 'ignore'), browsers)
     # )
@@ -95,7 +95,7 @@ def load():
 
 
 def write(data):
-    data = json.dumps(data)
+    data = json.dumps(data, ensure_ascii=False)
 
     # no codecs\with for python 2.5
     f = open(settings.DB, 'w+')
