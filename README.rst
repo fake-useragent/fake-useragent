@@ -2,6 +2,9 @@ fake-useragent
 ==============
 :Info: up to date simple useragent faker with real world database
 
+.. image:: https://api.travis-ci.org/hellysmile/fake-useragent.png
+        :target: https://travis-ci.org/hellysmile/fake-useragent
+
 features
 ********
 
@@ -69,6 +72,7 @@ if you dont want cache database or no writable file system:
 tests
 -----
 
-::
+.. code-block:: shell
 
-    # coming soon ;)
+    pip install tox
+    tox
