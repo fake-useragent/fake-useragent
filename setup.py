@@ -1,3 +1,4 @@
+import sys
 from setuptools import setup
 
 
@@ -19,6 +20,8 @@ description = 'User Agent faker'
 
 packages = ['fake_useragent']
 
+install_requires = []
+
 
 # no codecs\with for python 2.5
 def long_description():
@@ -28,6 +31,12 @@ def long_description():
     return rst
 
 
+# Python 2.5 capability
+major, minor = sys.version_info[:2]
+if (major, minor) == (2, 5):
+    install_requires.append('simplejson')
+
+
 setup(
     name='fake-useragent',
     version='0.0.2',
@@ -35,6 +44,7 @@ setup(
     description=description,
     #include_package_data=True,
     long_description=long_description(),
+    install_requires=install_requires,
     author='hellysmile',
     author_email='hellysmile@gmail.com',
     url='https://github.com/hellysmile/fake-useragent',

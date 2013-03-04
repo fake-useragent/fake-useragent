@@ -26,12 +26,22 @@ def get_browsers():
     html = html.decode('windows-1252')
     html = html.split('<table class="reference">')[1]
     html = html.split('<td>&nbsp;</td>')[0]
-    html = html.encode('utf-8', 'ignore')
 
     browsers = re.findall(r'\.asp">(.+?)<', html, re.UNICODE)
     browsers_statistics = re.findall(r'"right">(.+?)\s', html, re.UNICODE)
 
-    return zip(browsers, browsers_statistics)
+    # TODO: unsure encoding
+    # browsers = list(map(
+    #     lambda stat: stat.encode('utf-8', 'ignore'), browsers)
+    # )
+    # browsers_statistics = list(
+    #     map(
+    #         lambda stat: stat.encode('utf-8', 'ignore'),
+    #         browsers_statistics
+    #     )
+    # )
+
+    return list(zip(browsers, browsers_statistics))
 
 
 def get_browser_versions(browser):
@@ -42,7 +52,6 @@ def get_browser_versions(browser):
     html = html.decode('iso-8859-1')
     html = html.split('<div id=\'liste\'>')[1]
     html = html.split('</div>')[0]
-    html = html.encode('utf-8', 'ignore')
 
     browsers_iter = re.finditer(r'\.php\'>(.+?)</a', html, re.UNICODE)
 
@@ -54,6 +63,8 @@ def get_browser_versions(browser):
         if 'more' in browser.group(1).lower():
             continue
 
+        # TODO: ensure encoding
+        # browser.group(1).encode('utf-8', 'ignore')
         browsers.append(browser.group(1))
         count += 1
 
