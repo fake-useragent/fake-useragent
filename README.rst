@@ -33,6 +33,8 @@ usage
     # Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.2 (KHTML, like Gecko) Chrome/22.0.1216.0 Safari/537.2'
     ua.google
     # Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/537.13 (KHTML, like Gecko) Chrome/24.0.1290.1 Safari/537.13
+    ua['google chrome']
+    # Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11
     ua.firefox
     # Mozilla/5.0 (Windows NT 6.2; Win64; x64; rv:16.0.1) Gecko/20121011 Firefox/16.0.1
     ua.ff
@@ -48,12 +50,13 @@ notes
 
 ``fake-useragent`` store collected data at your os temp dir, like ``/tmp``
 
-if you want to refresh saved database just
+if you want to update saved database just
 
 .. code-block:: python
 
-    from fake_useragent import refresh
-    refresh()
+    from fake_useragent import UserAgent
+    ua = UserAgent()
+    ua.update()
 
 if you dont want cache database or no writable file system:
 

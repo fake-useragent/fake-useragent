@@ -4,7 +4,7 @@ try:
 except ImportError:
     import simplejson as json
 from fake_useragent import settings
-from fake_useragent.utils import load_cached, load
+from fake_useragent.utils import load_cached, load, update
 
 
 class UserAgent(object):
@@ -15,6 +15,20 @@ class UserAgent(object):
             self.data = load_cached()
         else:
             self.data = load()
+
+        self.cache = cache
+
+    def update(self, cache=None):
+        if cache is None:
+            cache = self.cache
+
+        if self.cache:
+            update()
+
+        self.__init__(cache=cache)
+
+    def __getitem__(self, attr):
+        return self.__getattr__(attr)
 
     def __getattr__(self, attr):
         attr = attr.replace(' ', '').replace('_', '').lower()
@@ -28,6 +42,8 @@ class UserAgent(object):
         elif attr == 'msie':
             attr = 'internetexplorer'
         elif attr == 'google':
+            attr = 'chrome'
+        elif attr == 'googlechrome':
             attr = 'chrome'
         elif attr == 'ff':
             attr = 'firefox'

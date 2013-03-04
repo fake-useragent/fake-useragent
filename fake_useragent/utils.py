@@ -121,7 +121,7 @@ def rm():
         os.remove(settings.DB)
 
 
-def refresh():
+def update():
     if exist():
         rm()
 
@@ -130,6 +130,6 @@ def refresh():
 
 def load_cached():
     if not exist():
-        refresh()
+        update()
 
     return read()
