@@ -1,8 +1,4 @@
 from setuptools import setup
-from fake_useragent.build import build_db
-
-
-build_db()
 
 
 classifiers = '''\
