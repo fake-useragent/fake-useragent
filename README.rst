@@ -1,12 +1,12 @@
 fake-useragent
 ==============
-:Info: real world, up to date simple useragent faker
+:Info: up to date simple useragent faker with real world database
 
 features
 ********
 
 * grabs up to date ``useragent`` from `useragentstring.com <http://useragentstring.com/>`_
-* randomize via real world statistic via `w3schools.com <http://www.w3schools.com/browsers/browsers_stats.asp>`_
+* randomize with real world statistic via `w3schools.com <http://www.w3schools.com/browsers/browsers_stats.asp>`_
 
 installation
 ------------
@@ -46,16 +46,26 @@ usage
 notes
 -----
 
-``fake-useragent`` saves grabbed data at your os temp dir, like ``/tmp``
+``fake-useragent`` store collected data at your os temp dir, like ``/tmp``
 
-if you want to remove saved database just
+if you want to refresh saved database just
 
 .. code-block:: python
 
-    from fake_useragent import rm_tmp
-    rm_tmp()
+    from fake_useragent import refresh
+    refresh()
+
+if you dont want cache database or no writable file system:
+
+.. code-block:: python
+
+    from fake_useragent import UserAgent
+    ua = UserAgent(cache=False)
+
 
 tests
 -----
+
+::
 
     # coming soon ;)

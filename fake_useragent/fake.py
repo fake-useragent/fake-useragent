@@ -1,32 +1,27 @@
-import os
 import random
 try:
     import json
 except ImportError:
     import simplejson as json
 from fake_useragent import settings
-from fake_useragent.build import build_db
+from fake_useragent.utils import load_cached, load
 
 
 class UserAgent(object):
-    def __init__(self):
+    def __init__(self, cache=True):
         super(UserAgent, self).__init__()
 
-        # check db json file exists
-        if not os.path.isfile(settings.DB):
-            build_db()
-
-        # no codecs\with for python 2.5
-        f = open(settings.DB, 'r')
-        self.data = json.loads(f.read())
-        f.close()
+        if cache:
+            self.data = load_cached()
+        else:
+            self.data = load()
 
     def __getattr__(self, attr):
         attr = attr.replace(' ', '').replace('_', '').lower()
 
         if attr == 'random':
             attr = self.data['randomize'][
-                str(random.randint(0, self.data['max_random'] - 1))
+                str(random.randint(0, len(self.data['randomize']) - 1))
             ]
         elif attr == 'ie':
             attr = 'internetexplorer'
