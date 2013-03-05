@@ -4,7 +4,7 @@ fake-useragent
 :Info: up to date simple useragent faker with real world database
 
 .. image:: https://api.travis-ci.org/hellysmile/fake-useragent.png
-        :target: https://travis-ci.org/hellysmile/fake-useragent
+    :target: https://travis-ci.org/hellysmile/fake-useragent
 
 features
 ********
@@ -31,6 +31,8 @@ usage
     # Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US);
     ua.msie
     # Mozilla/5.0 (compatible; MSIE 10.0; Macintosh; Intel Mac OS X 10_7_3; Trident/6.0)'
+    ua['internet exporer']
+    # Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; GTB7.4; InfoPath.2; SV1; .NET CLR 3.3.69573; WOW64; en-US)
     ua.opera
     # Opera/9.80 (X11; Linux i686; U; ru) Presto/2.8.131 Version/11.11
     ua.chrome
