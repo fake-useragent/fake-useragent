@@ -1,7 +1,7 @@
 fake-useragent
 ==============
 
-:Info: up to date simple useragent faker with real world database
+:info: up to date simple useragent faker with real world database
 
 .. image:: https://api.travis-ci.org/hellysmile/fake-useragent.png
     :target: https://travis-ci.org/hellysmile/fake-useragent
