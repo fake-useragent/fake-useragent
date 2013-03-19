@@ -1,8 +1,3 @@
-currently
-^^^^^^^^^
-
-`useragentstring.com <http://useragentstring.com/>`_ ``Website deaktiviert``, looking for another service
-
 fake-useragent
 ==============
 
