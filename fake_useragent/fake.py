@@ -1,4 +1,5 @@
 import random
+
 from fake_useragent import settings
 from fake_useragent.utils import load_cached, load, update
 

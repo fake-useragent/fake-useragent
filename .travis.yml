@@ -4,6 +4,11 @@ python:
   - "3.2"
   - "2.7"
   - "2.6"
-  - "2.5"
   - "pypy"
-script: python setup.py nosetests --with-coverage --cover-package='fake_useragent'
+install:
+  - pip install coverage>=3.6 nose>=1.3.0 flake8>=2.0 coveralls>=0.3
+script:
+  - flake8 --show-source fake_useragent --ignore=F401
+  - python setup.py nosetests --with-coverage
+after_success:
+  - coveralls

@@ -16,7 +16,7 @@ Programming Language :: Python :: 3
 Operating System :: OS Independent
 '''
 
-description = 'up to date simple useragent faker with real world database'
+description = 'Up to date simple useragent faker with real world database'
 
 packages = ['fake_useragent']
 

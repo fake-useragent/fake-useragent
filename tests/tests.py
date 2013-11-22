@@ -6,7 +6,7 @@ from fake_useragent import utils
 
 def clear():
     try:
-        os.unlink((settings.DB))
+        os.unlink(settings.DB)
     except OSError:
         pass
 

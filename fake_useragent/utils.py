@@ -1,6 +1,6 @@
 import re
 import os
-try:
+try:  # Python 2
     from urllib import urlopen, quote_plus
 except ImportError:  # Python 3
     from urllib.request import urlopen
@@ -9,6 +9,7 @@ try:
     import json
 except ImportError:
     import simplejson as json
+
 from fake_useragent import settings
 
 
