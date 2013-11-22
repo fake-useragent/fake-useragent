@@ -79,3 +79,9 @@ tests
 
     pip install tox
     tox
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/hellysmile/fake-useragent/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
