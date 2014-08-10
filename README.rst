@@ -3,20 +3,20 @@ fake-useragent
 
 :info: Up to date simple useragent faker with real world database
 
-.. image:: https://api.travis-ci.org/hellysmile/fake-useragent.png
+.. image:: https://travis-ci.org/hellysmile/fake-useragent.svg?branch=master
     :target: https://travis-ci.org/hellysmile/fake-useragent
 
 .. image:: https://coveralls.io/repos/hellysmile/fake-useragent/badge.png?branch=master
     :target: https://coveralls.io/r/hellysmile/fake-useragent?branch=master
 
-.. image:: https://pypip.in/d/fake-useragent/badge.png
+.. image:: https://pypip.in/download/fake-useragent/badge.svg?period=month
     :target: https://pypi.python.org/pypi/fake-useragent
 
-.. image:: https://pypip.in/v/fake-useragent/badge.png
+.. image:: https://pypip.in/version/fake-useragent/badge.svg
     :target: https://pypi.python.org/pypi/fake-useragent
 
-.. image:: https://d2weczhvl823v0.cloudfront.net/hellysmile/fake-useragent/trend.png
-   :target: https://bitdeli.com/free
+.. image:: https://landscape.io/github/hellysmile/fake-useragent/master/landscape.png
+   :target: https://landscape.io/github/hellysmile/fake-useragent/master
 
 Features
 ********

@@ -14,7 +14,7 @@ from fake_useragent import settings
 
 
 def get(url, annex=None):
-    if not annex is None:
+    if annex is not None:
         url = url % (quote_plus(annex), )
     return urlopen(url).read()
 
