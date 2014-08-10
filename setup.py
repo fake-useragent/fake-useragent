@@ -39,7 +39,7 @@ if (major, minor) == (2, 5):
 
 setup(
     name='fake-useragent',
-    version='0.0.6',
+    version='0.0.7',
     packages=packages,
     description=description,
     #include_package_data=True,
