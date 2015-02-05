@@ -35,9 +35,11 @@ def test_get_args():
 
 def test_get_browsers():
     browsers = utils.get_browsers()
+
     browser_list = []
 
     for browser in browsers:
+        print browser[0]
         # ie becomes popular !? xD
         if browser[0] == 'Internet Explorer':
             assert int(float(browser[1])) < 20
@@ -56,8 +58,11 @@ def test_get_browsers():
 
 def test_get_browser_versions():
     for browser in browser_list:
-        assert len(utils.get_browser_versions(browser)) == \
+        assert (
+            len(utils.get_browser_versions(browser))
+            ==
             settings.BROWSERS_COUNT_LIMIT
+        )
 
 
 def test_load():
@@ -122,22 +127,22 @@ def test_user_agent():
 
     ua = UserAgent(cache=False)
 
-    assert not ua.ie is None
-    assert not ua.msie is None
-    assert not ua.internetexplorer is None
-    assert not ua.internet_explorer is None
-    assert not ua['internet explorer'] is None
-    assert not ua.google is None
-    assert not ua.chrome is None
-    assert not ua.googlechrome is None
-    assert not ua.google_chrome is None
-    assert not ua['google chrome'] is None
-    assert not ua.firefox is None
-    assert not ua.ff is None
-    assert not ua.ie is None
-    assert not ua.safari is None
-    assert not ua.random is None
-    assert not ua['random'] is None
+    assert ua.ie is not None
+    assert ua.msie is not None
+    assert ua.internetexplorer is not None
+    assert ua.internet_explorer is not None
+    assert ua['internet explorer'] is not None
+    assert ua.google is not None
+    assert ua.chrome is not None
+    assert ua.googlechrome is not None
+    assert ua.google_chrome is not None
+    assert ua['google chrome'] is not None
+    assert ua.firefox is not None
+    assert ua.ff is not None
+    assert ua.ie is not None
+    assert ua.safari is not None
+    assert ua.random is not None
+    assert ua['random'] is not None
 
     assert ua.non_existing is None
     assert ua['non_existing'] is None
@@ -149,7 +154,7 @@ def test_user_agent():
     data2 = ua.data
 
     assert data1 == data2
-    assert not data1 is data2
+    assert data1 is not data2
 
     clear()
     del ua
@@ -169,4 +174,4 @@ def test_user_agent():
     data2 = ua.data
 
     assert data1 == data2
-    assert not data1 is data2
+    assert data1 is not data2
