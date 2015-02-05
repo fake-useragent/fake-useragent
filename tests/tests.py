@@ -39,7 +39,6 @@ def test_get_browsers():
     browser_list = []
 
     for browser in browsers:
-        print browser[0]
         # ie becomes popular !? xD
         if browser[0] == 'Internet Explorer':
             assert int(float(browser[1])) < 20
