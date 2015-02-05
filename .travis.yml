@@ -7,10 +7,11 @@ python:
   - "2.6"
   - "pypy"
 install:
-  - pip install coverage nose flake8 coveralls isort frosted
+  - pip install coverage nose flake8 coveralls isort
+  - if [[ $TRAVIS_PYTHON_VERSION != 'pypy' ]]; then pip intall frosted; fi
 script:
   - flake8 --show-source fake_useragent
-  - frosted -r fake_useragent
+  - if [[ $TRAVIS_PYTHON_VERSION != 'pypy' ]]; then frosted -r fake_useragent; fi
   - isort --check-only -rc fake_useragent --diff
   - python setup.py nosetests --with-coverage
 after_success:
