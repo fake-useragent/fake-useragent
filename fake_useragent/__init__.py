@@ -1,1 +1,1 @@
-from fake_useragent.fake import UserAgent  # noqa
+from .fake import UserAgent  # noqa

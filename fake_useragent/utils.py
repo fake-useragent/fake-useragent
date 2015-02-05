@@ -1,5 +1,8 @@
-import re
 import os
+import re
+
+from . import settings
+
 try:  # Python 2
     from urllib import urlopen, quote_plus
 except ImportError:  # Python 3
@@ -10,8 +13,6 @@ try:
 except ImportError:
     import simplejson as json
 
-from fake_useragent import settings
-
 
 def get(url, annex=None):
     if annex is not None:
@@ -20,37 +21,35 @@ def get(url, annex=None):
 
 
 def get_browsers():
-    '''
+    """
     very very hardcoded/dirty re/split stuff, but no dependencies
-    '''
+    """
     html = get(settings.BROWSERS_STATS_PAGE)
     html = html.decode('windows-1252')
     html = html.split('<table class="reference notranslate">')[1]
-    html = html.split('<td>&nbsp;</td>')[0]
+    html = html.split('</table>')[0]
 
     browsers = re.findall(r'\.asp">(.+?)<', html, re.UNICODE)
-    browsers = ["Internet Explorer" if browser == "IE" else browser
-                for browser in browsers]
-    browsers_statistics = re.findall(r'"right">(.+?)\s', html, re.UNICODE)
+
+    for value, override in settings.OVERRIDES:
+        browsers = [
+            value if browser == override else browser
+            for browser in browsers
+        ]
+
+    browsers_statistics = re.findall(
+        r'td\sclass="right">(.+?)\s', html, re.UNICODE
+    )
 
     # TODO: ensure encoding
-    # browsers = list(map(
-    #     lambda stat: stat.encode('utf-8', 'ignore'), browsers)
-    # )
-    # browsers_statistics = list(
-    #     map(
-    #         lambda stat: stat.encode('utf-8', 'ignore'),
-    #         browsers_statistics
-    #     )
-    # )
 
     return list(zip(browsers, browsers_statistics))
 
 
 def get_browser_versions(browser):
-    '''
+    """
     very very hardcoded/dirty re/split stuff, but no dependencies
-    '''
+    """
     html = get(settings.BROWSER_BASE_PAGE, browser)
     html = html.decode('iso-8859-1')
     html = html.split('<div id=\'liste\'>')[1]
@@ -67,7 +66,6 @@ def get_browser_versions(browser):
             continue
 
         # TODO: ensure encoding
-        # browser.group(1).encode('utf-8', 'ignore')
         browsers.append(browser.group(1))
         count += 1
 
@@ -83,12 +81,18 @@ def load():
 
     for item in get_browsers():
         browser, percent = item
-        clear_browser = browser.replace(' ', '').lower()
 
-        browsers_dict[clear_browser] = get_browser_versions(browser)
+        browser_key = browser
+
+        for replacement in settings.REPLACEMENTS:
+            browser_key = browser_key.replace(replacement, '')
+
+        browser_key = browser_key.lower()
+
+        browsers_dict[browser_key] = get_browser_versions(browser)
 
         for counter in range(int(float(percent))):
-            randomize_dict[str(len(randomize_dict))] = clear_browser
+            randomize_dict[str(len(randomize_dict))] = browser_key
 
     db = {}
     db['browsers'] = browsers_dict
@@ -112,7 +116,7 @@ def read():
     data = f.read()
     f.close()
 
-    return json.loads(data, 'utf-8')
+    return json.loads(data)
 
 
 def exist():
