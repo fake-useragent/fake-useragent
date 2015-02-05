@@ -7,7 +7,7 @@ python:
   - "2.6"
   - "pypy"
 install:
-  - pip install coverage nose flake8 coveralls
+  - pip install coverage nose flake8 coveralls isort frosted
 script:
   - flake8 --show-source fake_useragent
   - frosted -r fake_useragent
