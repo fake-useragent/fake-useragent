@@ -29,6 +29,8 @@ def get_browsers():
     html = html.split('<td>&nbsp;</td>')[0]
 
     browsers = re.findall(r'\.asp">(.+?)<', html, re.UNICODE)
+    browsers = ["Internet Explorer" if browser == "IE" else browser
+                for browser in browsers]
     browsers_statistics = re.findall(r'"right">(.+?)\s', html, re.UNICODE)
 
     # TODO: ensure encoding
