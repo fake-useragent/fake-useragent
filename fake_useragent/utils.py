@@ -26,7 +26,7 @@ def get_browsers():
     """
     html = get(settings.BROWSERS_STATS_PAGE)
     html = html.decode('windows-1252')
-    html = html.split('<table class="reference notranslate">')[1]
+    html = html.split('<table class="w3-table-all notranslate">')[1]
     html = html.split('</table>')[0]
 
     browsers = re.findall(r'\.asp">(.+?)<', html, re.UNICODE)
