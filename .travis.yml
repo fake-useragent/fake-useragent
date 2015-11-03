@@ -1,17 +1,19 @@
+sudo: false
 language: python
 python:
+  - "3.5"
   - "3.4"
   - "3.3"
   - "2.7"
   - "2.6"
   - "pypy"
 install:
-  - pip install coverage nose flake8 coveralls isort
-  - if [[ $TRAVIS_PYTHON_VERSION != 'pypy' ]]; then pip install frosted; fi
+  - travis_retry pip install --upgrade pip -q
+  - travis_retry pip install nose coverage flake8 flake8-blind-except flake8-debugger flake8-print flake8-quotes pep8-naming frosted isort coveralls -q
 script:
-  - flake8 --show-source fake_useragent
-  - if [[ $TRAVIS_PYTHON_VERSION != 'pypy' ]]; then frosted -r fake_useragent; fi
-  - isort --check-only -rc fake_useragent --diff
   - python setup.py nosetests --with-coverage
 after_success:
-  - coveralls
+  - flake8 --show-source fake_useragent
+  - frosted -r fake_useragent
+  - isort --check-only -rc fake_useragent --diff
+  - travis_retry coveralls
