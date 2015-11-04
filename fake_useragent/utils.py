@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
+import codecs
+import json
 import os
 import re
-import json
-import codecs
 
 from . import settings
 
@@ -93,12 +93,12 @@ def load():
 
 
 def write(data):
-    with codecs.open(settings.DB, encoding='utf-8', mode='wt+',) as fp:
+    with codecs.open(settings.DB, encoding='utf-8', mode='wb+',) as fp:
         json.dump(data, fp)
 
 
 def read():
-    with codecs.open(settings.DB, encoding='utf-8', mode='rt',) as fp:
+    with codecs.open(settings.DB, encoding='utf-8', mode='rb',) as fp:
         return json.load(fp)
 
 
