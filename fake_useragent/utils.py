@@ -1,5 +1,9 @@
+from __future__ import absolute_import, unicode_literals
+
 import os
 import re
+import json
+import codecs
 
 from . import settings
 
@@ -8,15 +12,11 @@ try:  # Python 2
 except ImportError:  # Python 3
     from urllib.request import urlopen
     from urllib.parse import quote_plus
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 
 def get(url, annex=None):
     if annex is not None:
-        url = url % (quote_plus(annex), )
+        url = url.format(quote_plus(annex))
     return urlopen(url).read()
 
 
@@ -31,17 +31,13 @@ def get_browsers():
 
     browsers = re.findall(r'\.asp">(.+?)<', html, re.UNICODE)
 
-    for value, override in settings.OVERRIDES:
-        browsers = [
-            value if browser == override else browser
-            for browser in browsers
-        ]
+    browsers = [
+        settings.OVERRIDES.get(browser, browser) for browser in browsers
+    ]
 
     browsers_statistics = re.findall(
         r'td\sclass="right">(.+?)\s', html, re.UNICODE
     )
-
-    # TODO: ensure encoding
 
     return list(zip(browsers, browsers_statistics))
 
@@ -57,19 +53,15 @@ def get_browser_versions(browser):
 
     browsers_iter = re.finditer(r'\?id=\d+\'>(.+?)</a', html, re.UNICODE)
 
-    count = 0
-
     browsers = []
 
     for browser in browsers_iter:
         if 'more' in browser.group(1).lower():
             continue
 
-        # TODO: ensure encoding
         browsers.append(browser.group(1))
-        count += 1
 
-        if count == settings.BROWSERS_COUNT_LIMIT:
+        if len(browser) == settings.BROWSERS_COUNT_LIMIT:
             break
 
     return browsers
@@ -84,39 +76,30 @@ def load():
 
         browser_key = browser
 
-        for replacement in settings.REPLACEMENTS:
-            browser_key = browser_key.replace(replacement, '')
+        for value, replacement in settings.REPLACEMENTS.items():
+            browser_key = browser_key.replace(value, replacement)
 
         browser_key = browser_key.lower()
 
         browsers_dict[browser_key] = get_browser_versions(browser)
 
-        for counter in range(int(float(percent))):
+        for _ in range(int(float(percent) * 10)):
             randomize_dict[str(len(randomize_dict))] = browser_key
 
-    db = {}
-    db['browsers'] = browsers_dict
-    db['randomize'] = randomize_dict
-
-    return db
+    return {
+        'browsers': browsers_dict,
+        'randomize': randomize_dict
+    }
 
 
 def write(data):
-    data = json.dumps(data, ensure_ascii=False)
-
-    # no codecs\with for python 2.5
-    f = open(settings.DB, 'w+')
-    f.write(data)
-    f.close()
+    with codecs.open(settings.DB, encoding='utf-8', mode='wt+',) as fp:
+        json.dump(data, fp)
 
 
 def read():
-    # no codecs\with for python 2.5
-    f = open(settings.DB, 'r')
-    data = f.read()
-    f.close()
-
-    return json.loads(data)
+    with codecs.open(settings.DB, encoding='utf-8', mode='rt',) as fp:
+        return json.load(fp)
 
 
 def exist():
