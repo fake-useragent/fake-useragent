@@ -4,20 +4,36 @@ import codecs
 import json
 import os
 import re
+from time import sleep
 
 from . import settings
 
 try:  # Python 2
-    from urllib import urlopen, quote_plus
+    from urllib2 import urlopen, Request
+    from urllib import quote_plus
 except ImportError:  # Python 3
-    from urllib.request import urlopen
+    from urllib.request import urlopen, Request
     from urllib.parse import quote_plus
 
 
 def get(url, annex=None):
     if annex is not None:
         url = url.format(quote_plus(annex))
-    return urlopen(url).read()
+
+    request = Request(url)
+
+    attempt = 0
+
+    while attempt < settings.HTTP_RETRIES:
+        attempt += 1
+
+        try:
+            return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
+        except Exception:
+            if attempt == settings.HTTP_RETRIES:
+                raise
+            else:
+                sleep(settings.HTTP_DELAY)
 
 
 def get_browsers():
