@@ -61,7 +61,7 @@ def get_browser_versions(browser):
 
         browsers.append(browser.group(1))
 
-        if len(browser) == settings.BROWSERS_COUNT_LIMIT:
+        if len(browsers) == settings.BROWSERS_COUNT_LIMIT:
             break
 
     return browsers
