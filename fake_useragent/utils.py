@@ -55,7 +55,7 @@ def get_browser_versions(browser):
     html = html.split('<div id=\'liste\'>')[1]
     html = html.split('</div>')[0]
 
-    browsers_iter = re.finditer(r'\.php\'>(.+?)</a', html, re.UNICODE)
+    browsers_iter = re.finditer(r'\?id=\d+\'>(.+?)</a', html, re.UNICODE)
 
     count = 0
 

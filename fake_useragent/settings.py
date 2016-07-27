@@ -7,7 +7,8 @@ DB = os.path.join(
 
 BROWSERS_STATS_PAGE = 'http://www.w3schools.com/browsers/browsers_stats.asp'
 
-BROWSER_BASE_PAGE = 'http://useragentstring.com/pages/%s/'
+BROWSER_BASE_PAGE = 'http://useragentstring.com/pages/useragentstring.php?name=%s'  # noqa
+
 
 BROWSERS_COUNT_LIMIT = 30
 
