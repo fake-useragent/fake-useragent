@@ -2,8 +2,8 @@ from __future__ import absolute_import, unicode_literals
 
 import random
 
-from . import settings
-from .utils import load, load_cached, update
+from fake_useragent import settings
+from fake_useragent.utils import load, load_cached, update
 
 
 class UserAgent(object):

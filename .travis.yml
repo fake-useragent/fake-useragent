@@ -9,11 +9,10 @@ python:
   - "pypy"
 install:
   - travis_retry pip install --upgrade pip -q
-  - travis_retry pip install nose coverage flake8 flake8-blind-except flake8-debugger flake8-print flake8-quotes pep8-naming frosted isort coveralls -q
+  - travis_retry pip install nose coverage "flake8<3" "flake8-blind-except<0.2.0" "flake8-quotes<0.8.0" "pep8-naming<0.5.0" "isort<5" coveralls -q
 script:
   - python setup.py nosetests --with-coverage
 after_success:
   - flake8 --show-source fake_useragent
-  - frosted -r fake_useragent
   - isort --check-only -rc fake_useragent --diff
   - travis_retry coveralls

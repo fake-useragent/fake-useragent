@@ -28,7 +28,7 @@ def test_get_no_args():
 
 
 def test_get_args():
-    html = utils.get(settings.BROWSER_BASE_PAGE, 'Firefox')
+    html = utils.get(settings.BROWSER_BASE_PAGE.format(browser='Firefox'))
 
     assert len(html) > 0
 

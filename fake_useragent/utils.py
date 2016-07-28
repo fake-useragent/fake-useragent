@@ -6,20 +6,16 @@ import os
 import re
 from time import sleep
 
-from . import settings
-
 try:  # Python 2
-    from urllib2 import urlopen, Request
+    from urllib2 import urlopen, Request, URLError
     from urllib import quote_plus
 except ImportError:  # Python 3
     from urllib.request import urlopen, Request
     from urllib.parse import quote_plus
+    from urllib.error import URLError
 
 
-def get(url, annex=None):
-    if annex is not None:
-        url = url.format(quote_plus(annex))
-
+def get(url):
     request = Request(url)
 
     attempt = 0
@@ -29,7 +25,7 @@ def get(url, annex=None):
 
         try:
             return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
-        except Exception:
+        except URLError:
             if attempt == settings.HTTP_RETRIES:
                 raise
             else:
@@ -62,7 +58,7 @@ def get_browser_versions(browser):
     """
     very very hardcoded/dirty re/split stuff, but no dependencies
     """
-    html = get(settings.BROWSER_BASE_PAGE, browser)
+    html = get(settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)))
     html = html.decode('iso-8859-1')
     html = html.split('<div id=\'liste\'>')[1]
     html = html.split('</div>')[0]
@@ -139,3 +135,6 @@ def load_cached():
         update()
 
     return read()
+
+
+from fake_useragent import settings  # noqa # isort:skip

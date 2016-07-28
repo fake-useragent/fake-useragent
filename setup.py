@@ -48,7 +48,7 @@ install_requires = []
 
 setup(
     name='fake-useragent',
-    version=find_version('fake_useragent', '__init__.py'),
+    version=find_version('fake_useragent', 'settings.py'),
     packages=packages,
     description=description,
     long_description=read('README.rst'),
