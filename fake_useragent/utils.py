@@ -5,6 +5,7 @@ import json
 import os
 import re
 from time import sleep
+from threading import Lock
 
 try:  # Python 2
     from urllib2 import urlopen, Request, URLError
@@ -16,20 +17,22 @@ except ImportError:  # Python 3
 
 
 def get(url):
-    request = Request(url)
+    with get.lock:
+        request = Request(url)
 
-    attempt = 0
+        attempt = 0
 
-    while attempt < settings.HTTP_RETRIES:
-        attempt += 1
+        while attempt < settings.HTTP_RETRIES:
+            attempt += 1
 
-        try:
-            return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
-        except URLError:
-            if attempt == settings.HTTP_RETRIES:
-                raise
-            else:
-                sleep(settings.HTTP_DELAY)
+            try:
+                return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
+            except URLError:
+                if attempt == settings.HTTP_RETRIES:
+                    raise
+                else:
+                    sleep(settings.HTTP_DELAY)
+get.lock = Lock()
 
 
 def get_browsers():

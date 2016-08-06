@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 import tempfile
 
-__version__ = '0.1.1a'
+__version__ = '0.1.1'
 
 DB = os.path.join(tempfile.gettempdir(), 'fake_useragent_{version}.json'.format(  # noqa
     version=__version__,
