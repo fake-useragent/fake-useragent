@@ -1,16 +1,20 @@
 from __future__ import absolute_import, unicode_literals
 
 import random
+from threading import Lock
 
 from fake_useragent import settings
 from fake_useragent.utils import load, load_cached, update
 
 
 class UserAgent(object):
+    lock = Lock()  # mutable cross-instance threading.Lock
+
     def __init__(self, cache=True):
         self.cache = cache
 
-        self.load()
+        with self.lock:
+            self.load()
 
     def load(self):
         if self.cache:
