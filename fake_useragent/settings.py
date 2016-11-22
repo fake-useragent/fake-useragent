@@ -9,9 +9,9 @@ DB = os.path.join(tempfile.gettempdir(), 'fake_useragent_{version}.json'.format(
     version=__version__,
 ))
 
-BROWSERS_STATS_PAGE = 'http://www.w3schools.com/browsers/browsers_stats.asp'
+BROWSERS_STATS_PAGE = 'https://web.archive.org/web/http://www.w3schools.com/browsers/browsers_stats.asp'  # noqa
 
-BROWSER_BASE_PAGE = 'http://useragentstring.com/pages/useragentstring.php?name={browser}'  # noqa
+BROWSER_BASE_PAGE = 'https://web.archive.org/web/http://useragentstring.com/pages/useragentstring.php?name={browser}'  # noqa
 
 BROWSERS_COUNT_LIMIT = 50
 
