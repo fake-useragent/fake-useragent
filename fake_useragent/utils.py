@@ -61,23 +61,40 @@ def get_browser_versions(browser):
     """
     very very hardcoded/dirty re/split stuff, but no dependencies
     """
-    html = get(settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)))
+    browser = quote_plus(browser)
+
+    if settings.HOTFIX:
+        browser = browser.lower().replace(' ', '+')
+
+    html = get(settings.BROWSER_BASE_PAGE.format(browser=browser))
     html = html.decode('iso-8859-1')
     html = html.split('<div id=\'liste\'>')[1]
     html = html.split('</div>')[0]
 
+    def _get_browsers(browsers_iter):
+        browsers = []
+
+        for browser in browsers_iter:
+            if 'more' in browser.group(1).lower():
+                continue
+
+            browsers.append(browser.group(1))
+
+            if len(browsers) == settings.BROWSERS_COUNT_LIMIT:
+                break
+
+        return browsers
+
     browsers_iter = re.finditer(r'\?id=\d+\'>(.+?)</a', html, re.UNICODE)
 
-    browsers = []
+    browsers = _get_browsers(browsers_iter)
 
-    for browser in browsers_iter:
-        if 'more' in browser.group(1).lower():
-            continue
+    if not browsers and settings.HOTFIX:
+        browsers_iter = re.finditer(
+            r'_id_\d+\.php\'>(.+?)</a', html, re.UNICODE,
+        )
 
-        browsers.append(browser.group(1))
-
-        if len(browsers) == settings.BROWSERS_COUNT_LIMIT:
-            break
+        browsers = _get_browsers(browsers_iter)
 
     return browsers
 
