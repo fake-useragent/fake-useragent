@@ -33,8 +33,10 @@ OVERRIDES = {
     'IE': 'Internet Explorer',
 }
 
-HTTP_TIMEOUT = 10
+HTTP_TIMEOUT = 20
 
 HTTP_RETRIES = 5
 
 HTTP_DELAY = 5
+
+HOTFIX = True
