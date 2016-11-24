@@ -29,7 +29,7 @@ def get(url):
                 return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
             except (URLError, OSError):
                 if attempt == settings.HTTP_RETRIES:
-                    raise DataSourceUnavalaible
+                    raise FakeUserAgentError
                 else:
                     sleep(settings.HTTP_DELAY)
 get.lock = Lock()
@@ -102,11 +102,11 @@ def load():
             for _ in range(int(float(percent) * 10)):
                 randomize_dict[str(len(randomize_dict))] = browser_key
 
-    except DataSourceUnavalaible:
+    except Exception:
         try:
             server_cached_data = get(settings.CACHE_SERVER)
         except (URLError, OSError):
-            raise DataSourceUnavalaible
+            raise FakeUserAgentError
         else:
             return json.loads(server_cached_data.decode('utf-8'))
 
@@ -151,4 +151,4 @@ def load_cached():
 
 
 from fake_useragent import settings  # noqa # isort:skip
-from fake_useragent.exceptions import DataSourceUnavalaible  # noqa # isort:skip
+from fake_useragent.exceptions import FakeUserAgentError  # noqa # isort:skip
