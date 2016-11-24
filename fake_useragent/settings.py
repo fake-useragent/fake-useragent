@@ -9,6 +9,8 @@ DB = os.path.join(tempfile.gettempdir(), 'fake_useragent_{version}.json'.format(
     version=__version__,
 ))
 
+CACHE_SERVER = 'https://fake-useragent.herokuapp.com/browsers/' + __version__
+
 BROWSERS_STATS_PAGE = 'http://www.w3schools.com/browsers/browsers_stats.asp'
 
 BROWSER_BASE_PAGE = 'http://useragentstring.com/pages/useragentstring.php?name={browser}'  # noqa
@@ -33,8 +35,8 @@ OVERRIDES = {
     'IE': 'Internet Explorer',
 }
 
-HTTP_TIMEOUT = 10
+HTTP_TIMEOUT = 15
 
-HTTP_RETRIES = 5
+HTTP_RETRIES = 2
 
-HTTP_DELAY = 5
+HTTP_DELAY = 3
