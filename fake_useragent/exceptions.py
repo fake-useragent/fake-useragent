@@ -1,6 +1,6 @@
 
 
-class DataSourceUnavalaible(
+class FakeUserAgentError(
     Exception,
 ):
     pass
