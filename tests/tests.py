@@ -1,8 +1,11 @@
 import os
+
+from nose.tools import raises
+
 from fake_useragent import UserAgent
 from fake_useragent import settings
 from fake_useragent import utils
-from fake_useragent.exceptions import DataSourceUnavalaible
+from fake_useragent.exceptions import FakeUserAgentError
 
 
 def clear():
@@ -42,7 +45,7 @@ def test_get_services():
 
         assert len(html) > 0
 
-    except DataSourceUnavalaible:
+    except FakeUserAgentError:
         service_failed = True
 
 
@@ -135,6 +138,7 @@ def test_load_cached():
     check_dict(data)
 
 
+@raises(FakeUserAgentError)
 def test_user_agent():
     clear()
     assert not utils.exist()
