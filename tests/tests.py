@@ -1,4 +1,7 @@
+from __future__ import absolute_import, unicode_literals
+
 import os
+import json
 
 from nose.tools import raises
 
@@ -13,6 +16,7 @@ def clear():
 
 
 def check_dict(data):
+    assert isinstance(data, dict)
     assert data.get('randomize')
     assert data.get('browsers')
     assert data.get('browsers').get('chrome')
@@ -25,7 +29,9 @@ def check_dict(data):
 def test_get_cache():
     html = utils.get(settings.CACHE_SERVER)
 
-    assert len(html) > 0
+    data = json.loads(html.decode('utf-8'))
+
+    check_dict(data)
 
 
 def test_get_services():
