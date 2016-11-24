@@ -4,7 +4,6 @@ import codecs
 import json
 import os
 import re
-import socket
 from time import sleep
 from threading import Lock
 
@@ -28,9 +27,9 @@ def get(url):
 
             try:
                 return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
-            except (URLError, socket.error):
+            except (URLError, OSError):
                 if attempt == settings.HTTP_RETRIES:
-                    raise
+                    raise DataSourceUnavalaible
                 else:
                     sleep(settings.HTTP_DELAY)
 get.lock = Lock()
@@ -103,11 +102,11 @@ def load():
             for _ in range(int(float(percent) * 10)):
                 randomize_dict[str(len(randomize_dict))] = browser_key
 
-    except Exception:
+    except DataSourceUnavalaible:
         try:
             server_cached_data = get(settings.CACHE_SERVER)
-        except URLError:
-            raise
+        except (URLError, OSError):
+            raise DataSourceUnavalaible
         else:
             return json.loads(server_cached_data.decode('utf-8'))
 
@@ -152,3 +151,4 @@ def load_cached():
 
 
 from fake_useragent import settings  # noqa # isort:skip
+from fake_useragent.exceptions import DataSourceUnavalaible  # noqa # isort:skip
