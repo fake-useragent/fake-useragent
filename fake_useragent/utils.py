@@ -32,7 +32,7 @@ def get(url):
 
         attempt = 0
 
-        while attempt < settings.HTTP_RETRIES:
+        while True:
             attempt += 1
 
             try:
