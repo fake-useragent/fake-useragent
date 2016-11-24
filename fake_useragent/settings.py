@@ -3,11 +3,13 @@ from __future__ import absolute_import, unicode_literals
 import os
 import tempfile
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 DB = os.path.join(tempfile.gettempdir(), 'fake_useragent_{version}.json'.format(  # noqa
     version=__version__,
 ))
+
+CACHE_SERVER = 'https://fake-useragent.herokuapp.com/browsers/' + __version__
 
 BROWSERS_STATS_PAGE = 'http://www.w3schools.com/browsers/browsers_stats.asp'
 
@@ -35,6 +37,6 @@ OVERRIDES = {
 
 HTTP_TIMEOUT = 10
 
-HTTP_RETRIES = 5
+HTTP_RETRIES = 2
 
-HTTP_DELAY = 5
+HTTP_DELAY = 1

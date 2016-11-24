@@ -27,9 +27,9 @@ def get(url):
 
             try:
                 return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
-            except URLError:
+            except (URLError, OSError):
                 if attempt == settings.HTTP_RETRIES:
-                    raise
+                    raise FakeUserAgentError
                 else:
                     sleep(settings.HTTP_DELAY)
 get.lock = Lock()
@@ -86,25 +86,35 @@ def load():
     browsers_dict = {}
     randomize_dict = {}
 
-    for item in get_browsers():
-        browser, percent = item
+    try:
+        for item in get_browsers():
+            browser, percent = item
 
-        browser_key = browser
+            browser_key = browser
 
-        for value, replacement in settings.REPLACEMENTS.items():
-            browser_key = browser_key.replace(value, replacement)
+            for value, replacement in settings.REPLACEMENTS.items():
+                browser_key = browser_key.replace(value, replacement)
 
-        browser_key = browser_key.lower()
+            browser_key = browser_key.lower()
 
-        browsers_dict[browser_key] = get_browser_versions(browser)
+            browsers_dict[browser_key] = get_browser_versions(browser)
 
-        for _ in range(int(float(percent) * 10)):
-            randomize_dict[str(len(randomize_dict))] = browser_key
+            for _ in range(int(float(percent) * 10)):
+                randomize_dict[str(len(randomize_dict))] = browser_key
 
-    return {
-        'browsers': browsers_dict,
-        'randomize': randomize_dict
-    }
+    except Exception:
+        try:
+            server_cached_data = get(settings.CACHE_SERVER)
+        except (URLError, OSError):
+            raise FakeUserAgentError
+        else:
+            return json.loads(server_cached_data.decode('utf-8'))
+
+    else:
+        return {
+            'browsers': browsers_dict,
+            'randomize': randomize_dict
+        }
 
 
 def write(data):
@@ -141,3 +151,4 @@ def load_cached():
 
 
 from fake_useragent import settings  # noqa # isort:skip
+from fake_useragent.exceptions import FakeUserAgentError  # noqa # isort:skip
