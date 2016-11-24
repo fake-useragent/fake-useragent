@@ -4,6 +4,7 @@ import random
 from threading import Lock
 
 from fake_useragent import settings
+from fake_useragent.exceptions import FakeUserAgentError
 from fake_useragent.utils import load, load_cached, update
 
 
@@ -55,4 +56,4 @@ class UserAgent(object):
                 )
             ]
         except KeyError:
-            return None
+            raise FakeUserAgentError
