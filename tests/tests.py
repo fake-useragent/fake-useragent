@@ -1,7 +1,13 @@
 import os
+import socket
 from fake_useragent import UserAgent
 from fake_useragent import settings
 from fake_useragent import utils
+
+try:  # Python 2
+    from urllib2 import URLError
+except ImportError:  # Python 3
+    from urllib.error import URLError
 
 
 def clear():
@@ -21,47 +27,61 @@ def check_dict(data):
     assert data.get('browsers').get('internetexplorer')
 
 
-def test_get_no_args():
-    html = utils.get(settings.BROWSERS_STATS_PAGE)
+def test_get_cache():
+    html = utils.get(settings.CACHE_SERVER)
 
     assert len(html) > 0
 
 
-def test_get_args():
-    html = utils.get(settings.BROWSER_BASE_PAGE.format(browser='Firefox'))
+def test_get_services():
+    service_failed = False
 
-    assert len(html) > 0
+    global service_failed
+
+    try:
+        html = utils.get(settings.BROWSERS_STATS_PAGE)
+
+        assert len(html) > 0
+
+        html = utils.get(settings.BROWSER_BASE_PAGE.format(browser='Firefox'))
+
+        assert len(html) > 0
+
+    except (URLError, socket.error):
+        service_failed = True
 
 
 def test_get_browsers():
-    browsers = utils.get_browsers()
+    if not service_failed:
+        browsers = utils.get_browsers()
 
-    browser_list = []
+        browser_list = []
 
-    for browser in browsers:
-        # ie becomes popular !? xD
-        if browser[0] == 'Internet Explorer':
-            assert int(float(browser[1])) < 20
-        browser_list.append(browser[0])
+        for browser in browsers:
+            # ie becomes popular !? xD
+            if browser[0] == 'Internet Explorer':
+                assert int(float(browser[1])) < 20
+            browser_list.append(browser[0])
 
-    assert len(browser_list) == 5
+        assert len(browser_list) == 5
 
-    assert 'Firefox' in browser_list
-    assert 'Opera' in browser_list
-    assert 'Chrome' in browser_list
-    assert 'Internet Explorer' in browser_list
-    assert 'Safari' in browser_list
+        assert 'Firefox' in browser_list
+        assert 'Opera' in browser_list
+        assert 'Chrome' in browser_list
+        assert 'Internet Explorer' in browser_list
+        assert 'Safari' in browser_list
 
-    global browser_list
+        global browser_list
 
 
 def test_get_browser_versions():
-    for browser in browser_list:
-        assert (
-            len(utils.get_browser_versions(browser))
-            ==
-            settings.BROWSERS_COUNT_LIMIT
-        )
+    if not service_failed:
+        for browser in browser_list:
+            assert (
+                len(utils.get_browser_versions(browser))
+                ==
+                settings.BROWSERS_COUNT_LIMIT
+            )
 
 
 def test_load():
