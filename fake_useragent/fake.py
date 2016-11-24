@@ -4,7 +4,7 @@ import random
 from threading import Lock
 
 from fake_useragent import settings
-from fake_useragent.exceptions import FakeUserAgentError
+from fake_useragent.errors import FakeUserAgentError
 from fake_useragent.utils import load, load_cached, update
 
 

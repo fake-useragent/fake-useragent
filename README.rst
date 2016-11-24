@@ -21,6 +21,12 @@ Features
 * grabs up to date ``useragent`` from `useragentstring.com <http://useragentstring.com/>`_
 * randomize with real world statistic via `w3schools.com <http://www.w3schools.com/browsers/browsers_stats.asp>`_
 
+Disclaimer
+**********
+
+As of November 2016, `useragentstring.com <http://useragentstring.com/>`_
+is down, version 0.1.3 uses hosted data to keep library working.
+
 Installation
 ------------
 
@@ -80,6 +86,27 @@ if you dont want cache database or no writable file system:
     from fake_useragent import UserAgent
     ua = UserAgent(cache=False)
 
+In very rare case ``fake-useragent`` can not download browser data (version 0.1.3 added)
+
+.. code-block:: python
+
+    from fake_useragent import UserAgent
+    ua = UserAgent()
+    # Traceback (most recent call last):
+    #   ...
+    # fake_useragent.errors.FakeUserAgentError
+
+If You will try to get unknown browser (version 0.1.3 added)
+
+.. code-block:: python
+
+    from fake_useragent import UserAgent
+    ua = UserAgent()
+    ua.best_browser
+    # Traceback (most recent call last):
+    #   ...
+    # fake_useragent.errors.FakeUserAgentError
+
 
 Tests
 -----
@@ -88,3 +115,20 @@ Tests
 
     pip install tox
     tox
+
+
+Changelog
+=========
+
+* 0.1.3 November 24, 2016
+-------------------------
+
+- Raises ``fake_useragent.FakeUserAgentError`` in case of hosted service is unavailable
+
+- Raises ``fake_useragent.FakeUserAgentError`` instead on ``None`` in case of unknown browser
+
+- Added ``gevent.sleep`` support in ``gevent`` patched environment when trying to download browser data
+
+* X.X.X xxxxxxx xx, xxxx
+
+- ?????

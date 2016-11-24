@@ -1,0 +1,2 @@
+class FakeUserAgentError(Exception):
+    pass

@@ -2,10 +2,7 @@ import os
 
 from nose.tools import raises
 
-from fake_useragent import UserAgent
-from fake_useragent import settings
-from fake_useragent import utils
-from fake_useragent.exceptions import FakeUserAgentError
+from fake_useragent import FakeUserAgentError, UserAgent, settings, utils
 
 
 def clear():
@@ -75,11 +72,7 @@ def test_get_browsers():
 def test_get_browser_versions():
     if not service_failed:
         for browser in browser_list:
-            assert (
-                len(utils.get_browser_versions(browser))
-                ==
-                settings.BROWSERS_COUNT_LIMIT
-            )
+            assert len(utils.get_browser_versions(browser)) == settings.BROWSERS_COUNT_LIMIT  # noqa
 
 
 def test_load():

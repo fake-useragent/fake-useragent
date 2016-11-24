@@ -4,7 +4,6 @@ import codecs
 import json
 import os
 import re
-from time import sleep
 from threading import Lock
 
 try:  # Python 2
@@ -14,6 +13,17 @@ except ImportError:  # Python 3
     from urllib.request import urlopen, Request
     from urllib.parse import quote_plus
     from urllib.error import URLError
+
+try:
+    import socket
+    import gevent.socket
+
+    if socket.socket is gevent.socket.socket:
+        from gevent import sleep
+    else:
+        from time import sleep
+except ImportError, AttributeError:
+    from time import sleep
 
 
 def get(url):
@@ -31,7 +41,7 @@ def get(url):
                 if attempt == settings.HTTP_RETRIES:
                     raise FakeUserAgentError
                 else:
-                    sleep(settings.HTTP_DELAY)
+                    sleep(settings.HTTP_TIMEOUT)
 get.lock = Lock()
 
 
@@ -101,15 +111,13 @@ def load():
 
             for _ in range(int(float(percent) * 10)):
                 randomize_dict[str(len(randomize_dict))] = browser_key
-
     except Exception:
-        try:
-            server_cached_data = get(settings.CACHE_SERVER)
-        except (URLError, OSError):
-            raise FakeUserAgentError
-        else:
-            return json.loads(server_cached_data.decode('utf-8'))
+        server_cached_data = get(settings.CACHE_SERVER)
 
+        try:
+            return json.loads(server_cached_data.decode('utf-8'))
+        except (UnicodeDecodeError, TypeError, ValueError):
+            raise FakeUserAgentError
     else:
         return {
             'browsers': browsers_dict,
@@ -151,4 +159,4 @@ def load_cached():
 
 
 from fake_useragent import settings  # noqa # isort:skip
-from fake_useragent.exceptions import FakeUserAgentError  # noqa # isort:skip
+from fake_useragent.errors import FakeUserAgentError  # noqa # isort:skip
