@@ -1,0 +1,6 @@
+
+
+class DataSourceUnavalaible(
+    Exception,
+):
+    pass
