@@ -1,13 +1,8 @@
 import os
-import socket
 from fake_useragent import UserAgent
 from fake_useragent import settings
 from fake_useragent import utils
-
-try:  # Python 2
-    from urllib2 import URLError
-except ImportError:  # Python 3
-    from urllib.error import URLError
+from fake_useragent.exceptions import DataSourceUnavalaible
 
 
 def clear():
@@ -47,7 +42,7 @@ def test_get_services():
 
         assert len(html) > 0
 
-    except (URLError, socket.error):
+    except DataSourceUnavalaible:
         service_failed = True
 
 
