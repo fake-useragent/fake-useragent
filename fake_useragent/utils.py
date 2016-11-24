@@ -22,7 +22,7 @@ try:
         from gevent import sleep
     else:
         from time import sleep
-except ImportError, AttributeError:
+except (ImportError, AttributeError):
     from time import sleep
 
 
