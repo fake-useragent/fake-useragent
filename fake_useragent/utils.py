@@ -1,20 +1,25 @@
 from __future__ import absolute_import, unicode_literals
 
-import codecs
+import io
 import json
 import os
 import re
-from threading import Lock
 
 try:  # Python 2
     from urllib2 import urlopen, Request, URLError
     from urllib import quote_plus
+
+    str_types = (unicode, str)  # noqa
+    text = unicode  # noqa
 except ImportError:  # Python 3
     from urllib.request import urlopen, Request
     from urllib.parse import quote_plus
     from urllib.error import URLError
 
-try:
+    str_types = (str,)
+    text = str
+
+try:  # gevent monkey patched environment check
     import socket
     import gevent.socket
 
@@ -27,22 +32,20 @@ except (ImportError, AttributeError):
 
 
 def get(url):
-    with get.lock:
-        request = Request(url)
+    request = Request(url)
 
-        attempt = 0
+    attempt = 0
 
-        while True:
-            attempt += 1
+    while True:
+        attempt += 1
 
-            try:
-                return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
-            except (URLError, OSError):
-                if attempt == settings.HTTP_RETRIES:
-                    raise FakeUserAgentError
-                else:
-                    sleep(settings.HTTP_TIMEOUT)
-get.lock = Lock()
+        try:
+            return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
+        except (URLError, OSError):
+            if attempt == settings.HTTP_RETRIES:
+                raise FakeUserAgentError
+            else:
+                sleep(settings.HTTP_TIMEOUT)
 
 
 def get_browsers():
@@ -54,15 +57,16 @@ def get_browsers():
     html = html.split('<table class="w3-table-all notranslate">')[1]
     html = html.split('</table>')[0]
 
-    browsers = re.findall(r'\.asp">(.+?)<', html, re.UNICODE)
+    pattern = r'\.asp">(.+?)<'
+    browsers = re.findall(pattern, html, re.UNICODE)
 
     browsers = [
-        settings.OVERRIDES.get(browser, browser) for browser in browsers
+        settings.OVERRIDES.get(browser, browser)
+        for browser in browsers
     ]
 
-    browsers_statistics = re.findall(
-        r'td\sclass="right">(.+?)\s', html, re.UNICODE
-    )
+    pattern = r'td\sclass="right">(.+?)\s'
+    browsers_statistics = re.findall(pattern, html, re.UNICODE)
 
     return list(zip(browsers, browsers_statistics))
 
@@ -76,7 +80,8 @@ def get_browser_versions(browser):
     html = html.split('<div id=\'liste\'>')[1]
     html = html.split('</div>')[0]
 
-    browsers_iter = re.finditer(r'\?id=\d+\'>(.+?)</a', html, re.UNICODE)
+    pattern = r'\?id=\d+\'>(.+?)</a'
+    browsers_iter = re.finditer(pattern, html, re.UNICODE)
 
     browsers = []
 
@@ -109,53 +114,76 @@ def load():
 
             browsers_dict[browser_key] = get_browser_versions(browser)
 
+            # it is actually so bad way for randomizing, simple list with
+            # browser_key's is event better
+            # I've failed so much a lot of years ago
             for _ in range(int(float(percent) * 10)):
                 randomize_dict[str(len(randomize_dict))] = browser_key
     except Exception:
-        server_cached_data = get(settings.CACHE_SERVER)
-
         try:
-            return json.loads(server_cached_data.decode('utf-8'))
+            ret = json.loads(get(settings.CACHE_SERVER).decode('utf-8'))
         except (UnicodeDecodeError, TypeError, ValueError):
             raise FakeUserAgentError
     else:
-        return {
+        ret = {
             'browsers': browsers_dict,
             'randomize': randomize_dict,
         }
 
+    if not isinstance(ret, dict):
+        raise FakeUserAgentError
 
-def write(data):
-    with codecs.open(settings.DB, encoding='utf-8', mode='wb+') as fp:
-        json.dump(data, fp)
+    for param in ['browsers', 'randomize']:
+        if param not in ret:
+            raise FakeUserAgentError
 
+        if not isinstance(ret[param], dict):
+            raise FakeUserAgentError
 
-def read():
-    with codecs.open(settings.DB, encoding='utf-8', mode='rb') as fp:
-        return json.load(fp)
+        if not ret[param]:
+            raise FakeUserAgentError
 
-
-def exist():
-    return os.path.isfile(settings.DB)
-
-
-def rm():
-    if exist():
-        os.remove(settings.DB)
+    return ret
 
 
-def update():
-    if exist():
-        rm()
-
-    write(load())
+# TODO: drop these useless functions
 
 
-def load_cached():
-    if not exist():
-        update()
+def write(path, data):
+    with io.open(path, encoding='utf-8', mode='wt') as fp:
+        dumped = json.dumps(data)
 
-    return read()
+        if not isinstance(dumped, text):
+            dumped = dumped.decode('utf-8')
+
+        fp.write(dumped)
+
+
+def read(path):
+    with io.open(path, encoding='utf-8', mode='rt') as fp:
+        return json.loads(fp.read())
+
+
+def exist(path):
+    return os.path.isfile(path)
+
+
+def rm(path):
+    if exist(path):
+        os.remove(path)
+
+
+def update(path):
+    rm(path)
+
+    write(path, load())
+
+
+def load_cached(path):
+    if not exist(path):
+        update(path)
+
+    return read(path)
 
 
 from fake_useragent import settings  # noqa # isort:skip

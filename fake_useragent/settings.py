@@ -3,13 +3,18 @@ from __future__ import absolute_import, unicode_literals
 import os
 import tempfile
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
-DB = os.path.join(tempfile.gettempdir(), 'fake_useragent_{version}.json'.format(  # noqa
+DB = os.path.join(
+    tempfile.gettempdir(),
+    'fake_useragent_{version}.json'.format(
+        version=__version__,
+    ),
+)
+
+CACHE_SERVER = 'https://fake-useragent.herokuapp.com/browsers/{version}'.format(  # noqa
     version=__version__,
-))
-
-CACHE_SERVER = 'https://fake-useragent.herokuapp.com/browsers/' + __version__
+)
 
 BROWSERS_STATS_PAGE = 'http://www.w3schools.com/browsers/browsers_stats.asp'
 
@@ -35,7 +40,7 @@ OVERRIDES = {
     'IE': 'Internet Explorer',
 }
 
-HTTP_TIMEOUT = 5
+HTTP_TIMEOUT = 3
 
 HTTP_RETRIES = 2
 

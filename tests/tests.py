@@ -2,10 +2,16 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 import json
-
-from nose.tools import raises
+import tempfile
+import uuid
 
 from fake_useragent import FakeUserAgentError, UserAgent, settings, utils
+
+settings.HTTP_TIMEOUT = 1
+
+settings.HTTP_RETRIES = 1
+
+settings.HTTP_DELAY = 0
 
 
 def clear():
@@ -92,55 +98,48 @@ def test_load():
 def test_write():
     clear()
 
-    assert not os.path.isfile(settings.DB)
-
-    utils.write(fake_useragent_dict)
-
-    assert os.path.isfile(settings.DB)
-
-
-def test_read():
-    data = utils.read()
-
-    check_dict(data)
+    utils.write(settings.DB, fake_useragent_dict)
 
     assert os.path.isfile(settings.DB)
 
 
 def test_exists():
-    assert utils.exist()
+    assert utils.exist(settings.DB)
+
+
+def test_read():
+    check_dict(utils.read(settings.DB))
 
 
 def test_rm():
-    assert utils.exist()
-    utils.rm()
-    assert not utils.exist()
+    assert utils.exist(settings.DB)
+    utils.rm(settings.DB)
+    assert not utils.exist(settings.DB)
 
 
 def test_update():
-    assert not utils.exist()
-    utils.update()
-    assert utils.exist()
-    utils.update()
-    assert utils.exist()
+    assert not utils.exist(settings.DB)
+    utils.update(settings.DB)
+    assert utils.exist(settings.DB)
+    utils.update(settings.DB)
+    assert utils.exist(settings.DB)
 
 
 def test_load_cached():
-    data = utils.load_cached()
+    data = utils.load_cached(settings.DB)
 
     check_dict(data)
 
     clear()
 
-    data = utils.load_cached()
+    data = utils.load_cached(settings.DB)
 
     check_dict(data)
 
 
-@raises(FakeUserAgentError)
 def test_user_agent():
     clear()
-    assert not utils.exist()
+    assert not utils.exist(settings.DB)
 
     ua = UserAgent(cache=False)
 
@@ -161,12 +160,23 @@ def test_user_agent():
     assert ua.random is not None
     assert ua['random'] is not None
 
-    assert ua.non_existing is None
-    assert ua['non_existing'] is None
+    try:
+        assert ua.non_existing is None
+    except FakeUserAgentError:
+        pass
+    else:
+        assert False
+
+    try:
+        assert ua['non_existing']
+    except FakeUserAgentError:
+        pass
+    else:
+        assert False
 
     data1 = ua.data
 
-    ua.update()
+    ua.update(settings.DB)
 
     data2 = ua.data
 
@@ -178,17 +188,83 @@ def test_user_agent():
 
     ua = UserAgent()
 
-    assert utils.exist()
+    assert utils.exist(settings.DB)
 
     data1 = ua.data
 
     clear()
 
-    ua.update()
+    ua.update(settings.DB)
 
-    assert utils.exist()
+    assert utils.exist(settings.DB)
 
     data2 = ua.data
 
     assert data1 == data2
     assert data1 is not data2
+
+
+def test_custom_path():
+    location = os.path.join(
+        tempfile.gettempdir(),
+        'fake_useragent' + uuid.uuid1().hex + '.json',
+    )
+
+    ua = UserAgent(path=location)
+
+    assert utils.exist(location)
+
+    check_dict(ua.data)
+
+    mtime = os.path.getmtime(location)
+
+    ua.update()
+
+    assert os.path.getmtime(location) != mtime
+
+
+def test_fallback():
+    fallback = 'Foo Browser'
+
+    clear()
+
+    settings.CACHE_SERVER = 'http://example.com/'
+
+    ua = UserAgent(fallback=fallback)
+
+    assert ua.random == fallback
+
+    assert ua.ie == fallback
+
+    try:
+        ua = UserAgent(fallback=True)
+    except AssertionError:
+        pass
+    else:
+        assert False
+
+    clear()
+
+    # json cached server response
+
+    settings.CACHE_SERVER = 'https://httpbin.org/get'
+
+    ua = UserAgent(fallback=fallback)
+
+    assert ua.random == fallback
+
+    assert ua.ie == fallback
+
+
+def test_version():
+    import fake_useragent
+
+    assert fake_useragent.VERSION == settings.__version__
+
+
+def test_aliases():
+    from fake_useragent import FakeUserAgent, UserAgentError
+
+    assert FakeUserAgentError is UserAgentError
+
+    assert UserAgent is FakeUserAgent

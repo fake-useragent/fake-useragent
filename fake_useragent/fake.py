@@ -5,55 +5,77 @@ from threading import Lock
 
 from fake_useragent import settings
 from fake_useragent.errors import FakeUserAgentError
-from fake_useragent.utils import load, load_cached, update
+from fake_useragent.utils import load, load_cached, str_types, update
 
 
-class UserAgent(object):
-    lock = Lock()  # mutable cross-instance threading.Lock
-
-    def __init__(self, cache=True):
+class FakeUserAgent(object):
+    def __init__(self, cache=True, path=settings.DB, fallback=None):
         self.cache = cache
+        self.path = path
 
-        with self.lock:
-            self.load()
+        if fallback is not None:
+            assert isinstance(fallback, str_types), \
+                'fallback must be string or unicode'
 
-    def load(self):
-        if self.cache:
-            self.data = load_cached()
-        else:
-            self.data = load()
+        self.fallback = fallback
 
-    def update(self, cache=None):
-        if cache is not None:
-            self.cache = cache
-
-        if self.cache:
-            update()
+        # initial empty data
+        self.data = {}
+        self.data_randomize = []
+        self.data_browsers = {}
 
         self.load()
+
+    def load(self):
+        try:
+            with self.load.lock:
+                if self.cache:
+                    self.data = load_cached(self.path)
+                else:
+                    self.data = load()
+
+                # TODO: change source file format
+                # version 0.1.4- migration tool
+                self.data_randomize = list(self.data['randomize'].values())
+                self.data_browsers = self.data['browsers']
+        except FakeUserAgentError:
+            if self.fallback is None:
+                raise
+    load.lock = Lock()
+
+    def update(self, cache=None):
+        with self.update.lock:
+            if cache is not None:
+                self.cache = cache
+
+            if self.cache:
+                update(self.path)
+
+            self.load()
+    update.lock = Lock()
 
     def __getitem__(self, attr):
         return self.__getattr__(attr)
 
     def __getattr__(self, attr):
-        for value, replacement in settings.REPLACEMENTS.items():
-            attr = attr.replace(value, replacement)
-
-        attr = attr.lower()
-
-        if attr == 'random':
-            attr = self.data['randomize'][
-                str(random.randint(0, len(self.data['randomize']) - 1))
-            ]
-        else:
-            if attr in settings.SHORTCUTS:
-                attr = settings.SHORTCUTS[attr]
-
         try:
-            return self.data['browsers'][attr][
-                random.randint(
-                    0, len(self.data['browsers'][attr]) - 1
-                )
-            ]
-        except KeyError:
-            raise FakeUserAgentError
+            for value, replacement in settings.REPLACEMENTS.items():
+                attr = attr.replace(value, replacement)
+
+            attr = attr.lower()
+
+            if attr == 'random':
+                browser = random.choice(self.data_randomize)
+            else:
+                browser = settings.SHORTCUTS.get(attr, attr)
+
+            return random.choice(self.data_browsers[browser])
+        except (KeyError, IndexError):
+            if self.fallback is None:
+                raise FakeUserAgentError
+            else:
+                return self.fallback
+
+
+# common alias
+UserAgent = FakeUserAgent

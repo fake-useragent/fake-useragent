@@ -19,7 +19,7 @@ Disclaimer
 ==========
 
 As of November 2016, `useragentstring.com <http://useragentstring.com/>`_
-is down, version 0.1.3 uses hosted data to keep library working.
+is down, version 0.1.3 uses hosted data to keep library working
 
 Features
 ********
@@ -71,7 +71,7 @@ Notes
 
 ``fake-useragent`` store collected data at your os temp dir, like ``/tmp``
 
-if you want to update saved database just
+if you want to update saved database just:
 
 .. code-block:: python
 
@@ -86,17 +86,27 @@ if you dont want cache database or no writable file system:
     from fake_useragent import UserAgent
     ua = UserAgent(cache=False)
 
-In very rare case ``fake-useragent`` can not download data (version 0.1.3 added)
+In very rare case ``fake-useragent`` can not download data: (version 0.1.3 added)
 
 .. code-block:: python
 
     from fake_useragent import UserAgent
     ua = UserAgent()
+
     # Traceback (most recent call last):
     #   ...
     # fake_useragent.errors.FakeUserAgentError
 
-If You will try to get unknown browser (version 0.1.3 added)
+    # You can catch it via
+
+    from fake_useragent import FakeUserAgentError
+
+    try:
+        ua = UserAgent()
+    except FakeUserAgentError:
+        pass
+
+If You will try to get unknown browser: (version 0.1.3 changed)
 
 .. code-block:: python
 
@@ -107,6 +117,47 @@ If You will try to get unknown browser (version 0.1.3 added)
     #   ...
     # fake_useragent.errors.FakeUserAgentError
 
+You can completely disable ANY annoying exception with adding ``fallback``: (version 0.1.4 added)
+
+.. code-block:: python
+
+    import fake_useragent
+
+    ua = fake_useragent.UserAgent(fallback='Your favorite Browser')
+    # in case if something went wrong, one more time it is REALLY!!! rare case
+    ua.random == 'Your favorite Browser'
+
+Want to control location of data file? (version 0.1.4 added)
+
+.. code-block:: python
+
+    import fake_useragent
+
+    # I am STRONGLY!!! recommend to use version prefix
+    location = '/home/user/fake_useragent%s.json' % fake_useragent.VERSION
+
+    ua = fake_useragent.UserAgent(path=location)
+    ua.random
+
+Experiencing issues???
+----------------------
+
+Make sure that You using latest version!!!
+
+.. code-block:: shell
+
+    pip install -U fake-useragent
+
+Check version via python console: (version 0.1.4 added)
+
+.. code-block:: python
+
+    import fake_useragent
+
+    print(fake_useragent.VERSION)
+
+And You are welcome to post `issue <https://github.com/hellysmile/fake-useragent/issues>`_
+Please do not forget mention version that You are using
 
 Tests
 -----
@@ -116,13 +167,24 @@ Tests
     pip install tox
     tox
 
-
 Changelog
 ---------
 
+* 0.1.4 November 25, 2016
+    - Added custom data file location support
+    - Added ``fallback`` browser support, in case of unavailable data sources
+    - Added alias ``fake_useragent.FakeUserAgent`` for ``fake_useragent.UserAgent``
+    - Added alias ``fake_useragent.UserAgentError`` for ``fake_useragent.FakseUserAgentError``
+    - reduced fake_useragent.settings.HTTP_TIMEOUT to 3 seconds
+    - Started migration to new data file format
+    - Simplified a lot 4+ years out of date code
+    - better thread\greenlet safety
+
 * 0.1.3 November 24, 2016
-    - Raises ``fake_useragent.FakeUserAgentError`` in case when there is not way to download data
-    - Raises ``fake_useragent.FakeUserAgentError`` instead on ``None`` in case of unknown browser
+    - Added hosted data file, when remote services is unavailable
+    - Raises ``fake_useragent.errors.FakeUserAgentError`` in case when there is not way to download data
+    - Raises ``fake_useragent.errors.FakeUserAgentError`` instead on ``None`` in case of unknown browser
     - Added ``gevent.sleep`` support in ``gevent`` patched environment when trying to download data
+
 * X.X.X xxxxxxx xx, xxxx
     - xxxxx ?????

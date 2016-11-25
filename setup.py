@@ -1,6 +1,8 @@
+from __future__ import absolute_import, unicode_literals
+
 import ast
 import os
-import codecs
+import io
 from setuptools import setup
 
 
@@ -15,7 +17,7 @@ class VersionFinder(ast.NodeVisitor):
 
 def read(*parts):
     filename = os.path.join(os.path.dirname(__file__), *parts)
-    with codecs.open(filename, encoding='utf-8') as fp:
+    with io.open(filename, encoding='utf-8', mode='rt') as fp:
         return fp.read()
 
 
@@ -41,18 +43,14 @@ Operating System :: OS Independent
 
 description = 'Up to date simple useragent faker with real world database'
 
-packages = ['fake_useragent']
-
-install_requires = []
-
 
 setup(
     name='fake-useragent',
     version=find_version('fake_useragent', 'settings.py'),
-    packages=packages,
+    packages=[str('fake_useragent')],
     description=description,
     long_description=read('README.rst'),
-    install_requires=install_requires,
+    install_requires=[],
     author='hellysmile',
     author_email='hellysmile@gmail.com',
     url='https://github.com/hellysmile/fake-useragent',
@@ -60,6 +58,7 @@ setup(
     license='http://www.apache.org/licenses/LICENSE-2.0',
     classifiers=filter(None, classifiers.split('\n')),
     keywords=[
-        'user', 'agent', 'user agent', 'user-agent', 'fake'
-    ]
+        'user', 'agent', 'user agent', 'useragent',
+        'fake', 'fake useragent', 'fake user agent',
+    ],
 )
