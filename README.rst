@@ -157,6 +157,7 @@ Check version via python console: (version 0.1.4 added)
     print(fake_useragent.VERSION)
 
 And You are welcome to post `issue <https://github.com/hellysmile/fake-useragent/issues>`_
+
 Please do not forget mention version that You are using
 
 Tests
