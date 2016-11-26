@@ -171,7 +171,7 @@ Tests
 Changelog
 ---------
 
-* 0.1.4 November 26, 2016 (not released yet)
+* 0.1.4 xxxxxxx xx, xxxx (not released yet)
     - Added custom data file location support
     - Added ``fallback`` browser support, in case of unavailable data sources
     - Added alias ``fake_useragent.FakeUserAgent`` for ``fake_useragent.UserAgent``
