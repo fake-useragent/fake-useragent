@@ -9,8 +9,8 @@ fake-useragent
 .. image:: https://img.shields.io/coveralls/hellysmile/fake-useragent.svg
     :target: https://coveralls.io/r/hellysmile/fake-useragent
 
-.. image:: https://img.shields.io/pypi/dm/fake-useragent.svg
-    :target: https://pypi.python.org/pypi/fake-useragent
+.. image:: https://landscape.io/github/hellysmile/fake-useragent/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/hellysmile/fake-useragent/master
 
 .. image:: https://img.shields.io/pypi/v/fake-useragent.svg
     :target: https://pypi.python.org/pypi/fake-useragent
