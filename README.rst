@@ -71,7 +71,7 @@ Notes
 
 ``fake-useragent`` store collected data at your os temp dir, like ``/tmp``
 
-if you want to update saved database just:
+If you want to update saved database just:
 
 .. code-block:: python
 
@@ -79,7 +79,7 @@ if you want to update saved database just:
     ua = UserAgent()
     ua.update()
 
-if you dont want cache database or no writable file system:
+If you dont want cache database or no writable file system:
 
 .. code-block:: python
 
@@ -106,7 +106,7 @@ In very rare case ``fake-useragent`` can not download data: (version 0.1.3 added
     except FakeUserAgentError:
         pass
 
-If You will try to get unknown browser: (version 0.1.3 changed)
+If you will try to get unknown browser: (version 0.1.3 changed)
 
 .. code-block:: python
 
@@ -142,7 +142,7 @@ Want to control location of data file? (version 0.1.4 added)
 Experiencing issues???
 ----------------------
 
-Make sure that You using latest version!!!
+Make sure that you using latest version!!!
 
 .. code-block:: shell
 
@@ -156,9 +156,9 @@ Check version via python console: (version 0.1.4 added)
 
     print(fake_useragent.VERSION)
 
-And You are welcome to post `issue <https://github.com/hellysmile/fake-useragent/issues>`_
+And you are welcome to post `issue <https://github.com/hellysmile/fake-useragent/issues>`_
 
-Please do not forget mention version that You are using
+Please do not forget mention version that you are using
 
 Tests
 -----
@@ -175,17 +175,22 @@ Changelog
     - Added custom data file location support
     - Added ``fallback`` browser support, in case of unavailable data sources
     - Added alias ``fake_useragent.FakeUserAgent`` for ``fake_useragent.UserAgent``
-    - Added alias ``fake_useragent.UserAgentError`` for ``fake_useragent.FakseUserAgentError``
-    - reduced fake_useragent.settings.HTTP_TIMEOUT to 3 seconds
+    - Added alias ``fake_useragent.UserAgentError`` for ``fake_useragent.FakeUserAgentError``
+    - Reduced fake_useragent.settings.HTTP_TIMEOUT to 3 seconds
     - Started migration to new data file format
     - Simplified a lot 4+ years out of date code
-    - better thread\greenlet safety
+    - Better thread/greenlet safety
 
 * 0.1.3 November 24, 2016
     - Added hosted data file, when remote services is unavailable
     - Raises ``fake_useragent.errors.FakeUserAgentError`` in case when there is not way to download data
-    - Raises ``fake_useragent.errors.FakeUserAgentError`` instead on ``None`` in case of unknown browser
+    - Raises ``fake_useragent.errors.FakeUserAgentError`` instead of ``None`` in case of unknown browser
     - Added ``gevent.sleep`` support in ``gevent`` patched environment when trying to download data
 
 * X.X.X xxxxxxx xx, xxxx
     - xxxxx ?????
+
+Contributors
+------------
+
+You can visit `contributors page <https://github.com/hellysmile/fake-useragent/blob/master/CONTRIBUTORS.txt>`_
