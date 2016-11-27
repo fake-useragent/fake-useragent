@@ -191,6 +191,6 @@ Changelog
     - xxxxx ?????
 
 Authors
-------------
+-------
 
 You can visit `authors page <https://github.com/hellysmile/fake-useragent/blob/master/AUTHORS>`_
