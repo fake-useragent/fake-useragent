@@ -71,7 +71,7 @@ Notes
 
 ``fake-useragent`` store collected data at your os temp dir, like ``/tmp``
 
-if you want to update saved database just:
+If You want to update saved database just:
 
 .. code-block:: python
 
@@ -79,7 +79,7 @@ if you want to update saved database just:
     ua = UserAgent()
     ua.update()
 
-if you dont want cache database or no writable file system:
+If You dont want cache database or no writable file system:
 
 .. code-block:: python
 
@@ -133,7 +133,7 @@ Want to control location of data file? (version 0.1.4 added)
 
     import fake_useragent
 
-    # I am STRONGLY!!! recommend to use version prefix
+    # I am STRONGLY!!! recommend to use version suffix
     location = '/home/user/fake_useragent%s.json' % fake_useragent.VERSION
 
     ua = fake_useragent.UserAgent(path=location)
@@ -156,7 +156,7 @@ Check version via python console: (version 0.1.4 added)
 
     print(fake_useragent.VERSION)
 
-And You are welcome to post `issue <https://github.com/hellysmile/fake-useragent/issues>`_
+And You are always welcome to post `issues <https://github.com/hellysmile/fake-useragent/issues>`_
 
 Please do not forget mention version that You are using
 
@@ -175,17 +175,22 @@ Changelog
     - Added custom data file location support
     - Added ``fallback`` browser support, in case of unavailable data sources
     - Added alias ``fake_useragent.FakeUserAgent`` for ``fake_useragent.UserAgent``
-    - Added alias ``fake_useragent.UserAgentError`` for ``fake_useragent.FakseUserAgentError``
-    - reduced fake_useragent.settings.HTTP_TIMEOUT to 3 seconds
+    - Added alias ``fake_useragent.UserAgentError`` for ``fake_useragent.FakeUserAgentError``
+    - Reduced fake_useragent.settings.HTTP_TIMEOUT to 3 seconds
     - Started migration to new data file format
     - Simplified a lot 4+ years out of date code
-    - better thread\greenlet safety
+    - Better thread/greenlet safety
 
 * 0.1.3 November 24, 2016
     - Added hosted data file, when remote services is unavailable
     - Raises ``fake_useragent.errors.FakeUserAgentError`` in case when there is not way to download data
-    - Raises ``fake_useragent.errors.FakeUserAgentError`` instead on ``None`` in case of unknown browser
+    - Raises ``fake_useragent.errors.FakeUserAgentError`` instead of ``None`` in case of unknown browser
     - Added ``gevent.sleep`` support in ``gevent`` patched environment when trying to download data
 
 * X.X.X xxxxxxx xx, xxxx
     - xxxxx ?????
+
+Authors
+------------
+
+You can visit `authors page <https://github.com/hellysmile/fake-useragent/blob/master/AUTHORS>`_
