@@ -203,6 +203,8 @@ def test_user_agent():
     assert data1 == data2
     assert data1 is not data2
 
+    utils.rm(settings.DB)
+
 
 def test_custom_path():
     location = os.path.join(
@@ -222,11 +224,15 @@ def test_custom_path():
 
     assert os.path.getmtime(location) != mtime
 
+    utils.rm(location)
+
 
 def test_fallback():
     fallback = 'Foo Browser'
 
-    clear()
+    settings.BROWSER_BASE_PAGE = 'http://example.com/'
+
+    settings.BROWSERS_STATS_PAGE = 'http://example.com/'
 
     settings.CACHE_SERVER = 'http://example.com/'
 
