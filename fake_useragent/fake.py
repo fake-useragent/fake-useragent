@@ -87,7 +87,7 @@ class FakeUserAgent(object):
         except (KeyError, IndexError) as exc:
             if self.fallback is None:
                 logger.error(
-                    'Error occurred during fetching data...',
+                    'Error occurred during getting browser...',
                     exc_info=exc,
                 )
 

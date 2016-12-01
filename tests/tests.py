@@ -238,10 +238,6 @@ def test_cache_server():
 
     ua = UserAgent(fallback=fallback)
 
-    assert ua.random is not None
-
-    assert ua.ie is not None
-
     assert ua.random != fallback
 
     assert ua.ie != fallback
