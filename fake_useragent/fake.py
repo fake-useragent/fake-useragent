@@ -1,11 +1,15 @@
 from __future__ import absolute_import, unicode_literals
 
+import logging
 import random
 from threading import Lock
 
 from fake_useragent import settings
 from fake_useragent.errors import FakeUserAgentError
 from fake_useragent.utils import load, load_cached, str_types, update
+
+
+logger = logging.getLogger(__name__)
 
 
 class FakeUserAgent(object):
@@ -38,9 +42,19 @@ class FakeUserAgent(object):
                 # version 0.1.4- migration tool
                 self.data_randomize = list(self.data['randomize'].values())
                 self.data_browsers = self.data['browsers']
-        except FakeUserAgentError:
+        except FakeUserAgentError as exc:
             if self.fallback is None:
+                logger.error(
+                    'Error occurred during fetching data...',
+                    exc_info=exc,
+                )
+
                 raise
+            else:
+                logger.warning(
+                    'Error occurred but was suppressed with fallback...',
+                    exc_info=exc,
+                )
     load.lock = Lock()
 
     def update(self, cache=None):
@@ -70,10 +84,20 @@ class FakeUserAgent(object):
                 browser = settings.SHORTCUTS.get(attr, attr)
 
             return random.choice(self.data_browsers[browser])
-        except (KeyError, IndexError):
+        except (KeyError, IndexError) as exc:
             if self.fallback is None:
+                logger.error(
+                    'Error occurred during fetching data...',
+                    exc_info=exc,
+                )
+
                 raise FakeUserAgentError
             else:
+                logger.warning(
+                    'Error occurred but was suppressed with fallback...',
+                    exc_info=exc,
+                )
+
                 return self.fallback
 
 
