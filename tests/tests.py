@@ -251,7 +251,6 @@ def test_cache_server():
     utils.rm(settings.DB)
 
 
-
 def test_fallback():
     clear()
 
