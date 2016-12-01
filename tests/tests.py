@@ -13,8 +13,6 @@ settings.HTTP_RETRIES = 1
 
 settings.HTTP_DELAY = 0
 
-default_settings = settings
-
 
 def clear():
     try:
