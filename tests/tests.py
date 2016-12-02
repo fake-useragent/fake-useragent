@@ -7,7 +7,7 @@ import uuid
 
 from fake_useragent import FakeUserAgentError, UserAgent, settings, utils
 
-settings.HTTP_TIMEOUT = 1
+settings.HTTP_TIMEOUT = 2
 
 settings.HTTP_RETRIES = 1
 
@@ -203,6 +203,8 @@ def test_user_agent():
     assert data1 == data2
     assert data1 is not data2
 
+    utils.rm(settings.DB)
+
 
 def test_custom_path():
     location = os.path.join(
@@ -222,11 +224,31 @@ def test_custom_path():
 
     assert os.path.getmtime(location) != mtime
 
+    utils.rm(location)
 
-def test_fallback():
+
+def test_cache_server():
+    clear()
+
     fallback = 'Foo Browser'
 
+    settings.BROWSER_BASE_PAGE = 'http://example.com/'
+
+    settings.BROWSERS_STATS_PAGE = 'http://example.com/'
+
+    ua = UserAgent(fallback=fallback)
+
+    assert ua.random != fallback
+
+    assert ua.ie != fallback
+
+    utils.rm(settings.DB)
+
+
+def test_fallback():
     clear()
+
+    fallback = 'Foo Browser'
 
     settings.CACHE_SERVER = 'http://example.com/'
 
