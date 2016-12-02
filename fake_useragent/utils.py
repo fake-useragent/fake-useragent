@@ -5,6 +5,8 @@ import json
 import os
 import re
 
+from fake_useragent.log import logger
+
 try:  # Python 2
     from urllib2 import urlopen, Request, URLError
     from urllib import quote_plus
@@ -41,10 +43,20 @@ def get(url):
 
         try:
             return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
-        except (URLError, OSError):
+        except (URLError, OSError) as exc:
+            logger.debug(
+                'Error occurred during fetching %s',
+                url,
+                exc_info=exc,
+            )
+
             if attempt == settings.HTTP_RETRIES:
-                raise FakeUserAgentError
+                raise FakeUserAgentError('Maximum amount of retries reached')
             else:
+                logger.debug(
+                    'Sleeping for %s secconds',
+                    settings.HTTP_TIMEOUT,
+                )
                 sleep(settings.HTTP_TIMEOUT)
 
 
@@ -116,14 +128,22 @@ def load():
 
             # it is actually so bad way for randomizing, simple list with
             # browser_key's is event better
-            # I've failed so much a lot of years ago
+            # I've failed so much a lot of years ago.
+            # Ideas for refactoring
+            # {'chrome': <percantage|int>, 'firefox': '<percatage|int>'}
             for _ in range(int(float(percent) * 10)):
                 randomize_dict[str(len(randomize_dict))] = browser_key
-    except Exception:
+    except Exception as exc:
+        logger.warning(
+            'Error occurred during formatting data. '
+            'Trying to use fallback server %s',
+            settings.CACHE_SERVER,
+            exc_info=exc,
+        )
         try:
             ret = json.loads(get(settings.CACHE_SERVER).decode('utf-8'))
         except (UnicodeDecodeError, TypeError, ValueError):
-            raise FakeUserAgentError
+            raise FakeUserAgentError('Can not load data from cached server')
     else:
         ret = {
             'browsers': browsers_dict,
@@ -131,17 +151,17 @@ def load():
         }
 
     if not isinstance(ret, dict):
-        raise FakeUserAgentError
+        raise FakeUserAgentError('Data is not dictionary ', ret)
 
     for param in ['browsers', 'randomize']:
         if param not in ret:
-            raise FakeUserAgentError
+            raise FakeUserAgentError('Missing data param: ', param)
 
         if not isinstance(ret[param], dict):
-            raise FakeUserAgentError
+            raise FakeUserAgentError('Data param is not dictionary', ret[param])  # noqa
 
         if not ret[param]:
-            raise FakeUserAgentError
+            raise FakeUserAgentError('Data param is empty', ret[param])
 
     return ret
 

@@ -1,20 +1,21 @@
 from __future__ import absolute_import, unicode_literals
 
-import logging
 import random
 from threading import Lock
 
 from fake_useragent import settings
 from fake_useragent.errors import FakeUserAgentError
+from fake_useragent.log import logger
 from fake_useragent.utils import load, load_cached, str_types, update
-
-
-logger = logging.getLogger(__name__)
 
 
 class FakeUserAgent(object):
     def __init__(self, cache=True, path=settings.DB, fallback=None):
+        assert isinstance(cache, bool), \
+            'cache must be True or False'
+
         self.cache = cache
+
         self.path = path
 
         if fallback is not None:
@@ -25,6 +26,8 @@ class FakeUserAgent(object):
 
         # initial empty data
         self.data = {}
+        # TODO: change source file format
+        # version 0.1.4+ migration tool
         self.data_randomize = []
         self.data_browsers = {}
 
@@ -39,19 +42,16 @@ class FakeUserAgent(object):
                     self.data = load()
 
                 # TODO: change source file format
-                # version 0.1.4- migration tool
+                # version 0.1.4+ migration tool
                 self.data_randomize = list(self.data['randomize'].values())
                 self.data_browsers = self.data['browsers']
         except FakeUserAgentError:
             if self.fallback is None:
-                logger.error(
-                    'Error occurred during fetching data...',
-                )
-
                 raise
             else:
                 logger.warning(
-                    'Error occurred during fetching data but was suppressed with fallback.',  # noqa
+                    'Error occurred during fetching data, '
+                    'but was suppressed with fallback.',
                 )
     load.lock = Lock()
 
@@ -82,18 +82,13 @@ class FakeUserAgent(object):
                 browser = settings.SHORTCUTS.get(attr, attr)
 
             return random.choice(self.data_browsers[browser])
-        except (KeyError, IndexError) as exc:
+        except (KeyError, IndexError):
             if self.fallback is None:
-                logger.error(
-                    'Error occurred during getting browser...',
-                    exc_info=exc,
-                )
-
-                raise FakeUserAgentError
+                raise FakeUserAgentError('Error occurred during getting browser')  # noqa
             else:
                 logger.warning(
-                    'Error occurred during getting browser but was suppressed with fallback.',  # noqa
-                    exc_info=exc,
+                    'Error occurred during getting browser, '
+                    'but was suppressed with fallback.',
                 )
 
                 return self.fallback

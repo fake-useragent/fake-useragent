@@ -14,9 +14,9 @@ settings.HTTP_RETRIES = 1
 settings.HTTP_DELAY = 0
 
 
-def clear():
+def clear(path):
     try:
-        os.unlink(settings.DB)
+        os.remove(path)
     except OSError:
         pass
 
@@ -96,7 +96,7 @@ def test_load():
 
 
 def test_write():
-    clear()
+    clear(settings.DB)
 
     utils.write(settings.DB, fake_useragent_dict)
 
@@ -113,7 +113,7 @@ def test_read():
 
 def test_rm():
     assert utils.exist(settings.DB)
-    utils.rm(settings.DB)
+    clear(settings.DB)
     assert not utils.exist(settings.DB)
 
 
@@ -130,7 +130,7 @@ def test_load_cached():
 
     check_dict(data)
 
-    clear()
+    clear(settings.DB)
 
     data = utils.load_cached(settings.DB)
 
@@ -138,7 +138,7 @@ def test_load_cached():
 
 
 def test_user_agent():
-    clear()
+    clear(settings.DB)
     assert not utils.exist(settings.DB)
 
     ua = UserAgent(cache=False)
@@ -161,7 +161,7 @@ def test_user_agent():
     assert ua['random'] is not None
 
     try:
-        assert ua.non_existing is None
+        ua.non_existing
     except FakeUserAgentError:
         pass
     else:
@@ -183,7 +183,7 @@ def test_user_agent():
     assert data1 == data2
     assert data1 is not data2
 
-    clear()
+    clear(settings.DB)
     del ua
 
     ua = UserAgent()
@@ -192,7 +192,7 @@ def test_user_agent():
 
     data1 = ua.data
 
-    clear()
+    clear(settings.DB)
 
     ua.update(settings.DB)
 
@@ -203,7 +203,7 @@ def test_user_agent():
     assert data1 == data2
     assert data1 is not data2
 
-    utils.rm(settings.DB)
+    clear(settings.DB)
 
 
 def test_custom_path():
@@ -224,29 +224,25 @@ def test_custom_path():
 
     assert os.path.getmtime(location) != mtime
 
-    utils.rm(location)
+    clear(location)
 
 
 def test_cache_server():
-    clear()
-
-    fallback = 'Foo Browser'
+    clear(settings.DB)
 
     settings.BROWSER_BASE_PAGE = 'http://example.com/'
 
     settings.BROWSERS_STATS_PAGE = 'http://example.com/'
 
-    ua = UserAgent(fallback=fallback)
+    ua = UserAgent()
 
-    assert ua.random != fallback
+    check_dict(ua.data)
 
-    assert ua.ie != fallback
-
-    utils.rm(settings.DB)
+    clear(settings.DB)
 
 
 def test_fallback():
-    clear()
+    clear(settings.DB)
 
     fallback = 'Foo Browser'
 
@@ -265,7 +261,7 @@ def test_fallback():
     else:
         assert False
 
-    clear()
+    clear(settings.DB)
 
     # json cached server response
 
