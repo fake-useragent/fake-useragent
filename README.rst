@@ -175,6 +175,7 @@ Changelog
     - Started migration to new data file format
     - Simplified a lot 4+ years out of date code
     - Better thread/greenlet safety
+    - Added verbose logging
 
 * 0.1.3 November 24, 2016
     - Added hosted data file, when remote services is unavailable
