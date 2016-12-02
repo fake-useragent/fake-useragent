@@ -42,18 +42,16 @@ class FakeUserAgent(object):
                 # version 0.1.4- migration tool
                 self.data_randomize = list(self.data['randomize'].values())
                 self.data_browsers = self.data['browsers']
-        except FakeUserAgentError as exc:
+        except FakeUserAgentError:
             if self.fallback is None:
                 logger.error(
                     'Error occurred during fetching data...',
-                    exc_info=exc,
                 )
 
                 raise
             else:
                 logger.warning(
-                    'Error occurred but was suppressed with fallback...',
-                    exc_info=exc,
+                    'Error occurred during fetching data but was suppressed with fallback.',  # noqa
                 )
     load.lock = Lock()
 
@@ -94,7 +92,7 @@ class FakeUserAgent(object):
                 raise FakeUserAgentError
             else:
                 logger.warning(
-                    'Error occurred but was suppressed with fallback...',
+                    'Error occurred during getting browser but was suppressed with fallback.',  # noqa
                     exc_info=exc,
                 )
 
