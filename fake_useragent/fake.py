@@ -10,13 +10,21 @@ from fake_useragent.utils import load, load_cached, str_types, update
 
 
 class FakeUserAgent(object):
-    def __init__(self, cache=True, path=settings.DB, fallback=None):
+    def __init__(
+        self,
+        cache=True,
+        path=settings.DB,
+        fallback=None,
+        safe_attrs=tuple(),
+    ):
         assert isinstance(cache, bool), \
             'cache must be True or False'
 
         self.cache = cache
 
         self.path = path
+
+        self.safe_attrs = set(safe_attrs)
 
         if fallback is not None:
             assert isinstance(fallback, str_types), \
@@ -70,6 +78,9 @@ class FakeUserAgent(object):
         return self.__getattr__(attr)
 
     def __getattr__(self, attr):
+        if attr in self.safe_attrs:
+            return super(UserAgent, self).__getattr__(attr)
+
         try:
             for value, replacement in settings.REPLACEMENTS.items():
                 attr = attr.replace(value, replacement)

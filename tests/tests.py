@@ -137,6 +137,17 @@ def test_load_cached():
     check_dict(data)
 
 
+def test_safe_attrs():
+    clear(settings.DB)
+
+    ua = UserAgent(safe_attrs=('foo',))
+
+    try:
+        ua.foo
+    except AttributeError:
+        pass
+
+
 def test_user_agent():
     clear(settings.DB)
     assert not utils.exist(settings.DB)

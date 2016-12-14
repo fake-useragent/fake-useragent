@@ -134,6 +134,21 @@ Want to control location of data file? (version 0.1.4 added)
     ua = fake_useragent.UserAgent(path=location)
     ua.random
 
+If you need to safe some attributes from overriding them in UserAgent by ``__getattr__`` method
+use ``safe_attrs`` you can pass there attributes names.
+At least this will prevent you from raising FakeUserAgentError when attribute not found.
+
+For example, when using fake_useragent with `injections <https://github.com/tailhook/injections>`_ you need to:
+
+.. code-block:: python
+
+    import fake_useragent
+
+    ua = fake_useragent.UserAgent(safe_attrs=('__injections__',))
+
+Please, do not use if you don't understand why you need this.
+This is magic for rarely extreme case.
+
 Experiencing issues???
 ----------------------
 
@@ -166,7 +181,7 @@ Tests
 Changelog
 ---------
 
-* 0.1.4 xxxxxxx xx, xxxx (not released yet)
+* 0.1.4 December 14, 2016
     - Added custom data file location support
     - Added ``fallback`` browser support, in case of unavailable data sources
     - Added alias ``fake_useragent.FakeUserAgent`` for ``fake_useragent.UserAgent``
@@ -176,6 +191,7 @@ Changelog
     - Simplified a lot 4+ years out of date code
     - Better thread/greenlet safety
     - Added verbose logging
+    - Added ``safe_attrs`` for prevent overriding by ``__getattr__``
 
 * 0.1.3 November 24, 2016
     - Added hosted data file, when remote services is unavailable
