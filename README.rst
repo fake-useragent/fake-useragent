@@ -138,7 +138,7 @@ If you need to safe some attributes from overriding them in UserAgent by ``__get
 use ``safe_attrs`` you can pass there attributes names.
 At least this will prevent you from raising FakeUserAgentError when attribute not found.
 
-For example, when using fake_useragent with injections you need to do:
+For example, when using fake_useragent with `injections <https://github.com/tailhook/injections>`_ you need to:
 
 .. code-block:: python
 
@@ -181,7 +181,7 @@ Tests
 Changelog
 ---------
 
-* 0.1.4 xxxxxxx xx, xxxx (not released yet)
+* 0.1.4 December 14, 2016 (not released yet)
     - Added custom data file location support
     - Added ``fallback`` browser support, in case of unavailable data sources
     - Added alias ``fake_useragent.FakeUserAgent`` for ``fake_useragent.UserAgent``
