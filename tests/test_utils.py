@@ -38,7 +38,7 @@ class UtilsTestCase(BaseTestCase):
                 'firefox': mock.ANY,
                 'opera': mock.ANY,
                 'safari': mock.ANY,
-                'internetexplorer': mock.ANY,
+                'ie/edge': mock.ANY,
             },
         }
 
