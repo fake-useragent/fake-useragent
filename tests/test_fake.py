@@ -199,8 +199,6 @@ class FakeTestCase(
             'fake_useragent.utils.Request',
             side_effect=_request,
         ):
-            # settings.CACHE_SERVER = 'https://httpbin.org/get'
-
             ua = UserAgent(fallback=fallback)
 
         self.assertEqual(ua.random, fallback)
