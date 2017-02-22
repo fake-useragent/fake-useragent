@@ -65,7 +65,7 @@ def get_browsers():
     very very hardcoded/dirty re/split stuff, but no dependencies
     """
     html = get(settings.BROWSERS_STATS_PAGE)
-    html = html.decode('windows-1252')
+    html = html.decode('utf-8')
     html = html.split('<table class="w3-table-all notranslate">')[1]
     html = html.split('</table>')[0]
 
