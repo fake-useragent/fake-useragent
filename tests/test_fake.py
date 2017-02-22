@@ -3,25 +3,26 @@ from __future__ import absolute_import, unicode_literals
 import os
 import tempfile
 import uuid
-
-import mock
-
-from fake_useragent import (
-    VERSION, FakeUserAgent, FakeUserAgentError, UserAgent, UserAgentError,
-    settings, utils,
-)
-from tests import BaseTestCase
-
 try:  # Python 2
     from urllib2 import Request
 
 except ImportError:  # Python 3
     from urllib.request import Request
 
+import mock
+import unittest2
 
-class FakeTestCase(
-    BaseTestCase,
-):
+from fake_useragent import (
+    VERSION, FakeUserAgent, FakeUserAgentError, UserAgent, UserAgentError,
+    settings, utils,
+)
+try:
+    from tests.base import BaseTestCase
+except ImportError:
+    from base import BaseTestCase
+
+
+class FakeTestCase(BaseTestCase):
     def setUp(self):
         self.clear_db()
 
@@ -54,6 +55,7 @@ class FakeTestCase(
             ua.safari,
             ua.random,
             ua['random'],
+            ua.edge,
         ]
 
         for probe in probes:
@@ -112,7 +114,7 @@ class FakeTestCase(
                 'opera': mock.ANY,
                 'safari': mock.ANY,
                 'internetexplorer': mock.ANY,
-            }
+            },
         }
 
         self.assertEqual(expected, ua.data)
@@ -154,7 +156,7 @@ class FakeTestCase(
                 'opera': mock.ANY,
                 'safari': mock.ANY,
                 'internetexplorer': mock.ANY,
-            }
+            },
         }
 
         self.assertEqual(expected, ua.data)
@@ -218,3 +220,7 @@ class FakeTestCase(
         self.assertIs(FakeUserAgentError, UserAgentError)
 
         self.assertIs(FakeUserAgent, UserAgent)
+
+
+if __name__ == '__main__':
+    unittest2.main(module=__name__)

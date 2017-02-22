@@ -4,16 +4,17 @@ import json
 import os
 
 import mock
+import unittest2
 
 from fake_useragent import settings, utils
 
+try:
+    from tests.base import BaseTestCase
+except ImportError:
+    from base import BaseTestCase
 
-from tests import BaseTestCase
 
-
-class UtilsTestCase(
-    BaseTestCase,
-):
+class UtilsTestCase(BaseTestCase):
     def setUp(self):
         self.clear_db()
 
@@ -23,9 +24,7 @@ class UtilsTestCase(
         self.clear_db()
 
     def test_utils_get(self):
-        self.assertIsNotNone(
-            utils.get(self.example_website),
-        )
+        self.assertIsNotNone(utils.get(self.example_website))
 
     def test_utils_get_cache(self):
         html = utils.get(settings.CACHE_SERVER)
@@ -40,7 +39,7 @@ class UtilsTestCase(
                 'opera': mock.ANY,
                 'safari': mock.ANY,
                 'internetexplorer': mock.ANY,
-            }
+            },
         }
 
         self.assertEqual(expected, data)
@@ -76,7 +75,7 @@ class UtilsTestCase(
                 'opera': mock.ANY,
                 'safari': mock.ANY,
                 'internetexplorer': mock.ANY,
-            }
+            },
         }
 
         self.assertEqual(expected, data)
@@ -102,3 +101,7 @@ class UtilsTestCase(
         self.assertFalse(utils.exist(self.db))
 
         self.assertEqual(expected, utils.load_cached(self.db))
+
+
+if __name__ == '__main__':
+    unittest2.main(module=__name__)

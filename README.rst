@@ -181,6 +181,10 @@ Tests
 Changelog
 ---------
 
+* 0.1.5 February 22, 2017
+    - added `ua.edge` alias to Internet Explorer
+    - w3schools.com starts displaying ``Edge`` statistic
+
 * 0.1.4 December 14, 2016
     - Added custom data file location support
     - Added ``fallback`` browser support, in case of unavailable data sources

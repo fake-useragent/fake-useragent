@@ -3,6 +3,8 @@
 env*
 build
 dist
+.cache
+.eggs
 *.egg-info
 *.egg
 *.log

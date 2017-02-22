@@ -9,11 +9,11 @@ python:
   - "2.6"
   - "pypy"
 install:
-  - travis_retry pip install -q flake8 flake8-blind-except flake8-quotes flake8-tuple pep8-naming isort coveralls coverage unittest2
-  - pip freeze | grep coverage
+  - travis_retry pip install -q isort flake8 flake8-blind-except flake8-quotes flake8-tuple pep8-naming unittest2 mock pytest pytest-cov pytest-catchlog coverage
 script:
-  - python setup.py nosetests --verbosity=2 --nocapture --nologcapture --cover-package=fake_useragent --with-coverage --cover-erase
+  - python setup.py test
 after_success:
   - flake8 --show-source fake_useragent
   - isort --check-only -rc fake_useragent --diff
+  - travis_retry pip install -q coveralls
   - travis_retry coveralls
