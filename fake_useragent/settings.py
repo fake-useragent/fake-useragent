@@ -30,6 +30,7 @@ REPLACEMENTS = {
 SHORTCUTS = {
     'internet explorer': 'internetexplorer',
     'ie': 'internetexplorer',
+    'ie/edge': 'internetexplorer',
     'msie': 'internetexplorer',
     'google': 'chrome',
     'googlechrome': 'chrome',
