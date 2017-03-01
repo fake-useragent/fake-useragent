@@ -192,10 +192,10 @@ Changelog
 ---------
 
 * 0.1.5 February 28, 2017
-    - added `ua.edge` alias to Internet Explorer
+    - added ``ua.edge`` alias to Internet Explorer
     - w3schools.com starts displaying ``Edge`` statistic
     - Python 2.6 is not tested anymore
-    - `use_cache_server` option added
+    - ``use_cache_server`` option added
 
 * 0.1.4 December 14, 2016
     - Added custom data file location support
