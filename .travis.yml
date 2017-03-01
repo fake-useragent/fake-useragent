@@ -6,12 +6,11 @@ python:
   - "3.4"
   - "3.3"
   - "2.7"
-  - "2.6"
   - "pypy"
 install:
-  - travis_retry pip install -U isort flake8 flake8-blind-except flake8-quotes flake8-tuple pep8-naming unittest2 mock pytest pytest-cov pytest-catchlog coverage
+  - travis_retry pip install -U isort flake8 mock pytest pytest-cov
 script:
-  - python setup.py test
+  - pytest tests
 after_success:
   - flake8 --show-source fake_useragent
   - isort --check-only -rc fake_useragent --diff

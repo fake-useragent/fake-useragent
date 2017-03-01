@@ -1,226 +1,237 @@
 from __future__ import absolute_import, unicode_literals
 
 import os
-import tempfile
-import uuid
-try:  # Python 2
-    from urllib2 import Request
-
-except ImportError:  # Python 3
-    from urllib.request import Request
+from functools import partial
 
 import mock
-import unittest2
+import pytest
 
 from fake_useragent import (
-    VERSION, FakeUserAgent, FakeUserAgentError, UserAgent, UserAgentError,
-    settings, utils,
+    VERSION, FakeUserAgent, FakeUserAgentError, UserAgent, settings,
 )
-try:
-    from tests.base import BaseTestCase
-except ImportError:
-    from base import BaseTestCase
+
+from tests.utils import _request
 
 
-class FakeTestCase(BaseTestCase):
-    def setUp(self):
-        self.clear_db()
+def setup_function(function):
+    try:
+        os.remove(settings.DB)
+    except OSError:
+        pass
 
-        self.example_website = 'http://google.com'
 
-        self.service_failed = False
+def teardown_function(function):
+    try:
+        os.remove(settings.DB)
+    except OSError:
+        pass
 
-    def tearDown(self):
-        self.clear_db()
 
-    def test_fake_user_agent(self):
-        self.assertFalse(utils.exist(self.db))
+def _probe(ua):
+    ua.ie
+    ua.msie
+    ua.internetexplorer
+    ua.internet_explorer
+    ua['internet explorer']
+    ua.edge
+    ua.google
+    ua.chrome
+    ua.googlechrome
+    ua.google_chrome
+    ua['google chrome']
+    ua.firefox
+    ua.ff
+    ua.safari
+    ua.random
+    ua['random']
+    ua.edge
 
-        ua = UserAgent(cache=False)
 
-        probes = [
-            ua.ie,
-            ua.msie,
-            ua.internetexplorer,
-            ua.internet_explorer,
-            ua['internet explorer'],
-            ua.google,
-            ua.chrome,
-            ua.googlechrome,
-            ua.google_chrome,
-            ua['google chrome'],
-            ua.firefox,
-            ua.ff,
-            ua.ie,
-            ua.safari,
-            ua.random,
-            ua['random'],
-            ua.edge,
-        ]
+def test_fake_user_agent_browsers():
+    ua = UserAgent(cache=False, use_cache_server=False)
 
-        for probe in probes:
-            self.assertIsNotNone(probe)
+    _probe(ua)
 
-        with self.assertRaises(FakeUserAgentError):
-            ua.non_existing
+    with pytest.raises(FakeUserAgentError):
+        ua.non_existing
 
-            ua['non_existing']
+    with pytest.raises(FakeUserAgentError):
+        ua['non_existing']
 
-        data1 = ua.data
+    data1 = ua.data
 
-        ua.update(self.db)
+    ua.update()
 
-        data2 = ua.data
+    data2 = ua.data
 
-        self.assertEqual(data1, data2)
+    assert data1 == data2
 
-        self.assertIsNot(data1, data2)
+    assert data1 is not data2
 
-        self.clear_db()
 
-        ua = UserAgent()
+def test_fake_user_agent_path(path):
+    assert not os.path.isfile(path)
 
-        self.assertTrue(utils.exist(self.db))
+    ua = UserAgent(path=path, cache=True, use_cache_server=False)
 
-        data1 = ua.data
+    assert path == ua.path
 
-        self.clear_db()
+    assert os.path.isfile(path)
 
-        ua.update(self.db)
 
-        self.assertTrue(utils.exist(self.db))
+def test_fake_default_path():
+    assert not os.path.isfile(settings.DB)
 
-        data2 = ua.data
+    ua = UserAgent(cache=True, use_cache_server=False)
 
-        self.assertEqual(data1, data2)
+    assert settings.DB == ua.path
 
-        self.assertIsNot(data1, data2)
+    assert os.path.isfile(settings.DB)
 
-    def test_fake_custom_path(self):
-        custom_path = os.path.join(
-            tempfile.gettempdir(),
-            'fake_useragent_' + uuid.uuid1().hex + '.json',
-        )
 
-        ua = UserAgent(path=custom_path)
+def test_fake_fallback():
+    fallback = 'Foo Browser'
 
-        self.assertTrue(utils.exist(custom_path))
+    denied_urls = [
+        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'http://useragentstring.com/pages/useragentstring.php',
+        settings.CACHE_SERVER,
+    ]
 
-        expected = {
-            'randomize': mock.ANY,
-            'browsers': {
-                'chrome': mock.ANY,
-                'firefox': mock.ANY,
-                'opera': mock.ANY,
-                'safari': mock.ANY,
-                'internetexplorer': mock.ANY,
-            },
-        }
+    with mock.patch(
+        'fake_useragent.utils.Request',
+        side_effect=partial(_request, denied_urls),
+    ):
+        ua = UserAgent(cache=False, use_cache_server=False, fallback=fallback)
 
-        self.assertEqual(expected, ua.data)
+    assert ua.random == fallback
 
-        mtime = os.path.getmtime(custom_path)
+    assert ua.ie == fallback
 
+
+def test_fake_no_fallback():
+    denied_urls = [
+        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'http://useragentstring.com/pages/useragentstring.php',
+        settings.CACHE_SERVER,
+    ]
+
+    with mock.patch(
+        'fake_useragent.utils.Request',
+        side_effect=partial(_request, denied_urls),
+    ):
+        with pytest.raises(FakeUserAgentError):
+            UserAgent(cache=False, use_cache_server=False)
+
+
+def test_fake_update():
+    ua = UserAgent(cache=False, use_cache_server=False)
+
+    ua.update()
+
+    _probe(ua)
+
+
+def test_fake_update_cache(path):
+    assert not os.path.isfile(path)
+
+    ua = UserAgent(path=path, cache=False, use_cache_server=False)
+
+    assert not os.path.isfile(path)
+
+    with pytest.raises(AssertionError):
+        ua.update(cache='y')
+
+    ua.update(cache=True)
+
+    assert os.path.isfile(path)
+
+    _probe(ua)
+
+
+def test_fake_update_use_cache_server():
+    ua = UserAgent(cache=False, use_cache_server=True)
+
+    denied_urls = [
+        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'http://useragentstring.com/pages/useragentstring.php',
+    ]
+
+    with mock.patch(
+        'fake_useragent.utils.Request',
+        side_effect=partial(_request, denied_urls),
+    ):
         ua.update()
 
-        self.assertNotEqual(os.path.getmtime(custom_path), mtime)
+        _probe(ua)
 
-        self.clear_db(path=custom_path)
+    denied_urls = [
+        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'http://useragentstring.com/pages/useragentstring.php',
+        settings.CACHE_SERVER,
+    ]
 
-    def test_fake_cache_server(self):
-        def _request(*args, **kwargs):
-            denied_urls = [
-                'http://www.w3schools.com/browsers/browsers_stats.asp',
-                'http://useragentstring.com/pages/useragentstring.php',
-            ]
-
-            requested_url = args[0]
-
-            for url in denied_urls:
-                if url in requested_url:
-                    return Request('http://0.0.0.0')
-
-            return Request(requested_url)
-
-        with mock.patch(
-            'fake_useragent.utils.Request',
-            side_effect=_request,
-        ):
-            ua = UserAgent()
-
-        expected = {
-            'randomize': mock.ANY,
-            'browsers': {
-                'chrome': mock.ANY,
-                'firefox': mock.ANY,
-                'opera': mock.ANY,
-                'safari': mock.ANY,
-                'ie/edge': mock.ANY,
-            },
-        }
-
-        self.assertEqual(expected, ua.data)
-
-    def test_fake_fallback(self):
-        fallback = 'Foo Browser'
-
-        def _request(*args, **kwargs):
-            return Request('http://0.0.0.0')
-
-        with mock.patch(
-            'fake_useragent.utils.Request',
-            side_effect=_request,
-        ):
-            ua = UserAgent(fallback=fallback)
-
-        self.assertEqual(ua.random, fallback)
-
-        self.assertEqual(ua.ie, fallback)
-
-        with self.assertRaises(AssertionError):
-            ua = UserAgent(fallback=True)
-
-        def _request(*args, **kwargs):
-            denied_urls = [
-                'http://www.w3schools.com/browsers/browsers_stats.asp',
-                'http://useragentstring.com/pages/useragentstring.php',
-            ]
-
-            requested_url = args[0]
-
-            for url in denied_urls:
-                if url in requested_url:
-                    return Request('http://0.0.0.0')
-
-            if 'https://fake-useragent.herokuapp.com/browsers/' in requested_url:  # noqa
-                return Request('https://httpbin.org/get')
-
-            return Request(requested_url)
-
-        with mock.patch(
-            'fake_useragent.utils.Request',
-            side_effect=_request,
-        ):
-            ua = UserAgent(fallback=fallback)
-
-        self.assertEqual(ua.random, fallback)
-
-        self.assertEqual(ua.ie, fallback)
-
-    def test_fake_safe_attrs(self):
-        ua = UserAgent(safe_attrs=('foo',))
-
-        with self.assertRaises(AttributeError):
-            ua.foo
-
-    def test_fake_version(self):
-        self.assertEqual(VERSION, settings.__version__)
-
-    def test_fake_aliases(self):
-        self.assertIs(FakeUserAgentError, UserAgentError)
-
-        self.assertIs(FakeUserAgent, UserAgent)
+    with mock.patch(
+        'fake_useragent.utils.Request',
+        side_effect=partial(_request, denied_urls),
+    ):
+        with pytest.raises(FakeUserAgentError):
+            ua.update()
 
 
-if __name__ == '__main__':
-    unittest2.main(module=__name__)
+def test_fake_use_cache_server():
+    denied_urls = [
+        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'http://useragentstring.com/pages/useragentstring.php',
+    ]
+
+    with mock.patch(
+        'fake_useragent.utils.Request',
+        side_effect=partial(_request, denied_urls),
+    ):
+        ua = UserAgent(cache=False, use_cache_server=True)
+
+    _probe(ua)
+
+
+def test_fake_cache_boolean():
+    with pytest.raises(AssertionError):
+        UserAgent(cache='y')
+
+
+def test_fake_use_cache_server_boolean():
+    with pytest.raises(AssertionError):
+        UserAgent(use_cache_server='y')
+
+
+def test_fake_path_str_types():
+    with pytest.raises(AssertionError):
+        UserAgent(path=10)
+
+
+def test_fake_fallback_str_types():
+    with pytest.raises(AssertionError):
+        UserAgent(fallback=True)
+
+
+def test_fake_safe_attrs_iterable_str_types():
+    with pytest.raises(AssertionError):
+        UserAgent(safe_attrs={})
+
+    with pytest.raises(AssertionError):
+        UserAgent(safe_attrs=[66])
+
+
+def test_fake_safe_attrs():
+    ua = UserAgent(safe_attrs=('__injections__',))
+
+    with pytest.raises(AttributeError):
+        ua.__injections__
+
+
+def test_fake_version():
+    assert VERSION == settings.__version__
+
+
+def test_fake_aliases():
+    assert FakeUserAgent is UserAgent

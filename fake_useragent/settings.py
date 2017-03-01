@@ -38,7 +38,6 @@ SHORTCUTS = {
 }
 
 OVERRIDES = {
-    'IE': 'Internet Explorer',
     'IE/Edge': 'Internet Explorer',
 }
 

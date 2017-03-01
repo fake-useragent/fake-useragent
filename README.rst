@@ -73,14 +73,24 @@ If You want to update saved database just:
     ua = UserAgent()
     ua.update()
 
-If You dont want cache database or no writable file system:
+If You don't want cache database or no writable file system:
 
 .. code-block:: python
 
     from fake_useragent import UserAgent
     ua = UserAgent(cache=False)
 
-In very rare case, if cache server and sources will be
+Sometimes, `useragentstring.com <http://useragentstring.com/>`_ or `w3schools.com <http://www.w3schools.com/browsers/browsers_stats.asp>`_ changes their html, or down, in such case
+``fake-useragent`` uses hosted cache server `heroku.com <https://fake-useragent.herokuapp.com/browsers/0.1.5>`_ fallback
+
+If You don't want to use hosted cache server (version 0.1.5 added)
+
+.. code-block:: python
+
+    from fake_useragent import UserAgent
+    ua = UserAgent(use_cache_server=False)
+
+In very rare case, if hosted cache server and sources will be
 unavailable ``fake-useragent`` wont be able to download data: (version 0.1.3 added)
 
 .. code-block:: python
@@ -181,9 +191,11 @@ Tests
 Changelog
 ---------
 
-* 0.1.5 February 2x, 2017 (Not released yet)
+* 0.1.5 February 28, 2017
     - added `ua.edge` alias to Internet Explorer
     - w3schools.com starts displaying ``Edge`` statistic
+    - Python 2.6 is not tested anymore
+    - `use_cache_server` option added
 
 * 0.1.4 December 14, 2016
     - Added custom data file location support
