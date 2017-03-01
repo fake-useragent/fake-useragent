@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 import tempfile
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 
 DB = os.path.join(
     tempfile.gettempdir(),

@@ -191,6 +191,9 @@ Tests
 Changelog
 ---------
 
+* 0.1.6 Not released yet
+    - ????
+
 * 0.1.5 February 28, 2017
     - added ``ua.edge`` alias to Internet Explorer
     - w3schools.com starts displaying ``Edge`` statistic
