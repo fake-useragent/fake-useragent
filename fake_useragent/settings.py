@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 import tempfile
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 DB = os.path.join(
     tempfile.gettempdir(),
@@ -31,16 +31,17 @@ SHORTCUTS = {
     'internet explorer': 'internetexplorer',
     'ie': 'internetexplorer',
     'msie': 'internetexplorer',
+    'edge': 'internetexplorer',
     'google': 'chrome',
     'googlechrome': 'chrome',
     'ff': 'firefox',
 }
 
 OVERRIDES = {
-    'IE': 'Internet Explorer',
+    'IE/Edge': 'Internet Explorer',
 }
 
-HTTP_TIMEOUT = 3
+HTTP_TIMEOUT = 5
 
 HTTP_RETRIES = 2
 

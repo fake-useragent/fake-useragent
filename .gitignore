@@ -3,6 +3,8 @@
 env*
 build
 dist
+.cache
+.eggs
 *.egg-info
 *.egg
 *.log
@@ -18,3 +20,4 @@ __pycache__
 *.swp
 *.swo
 *~
+htmlcov

@@ -1,17 +1,18 @@
 sudo: false
 language: python
 python:
+  - "3.6"
   - "3.5"
   - "3.4"
   - "3.3"
   - "2.7"
-  - "2.6"
   - "pypy"
 install:
-  - travis_retry pip install -q flake8 flake8-blind-except flake8-quotes flake8-tuple pep8-naming isort coveralls coverage
+  - travis_retry pip install -U isort flake8 mock pytest pytest-cov
 script:
-  - python setup.py nosetests --verbosity=2 --nocapture --nologcapture --cover-package=fake_useragent --with-coverage --cover-erase
+  - pytest tests
 after_success:
   - flake8 --show-source fake_useragent
   - isort --check-only -rc fake_useragent --diff
+  - travis_retry pip install -q coveralls
   - travis_retry coveralls

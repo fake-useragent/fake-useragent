@@ -13,6 +13,7 @@ class FakeUserAgent(object):
     def __init__(
         self,
         cache=True,
+        use_cache_server=True,
         path=settings.DB,
         fallback=None,
         safe_attrs=tuple(),
@@ -22,15 +23,34 @@ class FakeUserAgent(object):
 
         self.cache = cache
 
-        self.path = path
+        assert isinstance(use_cache_server, bool), \
+            'use_cache_server must be True or False'
 
-        self.safe_attrs = set(safe_attrs)
+        self.use_cache_server = use_cache_server
+
+        assert isinstance(path, str_types), \
+            'path must be string or unicode'
+
+        self.path = path
 
         if fallback is not None:
             assert isinstance(fallback, str_types), \
                 'fallback must be string or unicode'
 
         self.fallback = fallback
+
+        assert isinstance(safe_attrs, (list, set, tuple)), \
+            'safe_attrs must be list\\tuple\\set of strings or unicode'
+
+        if safe_attrs:
+            str_types_safe_attrs = [
+                isinstance(attr, str_types) for attr in safe_attrs
+            ]
+
+            assert all(str_types_safe_attrs), \
+                'safe_attrs must be list\\tuple\\set of strings or unicode'
+
+        self.safe_attrs = set(safe_attrs)
 
         # initial empty data
         self.data = {}
@@ -66,6 +86,8 @@ class FakeUserAgent(object):
     def update(self, cache=None):
         with self.update.lock:
             if cache is not None:
+                assert isinstance(cache, bool), \
+                    'cache must be True or False'
                 self.cache = cache
 
             if self.cache:

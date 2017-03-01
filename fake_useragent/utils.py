@@ -7,13 +7,13 @@ import re
 
 from fake_useragent.log import logger
 
-try:  # Python 2
+try:  # Python 2 # pragma: no cover
     from urllib2 import urlopen, Request, URLError
     from urllib import quote_plus
 
     str_types = (unicode, str)  # noqa
     text = unicode  # noqa
-except ImportError:  # Python 3
+except ImportError:  # Python 3 # pragma: no cover
     from urllib.request import urlopen, Request
     from urllib.parse import quote_plus
     from urllib.error import URLError
@@ -21,7 +21,8 @@ except ImportError:  # Python 3
     str_types = (str,)
     text = str
 
-try:  # gevent monkey patched environment check
+# gevent monkey patched environment check
+try:  # pragma: no cover
     import socket
     import gevent.socket
 
@@ -29,16 +30,16 @@ try:  # gevent monkey patched environment check
         from gevent import sleep
     else:
         from time import sleep
-except (ImportError, AttributeError):
+except (ImportError, AttributeError):  # pragma: no cover
     from time import sleep
 
 
 def get(url):
-    request = Request(url)
-
     attempt = 0
 
     while True:
+        request = Request(url)
+
         attempt += 1
 
         try:
@@ -54,10 +55,10 @@ def get(url):
                 raise FakeUserAgentError('Maximum amount of retries reached')
             else:
                 logger.debug(
-                    'Sleeping for %s secconds',
-                    settings.HTTP_TIMEOUT,
+                    'Sleeping for %s seconds',
+                    settings.HTTP_DELAY,
                 )
-                sleep(settings.HTTP_TIMEOUT)
+                sleep(settings.HTTP_DELAY)
 
 
 def get_browsers():
@@ -65,7 +66,7 @@ def get_browsers():
     very very hardcoded/dirty re/split stuff, but no dependencies
     """
     html = get(settings.BROWSERS_STATS_PAGE)
-    html = html.decode('windows-1252')
+    html = html.decode('utf-8')
     html = html.split('<table class="w3-table-all notranslate">')[1]
     html = html.split('</table>')[0]
 
@@ -109,7 +110,7 @@ def get_browser_versions(browser):
     return browsers
 
 
-def load():
+def load(use_cache_server=True):
     browsers_dict = {}
     randomize_dict = {}
 
@@ -134,16 +135,19 @@ def load():
             for _ in range(int(float(percent) * 10)):
                 randomize_dict[str(len(randomize_dict))] = browser_key
     except Exception as exc:
+        if not use_cache_server:
+            raise exc
+
         logger.warning(
-            'Error occurred during formatting data. '
-            'Trying to use fallback server %s',
+            'Error occurred during loading data. '
+            'Trying to use cache server %s',
             settings.CACHE_SERVER,
             exc_info=exc,
         )
         try:
             ret = json.loads(get(settings.CACHE_SERVER).decode('utf-8'))
-        except (UnicodeDecodeError, TypeError, ValueError):
-            raise FakeUserAgentError('Can not load data from cached server')
+        except (TypeError, ValueError):
+            raise FakeUserAgentError('Can not load data from cache server')
     else:
         ret = {
             'browsers': browsers_dict,
@@ -173,7 +177,7 @@ def write(path, data):
     with io.open(path, encoding='utf-8', mode='wt') as fp:
         dumped = json.dumps(data)
 
-        if not isinstance(dumped, text):
+        if not isinstance(dumped, text):  # Python 2
             dumped = dumped.decode('utf-8')
 
         fp.write(dumped)
@@ -193,15 +197,15 @@ def rm(path):
         os.remove(path)
 
 
-def update(path):
+def update(path, use_cache_server=True):
     rm(path)
 
-    write(path, load())
+    write(path, load(use_cache_server=use_cache_server))
 
 
-def load_cached(path):
+def load_cached(path, use_cache_server=True):
     if not exist(path):
-        update(path)
+        update(path, use_cache_server=use_cache_server)
 
     return read(path)
 
