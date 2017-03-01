@@ -199,14 +199,14 @@ Changelog
     - w3schools.com starts displaying ``Edge`` statistic
     - Python 2.6 is not tested anymore
     - ``use_cache_server`` option added
-    - Increased `fake_useragent.settings.HTTP_TIMEOUT` to 3 seconds
+    - Increased ``fake_useragent.settings.HTTP_TIMEOUT`` to 5 seconds
 
 * 0.1.4 December 14, 2016
     - Added custom data file location support
     - Added ``fallback`` browser support, in case of unavailable data sources
     - Added alias ``fake_useragent.FakeUserAgent`` for ``fake_useragent.UserAgent``
     - Added alias ``fake_useragent.UserAgentError`` for ``fake_useragent.FakeUserAgentError``
-    - Reduced `fake_useragent.settings.HTTP_TIMEOUT` to 3 seconds
+    - Reduced ``fake_useragent.settings.HTTP_TIMEOUT`` to 3 seconds
     - Started migration to new data file format
     - Simplified a lot 4+ years out of date code
     - Better thread/greenlet safety
