@@ -4,10 +4,6 @@ import io
 import json
 import os
 from functools import partial
-try:  # Python 2 # pragma: no cover
-    from urllib2 import Request
-except ImportError:  # Python 3 # pragma: no cover
-    from urllib.request import Request
 
 import mock
 import pytest
@@ -15,6 +11,11 @@ import pytest
 from fake_useragent import errors, settings, utils
 
 from tests.utils import _request, find_unused_port
+
+try:  # Python 2 # pragma: no cover
+    from urllib2 import Request
+except ImportError:  # Python 3 # pragma: no cover
+    from urllib.request import Request
 
 
 def test_utils_get():
