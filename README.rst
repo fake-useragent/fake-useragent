@@ -192,7 +192,7 @@ Changelog
 ---------
 
 * 0.1.6 Not released yet
-    - ????
+    - xxxxx ?????
 
 * 0.1.5 February 28, 2017
     - added ``ua.edge`` alias to Internet Explorer
