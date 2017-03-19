@@ -84,7 +84,7 @@ def test_utils_get_browsers():
     for _, percentage in browsers:
         total -= float(percentage)
 
-    assert round(total, 0) <= 1
+    assert round(total, 0) <= 2
 
 
 def test_utils_get_browser_versions():
