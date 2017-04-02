@@ -11,7 +11,6 @@ import pytest
 
 from fake_useragent import errors, settings, utils
 from fake_useragent.utils import urlopen_has_ssl_context
-
 from tests.utils import _request, find_unused_port
 
 try:  # Python 2 # pragma: no cover

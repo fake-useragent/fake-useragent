@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import socket
+
 try:  # Python 2 # pragma: no cover
     from urllib2 import Request
 except ImportError:  # Python 3 # pragma: no cover

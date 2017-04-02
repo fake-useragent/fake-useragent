@@ -7,10 +7,8 @@ from functools import partial
 import mock
 import pytest
 
-from fake_useragent import (
-    VERSION, FakeUserAgent, FakeUserAgentError, UserAgent, settings,
-)
-
+from fake_useragent import (VERSION, FakeUserAgent, FakeUserAgentError,
+                            UserAgent, settings)
 from tests.utils import _request
 
 
