@@ -37,7 +37,7 @@ except (ImportError, AttributeError):  # pragma: no cover
     from time import sleep
 
 
-urlopen_has_ssl_context = 'context' in inspect.getargspec(urlopen).args
+urlopen_has_ssl_context = 'context' in inspect.getfullargspec(urlopen).args
 
 
 def get(url, verify_ssl=True):
