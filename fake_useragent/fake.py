@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
 import random
@@ -16,6 +17,7 @@ class FakeUserAgent(object):
         use_cache_server=True,
         path=settings.DB,
         fallback=None,
+        verify_ssl=True,
         safe_attrs=tuple(),
     ):
         assert isinstance(cache, bool), \
@@ -38,6 +40,11 @@ class FakeUserAgent(object):
                 'fallback must be string or unicode'
 
         self.fallback = fallback
+
+        assert isinstance(verify_ssl, bool), \
+            'verify_ssl must be True or False'
+
+        self.verify_ssl = verify_ssl
 
         assert isinstance(safe_attrs, (list, set, tuple)), \
             'safe_attrs must be list\\tuple\\set of strings or unicode'
@@ -65,9 +72,16 @@ class FakeUserAgent(object):
         try:
             with self.load.lock:
                 if self.cache:
-                    self.data = load_cached(self.path)
+                    self.data = load_cached(
+                        self.path,
+                        use_cache_server=self.use_cache_server,
+                        verify_ssl=self.verify_ssl,
+                    )
                 else:
-                    self.data = load()
+                    self.data = load(
+                        use_cache_server=self.use_cache_server,
+                        verify_ssl=self.verify_ssl,
+                    )
 
                 # TODO: change source file format
                 # version 0.1.4+ migration tool
@@ -88,10 +102,15 @@ class FakeUserAgent(object):
             if cache is not None:
                 assert isinstance(cache, bool), \
                     'cache must be True or False'
+
                 self.cache = cache
 
             if self.cache:
-                update(self.path)
+                update(
+                    self.path,
+                    use_cache_server=self.use_cache_server,
+                    verify_ssl=self.verify_ssl,
+                )
 
             self.load()
     update.lock = Lock()

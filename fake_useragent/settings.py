@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
 import os
@@ -16,7 +17,7 @@ CACHE_SERVER = 'https://fake-useragent.herokuapp.com/browsers/{version}'.format(
     version=__version__,
 )
 
-BROWSERS_STATS_PAGE = 'http://www.w3schools.com/browsers/browsers_stats.asp'
+BROWSERS_STATS_PAGE = 'https://www.w3schools.com/browsers/default.asp'
 
 BROWSER_BASE_PAGE = 'http://useragentstring.com/pages/useragentstring.php?name={browser}'  # noqa
 

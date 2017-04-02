@@ -93,14 +93,14 @@ def test_fake_fallback():
     fallback = 'Foo Browser'
 
     denied_urls = [
-        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
         'http://useragentstring.com/pages/useragentstring.php',
         settings.CACHE_SERVER,
     ]
 
     with mock.patch(
         'fake_useragent.utils.Request',
-        side_effect=partial(_request, denied_urls),
+        side_effect=partial(_request, denied_urls=denied_urls),
     ):
         ua = UserAgent(cache=False, use_cache_server=False, fallback=fallback)
 
@@ -111,14 +111,14 @@ def test_fake_fallback():
 
 def test_fake_no_fallback():
     denied_urls = [
-        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
         'http://useragentstring.com/pages/useragentstring.php',
         settings.CACHE_SERVER,
     ]
 
     with mock.patch(
         'fake_useragent.utils.Request',
-        side_effect=partial(_request, denied_urls),
+        side_effect=partial(_request, denied_urls=denied_urls),
     ):
         with pytest.raises(FakeUserAgentError):
             UserAgent(cache=False, use_cache_server=False)
@@ -153,27 +153,57 @@ def test_fake_update_use_cache_server():
     ua = UserAgent(cache=False, use_cache_server=True)
 
     denied_urls = [
-        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
         'http://useragentstring.com/pages/useragentstring.php',
     ]
 
     with mock.patch(
         'fake_useragent.utils.Request',
-        side_effect=partial(_request, denied_urls),
+        side_effect=partial(_request, denied_urls=denied_urls),
     ):
         ua.update()
 
         _probe(ua)
 
     denied_urls = [
-        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
         'http://useragentstring.com/pages/useragentstring.php',
         settings.CACHE_SERVER,
     ]
 
     with mock.patch(
         'fake_useragent.utils.Request',
-        side_effect=partial(_request, denied_urls),
+        side_effect=partial(_request, denied_urls=denied_urls),
+    ):
+        with pytest.raises(FakeUserAgentError):
+            ua.update()
+
+
+def test_fake_not_use_cache_server():
+    denied_urls = [
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
+        'http://useragentstring.com/pages/useragentstring.php',
+    ]
+
+    with mock.patch(
+        'fake_useragent.utils.Request',
+        side_effect=partial(_request, denied_urls=denied_urls),
+    ):
+        with pytest.raises(FakeUserAgentError):
+            UserAgent(cache=False, use_cache_server=False)
+
+
+def test_fake_update_not_use_cache_server():
+    ua = UserAgent(cache=False, use_cache_server=False)
+
+    denied_urls = [
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
+        'http://useragentstring.com/pages/useragentstring.php',
+    ]
+
+    with mock.patch(
+        'fake_useragent.utils.Request',
+        side_effect=partial(_request, denied_urls=denied_urls),
     ):
         with pytest.raises(FakeUserAgentError):
             ua.update()
@@ -181,13 +211,13 @@ def test_fake_update_use_cache_server():
 
 def test_fake_use_cache_server():
     denied_urls = [
-        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
         'http://useragentstring.com/pages/useragentstring.php',
     ]
 
     with mock.patch(
         'fake_useragent.utils.Request',
-        side_effect=partial(_request, denied_urls),
+        side_effect=partial(_request, denied_urls=denied_urls),
     ):
         ua = UserAgent(cache=False, use_cache_server=True)
 

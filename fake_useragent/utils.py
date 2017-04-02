@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
 import io
 import json
 import os
 import re
+import ssl
 
 from fake_useragent.log import logger
 
@@ -34,8 +36,13 @@ except (ImportError, AttributeError):  # pragma: no cover
     from time import sleep
 
 
-def get(url):
+def get(url, verify_ssl=True):
     attempt = 0
+
+    if not verify_ssl:
+        context = ssl._create_unverified_context()
+    else:
+        context = None
 
     while True:
         request = Request(url)
@@ -43,7 +50,11 @@ def get(url):
         attempt += 1
 
         try:
-            return urlopen(request, timeout=settings.HTTP_TIMEOUT).read()
+            return urlopen(
+                request,
+                timeout=settings.HTTP_TIMEOUT,
+                context=context,
+            ).read()
         except (URLError, OSError) as exc:
             logger.debug(
                 'Error occurred during fetching %s',
@@ -61,11 +72,11 @@ def get(url):
                 sleep(settings.HTTP_DELAY)
 
 
-def get_browsers():
+def get_browsers(verify_ssl=True):
     """
     very very hardcoded/dirty re/split stuff, but no dependencies
     """
-    html = get(settings.BROWSERS_STATS_PAGE)
+    html = get(settings.BROWSERS_STATS_PAGE, verify_ssl=verify_ssl)
     html = html.decode('utf-8')
     html = html.split('<table class="w3-table-all notranslate">')[1]
     html = html.split('</table>')[0]
@@ -84,11 +95,14 @@ def get_browsers():
     return list(zip(browsers, browsers_statistics))
 
 
-def get_browser_versions(browser):
+def get_browser_versions(browser, verify_ssl=True):
     """
     very very hardcoded/dirty re/split stuff, but no dependencies
     """
-    html = get(settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)))
+    html = get(
+        settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)),
+        verify_ssl=verify_ssl,
+    )
     html = html.decode('iso-8859-1')
     html = html.split('<div id=\'liste\'>')[1]
     html = html.split('</div>')[0]
@@ -110,12 +124,12 @@ def get_browser_versions(browser):
     return browsers
 
 
-def load(use_cache_server=True):
+def load(use_cache_server=True, verify_ssl=True):
     browsers_dict = {}
     randomize_dict = {}
 
     try:
-        for item in get_browsers():
+        for item in get_browsers(verify_ssl=verify_ssl):
             browser, percent = item
 
             browser_key = browser
@@ -125,7 +139,10 @@ def load(use_cache_server=True):
 
             browser_key = browser_key.lower()
 
-            browsers_dict[browser_key] = get_browser_versions(browser)
+            browsers_dict[browser_key] = get_browser_versions(
+                browser,
+                verify_ssl=verify_ssl,
+            )
 
             # it is actually so bad way for randomizing, simple list with
             # browser_key's is event better
@@ -145,7 +162,10 @@ def load(use_cache_server=True):
             exc_info=exc,
         )
         try:
-            ret = json.loads(get(settings.CACHE_SERVER).decode('utf-8'))
+            ret = json.loads(get(
+                settings.CACHE_SERVER,
+                verify_ssl=verify_ssl,
+            ).decode('utf-8'))
         except (TypeError, ValueError):
             raise FakeUserAgentError('Can not load data from cache server')
     else:
@@ -197,15 +217,15 @@ def rm(path):
         os.remove(path)
 
 
-def update(path, use_cache_server=True):
+def update(path, use_cache_server=True, verify_ssl=True):
     rm(path)
 
-    write(path, load(use_cache_server=use_cache_server))
+    write(path, load(use_cache_server=use_cache_server, verify_ssl=verify_ssl))
 
 
-def load_cached(path, use_cache_server=True):
+def load_cached(path, use_cache_server=True, verify_ssl=True):
     if not exist(path):
-        update(path, use_cache_server=use_cache_server)
+        update(path, use_cache_server=use_cache_server, verify_ssl=verify_ssl)
 
     return read(path)
 

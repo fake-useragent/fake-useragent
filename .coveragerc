@@ -1,5 +1,0 @@
-[run]
-include =
-    fake_useragent/*
-omit =
-

@@ -21,26 +21,34 @@ except ImportError:  # Python 3 # pragma: no cover
 def test_utils_get():
     assert utils.get('http://google.com') is not None
 
+    with pytest.raises(errors.FakeUserAgentError):
+        utils.get('https://expired.badssl.com/')
+
+    assert utils.get(
+        'https://expired.badssl.com/',
+        verify_ssl=False,
+    ) is not None
+
 
 def test_utils_get_retries():
-    def __request(*args, **kwargs):  # noqa
-        __request.attempt += 1
+    def __retried_request(*args, **kwargs):  # noqa
+        __retried_request.attempt += 1
 
-        if __request.attempt < settings.HTTP_RETRIES:
+        if __retried_request.attempt < settings.HTTP_RETRIES:
             return Request('http://0.0.0.0:{port}'.format(
                 port=find_unused_port(),
             ))
 
         return Request(*args, **kwargs)
-    __request.attempt = 0
+    __retried_request.attempt = 0
 
     with mock.patch(
         'fake_useragent.utils.Request',
-        side_effect=__request,
+        side_effect=__retried_request,
     ):
         assert utils.get('http://google.com') is not None
 
-    assert __request.attempt == 2
+    assert __retried_request.attempt == 2
 
 
 def test_utils_get_cache_server():
@@ -86,6 +94,16 @@ def test_utils_get_browsers():
 
     assert round(total, 0) <= 2
 
+    with mock.patch(
+        'fake_useragent.utils.Request',
+        side_effect=partial(
+            _request,
+            response_url='https://expired.badssl.com/',
+        ),
+    ):
+        with pytest.raises(errors.FakeUserAgentError):
+            utils.get_browsers()
+
 
 def test_utils_get_browser_versions():
     browser_names = [browser[0] for browser in utils.get_browsers()]
@@ -93,6 +111,16 @@ def test_utils_get_browser_versions():
     for browser in browser_names:
         count = len(utils.get_browser_versions(browser))
         assert count == settings.BROWSERS_COUNT_LIMIT
+
+        with mock.patch(
+            'fake_useragent.utils.Request',
+            side_effect=partial(
+                _request,
+                response_url='https://expired.badssl.com/',
+            ),
+        ):
+            with pytest.raises(errors.FakeUserAgentError):
+                utils.get_browser_versions(browser)
 
 
 def test_utils_load(path):
@@ -227,13 +255,13 @@ def test_utils_load_cached(path):
 
 def test_utils_load_no_use_cache_server(path):
     denied_urls = [
-        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
         'http://useragentstring.com/pages/useragentstring.php',
     ]
 
     with mock.patch(
         'fake_useragent.utils.Request',
-        side_effect=partial(_request, denied_urls),
+        side_effect=partial(_request, denied_urls=denied_urls),
     ):
         with pytest.raises(errors.FakeUserAgentError):
             utils.load(use_cache_server=False)
@@ -247,13 +275,13 @@ def test_utils_load_no_use_cache_server(path):
 
 def test_utils_load_use_cache_server(path):
     denied_urls = [
-        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
         'http://useragentstring.com/pages/useragentstring.php',
     ]
 
     with mock.patch(
         'fake_useragent.utils.Request',
-        side_effect=partial(_request, denied_urls),
+        side_effect=partial(_request, denied_urls=denied_urls),
     ):
         data = utils.load(use_cache_server=True)
 
@@ -273,14 +301,14 @@ def test_utils_load_use_cache_server(path):
 
 def test_utils_load_use_cache_server_down(path):
     denied_urls = [
-        'http://www.w3schools.com/browsers/browsers_stats.asp',
+        'https://www.w3schools.com/browsers/browsers_stats.asp',
         'http://useragentstring.com/pages/useragentstring.php',
         settings.CACHE_SERVER,
     ]
 
     with mock.patch(
         'fake_useragent.utils.Request',
-        side_effect=partial(_request, denied_urls),
+        side_effect=partial(_request, denied_urls=denied_urls),
     ):
         with pytest.raises(errors.FakeUserAgentError):
             utils.load(use_cache_server=True)

@@ -19,7 +19,7 @@ Features
 ********
 
 * grabs up to date ``useragent`` from `useragentstring.com <http://useragentstring.com/>`_
-* randomize with real world statistic via `w3schools.com <http://www.w3schools.com/browsers/browsers_stats.asp>`_
+* randomize with real world statistic via `w3schools.com <https://www.w3schools.com/browsers/browsers_stats.asp>`_
 
 Installation
 ------------
@@ -80,7 +80,7 @@ If You don't want cache database or no writable file system:
     from fake_useragent import UserAgent
     ua = UserAgent(cache=False)
 
-Sometimes, `useragentstring.com <http://useragentstring.com/>`_ or `w3schools.com <http://www.w3schools.com/browsers/browsers_stats.asp>`_ changes their html, or down, in such case
+Sometimes, `useragentstring.com <http://useragentstring.com/>`_ or `w3schools.com <https://www.w3schools.com/browsers/browsers_stats.asp>`_ changes their html, or down, in such case
 ``fake-useragent`` uses hosted cache server `heroku.com <https://fake-useragent.herokuapp.com/browsers/0.1.5>`_ fallback
 
 If You don't want to use hosted cache server (version 0.1.5 added)
@@ -191,8 +191,10 @@ Tests
 Changelog
 ---------
 
-* 0.1.6 Not released yet
-    - xxxxx ?????
+* 0.1.6 April 2, 2017
+    - fixes bug ``use_cache_server`` do not affected anything
+    - `w3schools.com <https://www.w3schools.com/browsers/browsers_stats.asp>`_ moved to ``https``
+    - ``verify_ssl`` options added, by default it is ``True``
 
 * 0.1.5 February 28, 2017
     - added ``ua.edge`` alias to Internet Explorer
