@@ -23,10 +23,10 @@ except ImportError:  # Python 3 # pragma: no cover
 def test_utils_get():
     assert utils.get('http://google.com') is not None
 
-    with pytest.raises(errors.FakeUserAgentError):
-        utils.get('https://expired.badssl.com/')
-
     if urlopen_has_ssl_context:
+        with pytest.raises(errors.FakeUserAgentError):
+            utils.get('https://expired.badssl.com/')
+
         assert utils.get(
             'https://expired.badssl.com/',
             verify_ssl=False,
@@ -97,15 +97,16 @@ def test_utils_get_browsers():
 
     assert round(total, 0) <= 2
 
-    with mock.patch(
-        'fake_useragent.utils.Request',
-        side_effect=partial(
-            _request,
-            response_url='https://expired.badssl.com/',
-        ),
-    ):
-        with pytest.raises(errors.FakeUserAgentError):
-            utils.get_browsers()
+    if urlopen_has_ssl_context:
+        with mock.patch(
+            'fake_useragent.utils.Request',
+            side_effect=partial(
+                _request,
+                response_url='https://expired.badssl.com/',
+            ),
+        ):
+            with pytest.raises(errors.FakeUserAgentError):
+                utils.get_browsers()
 
 
 def test_utils_get_browser_versions():
@@ -115,15 +116,16 @@ def test_utils_get_browser_versions():
         count = len(utils.get_browser_versions(browser))
         assert count == settings.BROWSERS_COUNT_LIMIT
 
-        with mock.patch(
-            'fake_useragent.utils.Request',
-            side_effect=partial(
-                _request,
-                response_url='https://expired.badssl.com/',
-            ),
-        ):
-            with pytest.raises(errors.FakeUserAgentError):
-                utils.get_browser_versions(browser)
+        if urlopen_has_ssl_context:
+            with mock.patch(
+                'fake_useragent.utils.Request',
+                side_effect=partial(
+                    _request,
+                    response_url='https://expired.badssl.com/',
+                ),
+            ):
+                with pytest.raises(errors.FakeUserAgentError):
+                    utils.get_browser_versions(browser)
 
 
 def test_utils_load(path):
