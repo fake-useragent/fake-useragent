@@ -1,63 +1,51 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import ast
-import os
 import io
+import os
+import re
+
 from setuptools import setup
 
 
-class VersionFinder(ast.NodeVisitor):
-    def __init__(self):
-        self.version = None
+def get_version():
+    regex = r"__version__\s=\s\'(?P<version>[\d\.]+?)\'"
 
-    def visit_Assign(self, node):  # noqa
-        if node.targets[0].id == '__version__':
-            self.version = node.value.s
+    path = ('fake_useragent', '__init__.py')
+
+    return re.search(regex, read(*path)).group('version')
 
 
 def read(*parts):
-    filename = os.path.join(os.path.dirname(__file__), *parts)
+    filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), *parts)
+
     with io.open(filename, encoding='utf-8', mode='rt') as fp:
         return fp.read()
 
 
-def find_version(*parts):
-    finder = VersionFinder()
-    finder.visit(ast.parse(read(*parts)))
-    return finder.version
-
-
-classifiers = '''\
-Environment :: Web Environment
-Intended Audience :: Developers
-Topic :: Internet :: WWW/HTTP
-Topic :: Software Development :: Libraries
-License :: OSI Approved :: Apache Software License
-Development Status :: 5 - Production/Stable
-Natural Language :: English
-Programming Language :: Python
-Programming Language :: Python :: 2
-Programming Language :: Python :: 3
-Operating System :: OS Independent
-'''
-
-description = 'Up to date simple useragent faker with real world database'
-
-
 setup(
     name='fake-useragent',
-    version=find_version('fake_useragent', 'settings.py'),
-    packages=[str('fake_useragent')],
-    description=description,
-    long_description=read('README.rst'),
-    install_requires=[],
-    author='hellysmile',
+    version=get_version(),
+    author='hellysmile@gmail.com',
     author_email='hellysmile@gmail.com',
     url='https://github.com/hellysmile/fake-useragent',
+    description='Up to date simple useragent faker with real world database',
+    long_description=read('README.rst'),
+    packages=[str('fake_useragent')],
+    include_package_data=True,
     zip_safe=False,
-    license='http://www.apache.org/licenses/LICENSE-2.0',
-    classifiers=filter(None, classifiers.split('\n')),
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: POSIX',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: Microsoft :: Windows',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+        'Operating System :: OS Independent',
+    ],
     keywords=[
         'user', 'agent', 'user agent', 'useragent',
         'fake', 'fake useragent', 'fake user agent',

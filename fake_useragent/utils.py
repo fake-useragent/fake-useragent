@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import io
+import inspect
 import json
 import os
 import re
@@ -36,13 +37,11 @@ except (ImportError, AttributeError):  # pragma: no cover
     from time import sleep
 
 
+urlopen_has_ssl_context = 'context' in inspect.getargspec(urlopen).args
+
+
 def get(url, verify_ssl=True):
     attempt = 0
-
-    if not verify_ssl:
-        context = ssl._create_unverified_context()
-    else:
-        context = None
 
     while True:
         request = Request(url)
@@ -50,11 +49,22 @@ def get(url, verify_ssl=True):
         attempt += 1
 
         try:
-            return urlopen(
-                request,
-                timeout=settings.HTTP_TIMEOUT,
-                context=context,
-            ).read()
+            if urlopen_has_ssl_context:
+                if not verify_ssl:
+                    context = ssl._create_unverified_context()
+                else:
+                    context = None
+
+                return urlopen(
+                    request,
+                    timeout=settings.HTTP_TIMEOUT,
+                    context=context,
+                ).read()
+            else:  # context is not supported ;(
+                return urlopen(
+                    request,
+                    timeout=settings.HTTP_TIMEOUT,
+                ).read()
         except (URLError, OSError) as exc:
             logger.debug(
                 'Error occurred during fetching %s',

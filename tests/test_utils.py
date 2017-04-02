@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
 import io
@@ -10,7 +11,7 @@ import pytest
 
 from fake_useragent import errors, settings, utils
 
-from tests.utils import _request, find_unused_port
+from tests.utils import _request, find_unused_port, urlopen_has_ssl_context
 
 try:  # Python 2 # pragma: no cover
     from urllib2 import Request
@@ -24,10 +25,11 @@ def test_utils_get():
     with pytest.raises(errors.FakeUserAgentError):
         utils.get('https://expired.badssl.com/')
 
-    assert utils.get(
-        'https://expired.badssl.com/',
-        verify_ssl=False,
-    ) is not None
+    if urlopen_has_ssl_context:
+        assert utils.get(
+            'https://expired.badssl.com/',
+            verify_ssl=False,
+        ) is not None
 
 
 def test_utils_get_retries():
