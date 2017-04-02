@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+import contextlib
 import io
 import inspect
 import json
@@ -60,16 +61,18 @@ def get(url, verify_ssl=True):
                 else:
                     context = None
 
-                return urlopen(
+                with contextlib.closing(urlopen(
                     request,
                     timeout=settings.HTTP_TIMEOUT,
                     context=context,
-                ).read()
-            else:  # context is not supported ;(
-                return urlopen(
+                )) as response:
+                    return response.read()
+            else:  # ssl context is not supported ;(
+                with contextlib.closing(urlopen(
                     request,
                     timeout=settings.HTTP_TIMEOUT,
-                ).read()
+                )) as response:
+                    return response.read()
         except (URLError, OSError) as exc:
             logger.debug(
                 'Error occurred during fetching %s',

@@ -194,7 +194,7 @@ Changelog
 * 0.1.6 April 2, 2017
     - fixes bug ``use_cache_server`` do not affected anything
     - `w3schools.com <https://www.w3schools.com/browsers/browsers_stats.asp>`_ moved to ``https``
-    - ``verify_ssl`` options added, by default it is ``True``
+    - ``verify_ssl`` options added, by default it is ``True`` (``urllib.urlopen` ssl context for Python 2.7.9- and 3.4.3- is not supported)
 
 * 0.1.5 February 28, 2017
     - added ``ua.edge`` alias to Internet Explorer
