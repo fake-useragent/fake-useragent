@@ -39,7 +39,7 @@ except (ImportError, AttributeError):  # pragma: no cover
 
 
 try:
-    urlopen_args = inspect.getfullargspec(urlopen).args
+    urlopen_args = inspect.getfullargspec(urlopen).kwonlyargs
 except AttributeError:
     urlopen_args = inspect.getargspec(urlopen).args
 
