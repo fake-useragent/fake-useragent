@@ -192,7 +192,7 @@ Changelog
 ---------
 
 * 0.1.8 November 2, 2017
-    - fix `useragentstring.com` `Can't connect to local MySQL server through socket`
+    - fix ``useragentstring.com`` ``Can't connect to local MySQL server through socket``
 
 * 0.1.7 April 2, 2017
     - fix broken README.rst
