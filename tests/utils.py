@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+import os
 import socket
 
 try:  # Python 2 # pragma: no cover
@@ -9,6 +10,10 @@ except ImportError:  # Python 3 # pragma: no cover
     from urllib.request import Request
 
 _used_ports = set()
+
+
+here = os.path.dirname(os.path.abspath(__file__))
+assets = os.path.join(here, 'assets')
 
 
 def find_unused_port():

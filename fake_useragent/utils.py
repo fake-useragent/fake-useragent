@@ -2,8 +2,8 @@
 from __future__ import absolute_import, unicode_literals
 
 import contextlib
-import io
 import inspect
+import io
 import json
 import os
 import re
@@ -138,6 +138,10 @@ def get_browser_versions(browser, verify_ssl=True):
 
         if len(browsers) == settings.BROWSERS_COUNT_LIMIT:
             break
+
+    if not browsers:
+        raise FakeUserAgentError(
+            'No browsers version found for {browser}'.format(browser=browser))
 
     return browsers
 

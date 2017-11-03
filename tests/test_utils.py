@@ -11,7 +11,7 @@ import pytest
 
 from fake_useragent import errors, settings, utils
 from fake_useragent.utils import urlopen_has_ssl_context
-from tests.utils import _request, find_unused_port
+from tests.utils import _request, find_unused_port, assets
 
 try:  # Python 2 # pragma: no cover
     from urllib2 import Request
@@ -125,6 +125,24 @@ def test_utils_get_browser_versions():
             ):
                 with pytest.raises(errors.FakeUserAgentError):
                     utils.get_browser_versions(browser)
+
+
+def test_utils_get_browser_versions_no_browser_versions():
+    browser_names = [browser[0] for browser in utils.get_browsers()]
+
+    for browser in browser_names:
+        with mock.patch('fake_useragent.utils.urlopen') as mocked:
+            path = os.path.join(assets, 'no_browser_versions.html')
+
+            with io.open(path, mode='rb') as fp:
+                m = mock.Mock()
+                m.read = fp.read
+                mocked.return_value = m
+
+                with pytest.raises(errors.FakeUserAgentError) as ctx:
+                    utils.get_browser_versions(browser)
+
+                assert ctx.value.args[0].startswith('No browsers version')
 
 
 def test_utils_load(path):
