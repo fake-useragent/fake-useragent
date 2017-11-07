@@ -133,6 +133,9 @@ class FakeUserAgent(object):
             else:
                 browser = settings.SHORTCUTS.get(attr, attr)
 
+            if not self.data_browsers[browser]:
+                return random.choice(settings.SHORTCUTS.values())
+
             return random.choice(self.data_browsers[browser])
         except (KeyError, IndexError):
             if self.fallback is None:
