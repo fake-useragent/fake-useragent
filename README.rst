@@ -6,8 +6,8 @@ fake-useragent
 .. image:: https://img.shields.io/travis/hellysmile/fake-useragent.svg
     :target: https://travis-ci.org/hellysmile/fake-useragent
 
-.. image:: https://img.shields.io/coveralls/hellysmile/fake-useragent.svg
-    :target: https://coveralls.io/r/hellysmile/fake-useragent
+.. image:: https://codecov.io/gh/hellysmile/fake-useragent/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/hellysmile/fake-useragent
 
 .. image:: https://landscape.io/github/hellysmile/fake-useragent/master/landscape.svg?style=flat
     :target: https://landscape.io/github/hellysmile/fake-useragent/master
@@ -81,7 +81,7 @@ If You don't want cache database or no writable file system:
     ua = UserAgent(cache=False)
 
 Sometimes, `useragentstring.com <http://useragentstring.com/>`_ or `w3schools.com <https://www.w3schools.com/browsers/browsers_stats.asp>`_ changes their html, or down, in such case
-``fake-useragent`` uses hosted cache server `heroku.com <https://fake-useragent.herokuapp.com/browsers/0.1.5>`_ fallback
+``fake-useragent`` uses CDN `cloudfront <http://d2g6u4gh6d9rq0.cloudfront.net/browsers/0.1.9.json>`_ fallback
 
 If You don't want to use hosted cache server (version 0.1.5 added)
 
@@ -190,6 +190,11 @@ Tests
 
 Changelog
 ---------
+
+* 0.1.9 February 11, 2018
+    - fix ``w3schools.com`` renamed `IE/Edge` to `Edge/IE`
+    - moved `heroku.com` fallback to `s3 + cloudfront`
+    - stop testing Python3.3 and pypy
 
 * 0.1.8 November 2, 2017
     - fix ``useragentstring.com`` ``Can't connect to local MySQL server through socket``
