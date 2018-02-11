@@ -81,7 +81,7 @@ If You don't want cache database or no writable file system:
     ua = UserAgent(cache=False)
 
 Sometimes, `useragentstring.com <http://useragentstring.com/>`_ or `w3schools.com <https://www.w3schools.com/browsers/browsers_stats.asp>`_ changes their html, or down, in such case
-``fake-useragent`` uses CDN `cloudfront <http://d2g6u4gh6d9rq0.cloudfront.net/browsers/0.1.9.json>`_ fallback
+``fake-useragent`` uses CDN `cloudfront <http://d2g6u4gh6d9rq0.cloudfront.net/browsers/fake_useragent_0.1.9.json>`_ fallback
 
 If You don't want to use hosted cache server (version 0.1.5 added)
 
@@ -190,6 +190,9 @@ Tests
 
 Changelog
 ---------
+
+* 0.1.10 February 11, 2018
+    - Minor fix docs `cloudfront` url
 
 * 0.1.9 February 11, 2018
     - fix ``w3schools.com`` renamed `IE/Edge` to `Edge/IE`
