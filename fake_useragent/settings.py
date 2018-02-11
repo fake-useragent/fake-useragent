@@ -4,7 +4,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 import tempfile
 
-__version__ = '0.1.8'
+__version__ = '0.1.9'
 
 DB = os.path.join(
     tempfile.gettempdir(),
@@ -13,7 +13,7 @@ DB = os.path.join(
     ),
 )
 
-CACHE_SERVER = 'https://fake-useragent.herokuapp.com/browsers/{version}'.format(  # noqa
+CACHE_SERVER = 'http://d2g6u4gh6d9rq0.cloudfront.net/browsers/fake_useragent_{version}.json'.format(  # noqa
     version=__version__,
 )
 
@@ -39,6 +39,7 @@ SHORTCUTS = {
 }
 
 OVERRIDES = {
+    'Edge/IE': 'Internet Explorer',
     'IE/Edge': 'Internet Explorer',
 }
 
