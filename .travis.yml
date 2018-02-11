@@ -1,18 +1,34 @@
-sudo: false
+dist: trusty
 language: python
 python:
-  - "3.6"
-  - "3.5"
-  - "3.4"
-  - "3.3"
   - "2.7"
-  - "pypy"
+  - "3.4"
+  - "3.5"
+  - "3.6"
 install:
-  - travis_retry pip install -U isort flake8 mock pytest pytest-cov
+  - pip install -U setuptools
+  - pip install -U pip
+  - pip install -U wheel
+  - pip install -U tox
 script:
-  - pytest tests
+  - export TOXENV=py`python -c 'import sys; print("".join(map(str, sys.version_info[:2])))'`
+  - echo "$TOXENV"
+
+  - tox
 after_success:
-  - flake8 --show-source fake_useragent
-  - isort --check-only -rc fake_useragent --diff
-  - travis_retry pip install -q coveralls
-  - travis_retry coveralls
+  - pip install codecov
+  - codecov
+cache: pip
+notifications:
+  email: false
+
+deploy:
+  provider: pypi
+  user: hellysmile
+  password:
+    secure: "nDk2zl6oboaVJXakDDiChTXlLneM+Neqcqz+/t9eT+vU4c7N7Bhv3ONlm+W2PFsqLfLA4yTLweO7TG9+9nh7sKyneJkNUw4Srald7AFoBwhy/LERHw2FJUC1FbteWv+GiHPoz3lYAZKROG3rK/6nBeyivdDIteZf+W3YKo1wk3c="
+  distributions: "sdist upload"
+  on:
+    tags: true
+    all_branches: true
+    python: 2.7
