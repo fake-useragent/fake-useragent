@@ -18,7 +18,7 @@ class FakeUserAgent(object):
         path=settings.DB,
         fallback=None,
         verify_ssl=True,
-        safe_attrs=tuple(),
+        safe_attrs=tuple('__name__',),
     ):
         assert isinstance(cache, bool), \
             'cache must be True or False'
