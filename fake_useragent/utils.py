@@ -11,6 +11,7 @@ import ssl
 
 from fake_useragent.log import logger
 
+
 try:  # Python 2 # pragma: no cover
     from urllib2 import urlopen, Request, URLError
     from urllib import quote_plus
@@ -113,37 +114,117 @@ def get_browsers(verify_ssl=True):
     return list(zip(browsers, browsers_statistics))
 
 
+def get_version(browser, info):
+    try:
+        temp = re.search(re.escape(browser.capitalize()) + r'/(\d+)',info)#serach smth like "Chrome/60"
+        return int(temp.group(0)[len(browser)+1:])#getting only version digits
+    except:
+        temp = re.search(re.escape(browser.capitalize()) + r'/v(\d+)',info)#there are chrome/v1.0.0 and this handels it
+        return int(temp.group(0)[len(browser)+2:])
+
+
 def get_browser_versions(browser, verify_ssl=True):
-    """
-    very very hardcoded/dirty re/split stuff, but no dependencies
-    """
-    html = get(
-        settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)),
-        verify_ssl=verify_ssl,
-    )
-    html = html.decode('iso-8859-1')
-    html = html.split('<div id=\'liste\'>')[1]
-    html = html.split('</div>')[0]
 
-    pattern = r'\?id=\d+\'>(.+?)</a'
-    browsers_iter = re.finditer(pattern, html, re.UNICODE)
+        print(settings.BROWSER_BASE_PAGE + ' settings.BROWSER_BASE_PAGE')
 
-    browsers = []
+        useragents_list = []
 
-    for browser in browsers_iter:
-        if 'more' in browser.group(1).lower():
-            continue
+        #Because ie fucking special and we must handel it another way
+        if browser == 'internet-explorer':
+            return get_browser_versions_ie(browser)
 
-        browsers.append(browser.group(1))
+        for page in range(1,4):#getting info from first 3 pages
+            html = get(
+                    "https://developers.whatismybrowser.com/useragents/explore/software_name/{}/{}?order_by=-times_seen".format(browser,page),
+                    verify_ssl=verify_ssl,
+                    )
 
-        if len(browsers) == settings.BROWSERS_COUNT_LIMIT:
+
+            html = html.decode('utf-8')
+
+            #getting td and than tr tags
+            table = re.findall(r'<table class="table table-striped table-hover table-bordered table-useragents">(.*?)</table>', html, re.DOTALL)[0]
+            matchObj = re.findall(r'<tr>(.*?)</tr>', table, re.M|re.I|re.S)
+
+            for obj in matchObj[1:]:
+                tds = re.findall(r'<td(.*?)</td>',obj, re.DOTALL)
+                if tds[3][1:] == "Computer":
+                    #deleting tags and stuff like that around info we need
+                    info = re.sub(r'><a href=(.*?)>','',tds[0])
+                    info = re.sub('class="useragent"','',info)
+                    info = re.sub('</a>','',info)
+                    useragents_list.append(info)
+
+
+
+
+            #bubble sort by versions
+            for elem in range(len(useragents_list)-1,0,-1):
+                for i in range(elem):
+                    if get_version(browser ,useragents_list[i]) > get_version(browser, useragents_list[i+1]):
+                        temp = useragents_list[i]
+                        useragents_list[i] = useragents_list[i+1]
+                        useragents_list[i+1] = temp
+
+
+
+        return useragents_list[len(useragents_list):len(useragents_list)-50:-1]
+
+
+def get_version_ie(info):
+    if info[1].isdigit() == False:
+        return int(info[0])
+    else:
+        return int(info[:2])
+
+def get_browser_versions_ie(browser, verify_ssl=True):
+
+    useragents_list = []
+
+    for page in range(1,4):#getting info from first 3 pages
+        html = get(
+                "https://developers.whatismybrowser.com/useragents/explore/software_name/{}/{}?order_by=-times_seen".format(browser,page),
+                verify_ssl=verify_ssl,
+                )
+
+
+        html = html.decode('utf-8')
+
+        #getting td and than tr tags
+        table = re.findall(r'<table class="table table-striped table-hover table-bordered table-useragents">(.*?)</table>', html, re.DOTALL)[0]
+        matchObj = re.findall(r'<tr>(.*?)</tr>', table, re.M|re.I|re.S)
+
+        for obj in matchObj[1:]:
+            tds = re.findall(r'<td(.*?)</td>',obj, re.DOTALL)
+            if tds[3][1:] == "Computer":
+                #deleting tags and stuff like that around info we need
+                info = re.sub(r'><a href=(.*?)>','',tds[0])
+                info = re.sub('class="useragent"','',info)
+                info = re.sub('</a>','',info)
+
+                if tds[1][-2] == ' ':
+                    continue
+
+                if tds[1][-2] == '>':#some versions are 1-digit, some 2-digit
+                    useragents_list.append(info+' '+str(tds[1][-1:]))
+                elif tds[1][-2] == '.':
+                    useragents_list.append(info+' '+str(tds[1][-3:]))#some looks like '5.5'
+                else:
+                    useragents_list.append(info+' '+str(tds[1][-2:]))
+
+
+
+    counter = 0
+    result = []
+    for elem in useragents_list:
+        if '11' in elem[:-4] or '10' in elem[:-4]:
+            result.append(elem[:-3])
+            counter += 1
+        if counter == 50:
             break
 
-    if not browsers:
-        raise FakeUserAgentError(
-            'No browsers version found for {browser}'.format(browser=browser))
+    return result
 
-    return browsers
 
 
 def load(use_cache_server=True, verify_ssl=True):
@@ -254,3 +335,5 @@ def load_cached(path, use_cache_server=True, verify_ssl=True):
 
 from fake_useragent import settings  # noqa # isort:skip
 from fake_useragent.errors import FakeUserAgentError  # noqa # isort:skip
+
+print(get_browser_versions('chrome'))

@@ -19,7 +19,7 @@ CACHE_SERVER = 'http://d2g6u4gh6d9rq0.cloudfront.net/browsers/fake_useragent_{ve
 
 BROWSERS_STATS_PAGE = 'https://www.w3schools.com/browsers/default.asp'
 
-BROWSER_BASE_PAGE = 'http://useragentstring.com/pages/useragentstring.php?name={browser}'  # noqa
+BROWSER_BASE_PAGE = 'https://developers.whatismybrowser.com/useragents/explore/software_name/'  # noqa
 
 BROWSERS_COUNT_LIMIT = 50
 
@@ -29,10 +29,10 @@ REPLACEMENTS = {
 }
 
 SHORTCUTS = {
-    'internet explorer': 'internetexplorer',
-    'ie': 'internetexplorer',
-    'msie': 'internetexplorer',
-    'edge': 'internetexplorer',
+    'internet explorer': 'internet-explorer',
+    'ie': 'internet-explorer',
+    'msie': 'internet-explorer',
+    'edge': 'internet-explorer',
     'google': 'chrome',
     'googlechrome': 'chrome',
     'ff': 'firefox',
