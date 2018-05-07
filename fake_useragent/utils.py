@@ -324,6 +324,3 @@ def load_cached(path, use_cache_server=True, verify_ssl=True):
 
 from fake_useragent import settings  # noqa # isort:skip
 from fake_useragent.errors import FakeUserAgentError  # noqa # isort:skip
-
-for every in get_browser_versions('internet-explorer'):
-    print(every)
