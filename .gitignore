@@ -21,3 +21,4 @@ __pycache__
 *.swo
 *~
 htmlcov
+.pytest_cache
