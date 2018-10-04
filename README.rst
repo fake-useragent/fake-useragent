@@ -192,7 +192,7 @@ Changelog
 ---------
 
 * 0.1.11 October 4, 2018
-    - moved `s3 + cloudfront` fallback `heroku.com`, cuz someone from Florida did ~25M requests last month
+    - moved `s3 + cloudfront` fallback to `heroku.com`, cuz someone from Florida did ~25M requests last month
 
 * 0.1.10 February 11, 2018
     - Minor fix docs `cloudfront` url
