@@ -13,7 +13,7 @@ DB = os.path.join(
     ),
 )
 
-CACHE_SERVER = 'https://fake-useragent.herokuapp.com/browsers/{version}'.format(
+CACHE_SERVER = 'https://fake-useragent.herokuapp.com/browsers/{version}'.format(  # noqa
     version=__version__,
 )
 
