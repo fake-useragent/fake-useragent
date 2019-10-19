@@ -1,19 +1,15 @@
-dist: trusty
 language: python
 python:
   - "2.7"
-  - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
+  - "3.8"
 install:
-  - pip install -U setuptools
-  - pip install -U pip
-  - pip install -U wheel
-  - pip install -U tox
+  - pip install -U pip setuptools tox wheel
 script:
   - export TOXENV=py`python -c 'import sys; print("".join(map(str, sys.version_info[:2])))'`
   - echo "$TOXENV"
-
   - tox
 after_success:
   - pip install codecov
