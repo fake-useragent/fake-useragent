@@ -20,7 +20,7 @@ after_success:
   - codecov
 cache: pip
 notifications:
-  email: true
+  email: false
 
 deploy:
   provider: pypi
