@@ -29,6 +29,7 @@ except ImportError:  # Python 3 # pragma: no cover
 # gevent monkey patched environment check
 try:  # pragma: no cover
     import socket
+
     import gevent.socket
 
     if socket.socket is gevent.socket.socket:
