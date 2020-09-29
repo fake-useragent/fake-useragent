@@ -17,7 +17,7 @@ after_success:
   - pip install codecov
   - codecov
 notifications:
-  email: true
+  email: false
 
 deploy:
   provider: pypi
