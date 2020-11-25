@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import random
+import re
 from threading import Lock
 
 from fake_useragent import settings
@@ -65,6 +66,8 @@ class FakeUserAgent(object):
         # version 0.1.4+ migration tool
         self.data_randomize = []
         self.data_browsers = {}
+        self.data_browsers_desktop = {}
+        self.data_browsers_mobile = {}
 
         self.load()
 
@@ -87,6 +90,17 @@ class FakeUserAgent(object):
                 # version 0.1.4+ migration tool
                 self.data_randomize = list(self.data['randomize'].values())
                 self.data_browsers = self.data['browsers']
+
+                for family in self.data_browsers:
+                    for browser in self.data_browsers[family]:
+                        if re.search('(Mobile|Android)', browser):
+                            if family not in self.data_browsers_mobile:
+                                self.data_browsers_mobile.update({family: []})
+                            self.data_browsers_mobile[family].append(browser)
+                        else:
+                            if family not in self.data_browsers_mobile:
+                                self.data_browsers_desktop.update({family: []})
+                            self.data_browsers_desktop[family].append(browser)
         except FakeUserAgentError:
             if self.fallback is None:
                 raise
@@ -128,12 +142,22 @@ class FakeUserAgent(object):
 
             attr = attr.lower()
 
-            if attr == 'random':
-                browser = random.choice(self.data_randomize)
+            if attr in ['random', 'mobile', 'desktop']:
+                if attr == 'mobile':
+                    browser = random.choice(list(self.data_browsers_mobile.keys()))
+                elif attr == 'desktop':
+                    browser = random.choice(list(self.data_browsers_desktop.keys()))
+                else:
+                    browser = random.choice(self.data_randomize)
             else:
                 browser = settings.SHORTCUTS.get(attr, attr)
 
-            return random.choice(self.data_browsers[browser])
+            if attr == 'mobile':
+                return random.choice(self.data_browsers_mobile[browser])
+            elif attr == 'dekstop':
+                return random.choice(self.data_browsers_desktop[browser])
+            else:
+                return random.choice(self.data_browsers[browser])
         except (KeyError, IndexError):
             if self.fallback is None:
                 raise FakeUserAgentError('Error occurred during getting browser')  # noqa
