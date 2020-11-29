@@ -98,7 +98,7 @@ class FakeUserAgent(object):
                                 self.data_browsers_mobile.update({family: []})
                             self.data_browsers_mobile[family].append(browser)
                         else:
-                            if family not in self.data_browsers_mobile:
+                            if family not in self.data_browsers_desktop:
                                 self.data_browsers_desktop.update({family: []})
                             self.data_browsers_desktop[family].append(browser)
         except FakeUserAgentError:
