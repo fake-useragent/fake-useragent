@@ -27,7 +27,7 @@ REPLACEMENTS = {
     ' ': '',
     '_': '',
 }
-
+BROWSERS_NAMES = ['chrome', 'edge', 'firefox', 'safari', 'opera']
 SHORTCUTS = {
     'internet explorer': 'internetexplorer',
     'ie': 'internetexplorer',
