@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import random
 from threading import Lock
-
+from .settings import BROWSERS_NAMES
 from fake_useragent import settings
 from fake_useragent.errors import FakeUserAgentError
 from fake_useragent.log import logger
@@ -129,11 +129,11 @@ class FakeUserAgent(object):
             attr = attr.lower()
 
             if attr == 'random':
-                browser = random.choice(self.data_randomize)
+                latest_versions = [self.data_browsers[b][0] for b in BROWSERS_NAMES]
+                return random.choice(latest_versions)
             else:
                 browser = settings.SHORTCUTS.get(attr, attr)
-
-            return random.choice(self.data_browsers[browser])
+            return self.data_browsers[browser][0]
         except (KeyError, IndexError):
             if self.fallback is None:
                 raise FakeUserAgentError('Error occurred during getting browser')  # noqa
