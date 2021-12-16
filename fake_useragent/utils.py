@@ -1,79 +1,44 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-
-import contextlib
-import inspect
 import io
 import json
 import os
 import re
-import ssl
+from typing import Dict, List
+import urllib
+import random
+from urllib.error import URLError, HTTPError
+from time import sleep
 
 from fake_useragent.log import logger
+from .randomize import DataRandomize, AbstractRandomize
+from bs4 import BeautifulSoup 
+import requests
+from requests.exceptions import ReadTimeout, RequestException
 
-try:  # Python 2 # pragma: no cover
-    from urllib2 import urlopen, Request, URLError
-    from urllib import quote_plus
-
-    str_types = (unicode, str)  # noqa
-    text = unicode  # noqa
-except ImportError:  # Python 3 # pragma: no cover
-    from urllib.request import urlopen, Request
-    from urllib.parse import quote_plus
-    from urllib.error import URLError
-
-    str_types = (str,)
-    text = str
-
-# gevent monkey patched environment check
-try:  # pragma: no cover
-    import socket
-    import gevent.socket
-
-    if socket.socket is gevent.socket.socket:
-        from gevent import sleep
-    else:
-        from time import sleep
-except (ImportError, AttributeError):  # pragma: no cover
-    from time import sleep
+def read(path: str) -> Dict[str, List]:
+    with io.open(path, encoding='utf-8', mode='rt') as fp:
+        return json.loads(fp.read())
 
 
-try:
-    urlopen_args = inspect.getfullargspec(urlopen).kwonlyargs
-except AttributeError:
-    urlopen_args = inspect.getargspec(urlopen).args
-
-urlopen_has_ssl_context = 'context' in urlopen_args
-
-
-def get(url, verify_ssl=True):
+def get_with_agent(url: str, user_agents: Dict[str, List]):
+    """
+    takes a url and returns the response if 200 else raise exception
+    """
+    headers = requests.utils.default_headers()
+    headers.update({
+        'User-Agent': random.choices(
+            user_agents['browsers'],
+            user_agents['percents'])[0]
+        })
     attempt = 0
-
     while True:
-        request = Request(url)
 
         attempt += 1
-
         try:
-            if urlopen_has_ssl_context:
-                if not verify_ssl:
-                    context = ssl._create_unverified_context()
-                else:
-                    context = None
+            return requests.get(url=url, headers=headers, timeout=settings.HTTP_TIMEOUT)
 
-                with contextlib.closing(urlopen(
-                    request,
-                    timeout=settings.HTTP_TIMEOUT,
-                    context=context,
-                )) as response:
-                    return response.read()
-            else:  # ssl context is not supported ;(
-                with contextlib.closing(urlopen(
-                    request,
-                    timeout=settings.HTTP_TIMEOUT,
-                )) as response:
-                    return response.read()
-        except (URLError, OSError) as exc:
+        except (ReadTimeout, RequestException) as exc:
             logger.debug(
                 'Error occurred during fetching %s',
                 url,
@@ -90,54 +55,48 @@ def get(url, verify_ssl=True):
                 sleep(settings.HTTP_DELAY)
 
 
-def get_browsers(verify_ssl=True):
+def get_browsers(useragents):
     """
     very very hardcoded/dirty re/split stuff, but no dependencies
     """
-    html = get(settings.BROWSERS_STATS_PAGE, verify_ssl=verify_ssl)
-    html = html.decode('utf-8')
+    html = get_with_agent(settings.BROWSERS_STATS_PAGE, useragents)
+    html = html.text
     html = html.split('<table class="ws-table-all notranslate">')[1]
     html = html.split('</table>')[0]
 
     pattern = r'\.asp">(.+?)<'
     browsers = re.findall(pattern, html, re.UNICODE)
 
-    browsers = [
-        settings.OVERRIDES.get(browser, browser)
-        for browser in browsers
-    ]
-
     pattern = r'td\sclass="right">(.+?)\s'
     browsers_statistics = re.findall(pattern, html, re.UNICODE)
-
     return list(zip(browsers, browsers_statistics))
 
 
-def get_browser_versions(browser, verify_ssl=True):
+def get_browser_versions(browser, useragents):
     """
     very very hardcoded/dirty re/split stuff, but no dependencies
     """
-    html = get(
-        settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)),
-        verify_ssl=verify_ssl,
-    )
-    html = html.decode('iso-8859-1')
-    html = html.split('<div id=\'liste\'>')[1]
-    html = html.split('</div>')[0]
-
-    pattern = r'\?id=\d+\'>(.+?)</a'
-    browsers_iter = re.finditer(pattern, html, re.UNICODE)
-
     browsers = []
+    html = get_with_agent(
+        settings.BROWSER_BASE_PAGE.format(browser=browser),
+        user_agents=useragents,
+    ).text
+    versions_links = BeautifulSoup(html, 'html.parser').select(".compact_list li a ")[:11]
+    for link in versions_links:
+        html = get_with_agent(settings.BROWSER_HOST+link.get('href'), useragents)
 
-    for browser in browsers_iter:
-        if 'more' in browser.group(1).lower():
-            continue
+        html = html.text
+        html = html.split('<ul class=\'agents_list\'>')[1]
+        html = html.split('</ul>')[0]
 
-        browsers.append(browser.group(1))
+        pattern = r"'>(.+?)<"
+        browsers_iter = re.finditer(pattern, html, re.UNICODE)
 
-        if len(browsers) == settings.BROWSERS_COUNT_LIMIT:
-            break
+        for browser in browsers_iter:
+            browsers.append(browser.group(1))
+
+            if len(browsers) == settings.BROWSERS_COUNT_LIMIT:
+                return browsers
 
     if not browsers:
         raise FakeUserAgentError(
@@ -146,69 +105,52 @@ def get_browser_versions(browser, verify_ssl=True):
     return browsers
 
 
-def load(use_cache_server=True, verify_ssl=True):
-    browsers_dict = {}
-    randomize_dict = {}
+# browser_dict {"<browser>: ["<useragents>"]}
+# randomize_dict {'percents': [<n|float>], 'browsers' : ['<browser_key|str>']}
+
+
+def load(use_fallback=True):
+    browsers_dict = dict()
+    randomize_dict = {'percents': [], 'browsers': []}
+    stored_useragents = read(settings.FALLBACK_PATH)
 
     try:
-        for item in get_browsers(verify_ssl=verify_ssl):
+        for item in get_browsers(stored_useragents):
             browser, percent = item
 
-            browser_key = browser
-
-            for value, replacement in settings.REPLACEMENTS.items():
-                browser_key = browser_key.replace(value, replacement)
-
-            browser_key = browser_key.lower()
+            browser_key = browser.lower()
 
             browsers_dict[browser_key] = get_browser_versions(
-                browser,
-                verify_ssl=verify_ssl,
-            )
+                browser_key,
+                stored_useragents
+                )
 
-            # it is actually so bad way for randomizing, simple list with
-            # browser_key's is event better
-            # I've failed so much a lot of years ago.
-            # Ideas for refactoring
-            # {'chrome': <percantage|int>, 'firefox': '<percatage|int>'}
-            for _ in range(int(float(percent) * 10)):
-                randomize_dict[str(len(randomize_dict))] = browser_key
+            randomize_dict['percents'].append(float(percent))
+            randomize_dict['browsers'].append(browser_key)
     except Exception as exc:
-        if not use_cache_server:
+        if not use_fallback:
             raise exc
 
         logger.warning(
             'Error occurred during loading data. '
-            'Trying to use cache server %s',
-            settings.CACHE_SERVER,
+            'Trying to use Fallback useragents %s',
+            settings.FALLBACK_PATH,
             exc_info=exc,
         )
         try:
-            ret = json.loads(get(
-                settings.CACHE_SERVER,
-                verify_ssl=verify_ssl,
-            ).decode('utf-8'))
-        except (TypeError, ValueError):
+            print("here")
+            ret = DataRandomize.fallback(stored_useragents)
+        except Exception:
             raise FakeUserAgentError('Can not load data from cache server')
     else:
-        ret = {
-            'browsers': browsers_dict,
-            'randomize': randomize_dict,
-        }
+        ret = DataRandomize.parsed(
+                randomize_dict=randomize_dict,
+                browsers_dict=browsers_dict
+            )
 
-    if not isinstance(ret, dict):
-        raise FakeUserAgentError('Data is not dictionary ', ret)
-
-    for param in ['browsers', 'randomize']:
-        if param not in ret:
-            raise FakeUserAgentError('Missing data param: ', param)
-
-        if not isinstance(ret[param], dict):
-            raise FakeUserAgentError('Data param is not dictionary', ret[param])  # noqa
-
-        if not ret[param]:
-            raise FakeUserAgentError('Data param is empty', ret[param])
-
+    if not isinstance(ret, AbstractRandomize):
+        raise FakeUserAgentError('Data is not valid ', ret)
+    print(ret.useragents)
     return ret
 
 
@@ -225,7 +167,7 @@ def write(path, data):
         fp.write(dumped)
 
 
-def read(path):
+def read(path: str) -> List[Dict]:
     with io.open(path, encoding='utf-8', mode='rt') as fp:
         return json.loads(fp.read())
 
@@ -239,15 +181,15 @@ def rm(path):
         os.remove(path)
 
 
-def update(path, use_cache_server=True, verify_ssl=True):
+def update(path, use_cache_server=True):
     rm(path)
 
-    write(path, load(use_cache_server=use_cache_server, verify_ssl=verify_ssl))
+    write(path, load(use_cache_server=use_cache_server))
 
 
-def load_cached(path, use_cache_server=True, verify_ssl=True):
+def load_cached(path, use_cache_server=True):
     if not exist(path):
-        update(path, use_cache_server=use_cache_server, verify_ssl=verify_ssl)
+        update(path, use_cache_server=use_cache_server)
 
     return read(path)
 
