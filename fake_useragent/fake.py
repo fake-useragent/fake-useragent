@@ -19,6 +19,7 @@ class FakeUserAgent(object):
         fallback=None,
         verify_ssl=True,
         safe_attrs=tuple(),
+        num_newest_uas=settings.BROWSERS_COUNT_LIMIT,
     ):
         assert isinstance(cache, bool), \
             'cache must be True or False'
@@ -58,6 +59,14 @@ class FakeUserAgent(object):
                 'safe_attrs must be list\\tuple\\set of strings or unicode'
 
         self.safe_attrs = set(safe_attrs)
+        
+        assert isinstance(num_newest_uas, int), \
+            'num_newest_uas must be an integer'
+
+        assert (num_newest_uas > 0), \
+            'num_newest_uas must be greater than zero'
+
+        self.num_newest_uas = min(num_newest_uas, settings.BROWSERS_COUNT_LIMIT)
 
         # initial empty data
         self.data = {}
@@ -86,7 +95,7 @@ class FakeUserAgent(object):
                 # TODO: change source file format
                 # version 0.1.4+ migration tool
                 self.data_randomize = list(self.data['randomize'].values())
-                self.data_browsers = self.data['browsers']
+                self.data_browsers = {k: v[0:self.num_newest_uas] for k, v in self.data['browsers'].items()}
         except FakeUserAgentError:
             if self.fallback is None:
                 raise
