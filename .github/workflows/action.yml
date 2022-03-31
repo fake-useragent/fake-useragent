@@ -26,4 +26,4 @@ jobs:
       - name: Install depedencies
         run: pip install -r requirements.txt
       - name: Run tets
-      - run: tox
+        run: tox
