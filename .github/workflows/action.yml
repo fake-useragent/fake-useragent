@@ -1,3 +1,5 @@
+name: Test & Deploy fake-useragent
+
 on:
   push:
     branches:
@@ -5,7 +7,7 @@ on:
   pull_request:
     branches:
       - master
-   workflow_run:
+  workflow_run:
 
 jobs:
   test:
