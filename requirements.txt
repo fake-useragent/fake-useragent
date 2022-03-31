@@ -17,7 +17,7 @@ ipython==8.2.0
 isort==5.10.1
 jedi==0.18.1
 matplotlib-inline==0.1.3
-mccabe==0.7.0
+mccabe==0.6.1
 mock==4.0.3
 packaging==21.3
 parso==0.8.3
