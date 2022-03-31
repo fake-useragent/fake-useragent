@@ -12,15 +12,16 @@ import ssl
 from fake_useragent.log import logger
 
 try:  # Python 2 # pragma: no cover
-    from urllib2 import urlopen, Request, URLError
     from urllib import quote_plus
+
+    from urllib2 import Request, URLError, urlopen
 
     str_types = (unicode, str)  # noqa
     text = unicode  # noqa
 except ImportError:  # Python 3 # pragma: no cover
-    from urllib.request import urlopen, Request
-    from urllib.parse import quote_plus
     from urllib.error import URLError
+    from urllib.parse import quote_plus
+    from urllib.request import Request, urlopen
 
     str_types = (str,)
     text = str
@@ -28,6 +29,7 @@ except ImportError:  # Python 3 # pragma: no cover
 # gevent monkey patched environment check
 try:  # pragma: no cover
     import socket
+
     import gevent.socket
 
     if socket.socket is gevent.socket.socket:
