@@ -38,6 +38,7 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
         'Operating System :: OS Independent',
     ],
     keywords=[
