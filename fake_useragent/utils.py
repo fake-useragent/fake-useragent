@@ -127,7 +127,7 @@ def get_browser_versions(browser, verify_ssl=True):
     html = html.split('<div id=\'liste\'>')[1]
     html = html.split('</div>')[0]
 
-    pattern = r'\?id=\d+\'>(.+?)</a'
+    pattern = r'<a href=\'/.*?>(.+?)</a>'
     browsers_iter = re.finditer(pattern, html, re.UNICODE)
 
     browsers = []
