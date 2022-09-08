@@ -19,7 +19,7 @@ CACHE_SERVER = 'https://fake-useragent.herokuapp.com/browsers/{version}'.format(
 
 BROWSERS_STATS_PAGE = 'https://www.w3schools.com/browsers/default.asp'
 
-BROWSER_BASE_PAGE = 'http://useragentstring.com/pages/useragentstring.php?name={browser}'  # noqa
+BROWSER_BASE_PAGE = 'https://useragentstring.com/pages/useragentstring.php?name={browser}'  # noqa
 
 BROWSERS_COUNT_LIMIT = 50
 
