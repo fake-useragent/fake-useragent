@@ -45,7 +45,7 @@ try:
 except AttributeError:
     urlopen_args = inspect.getargspec(urlopen).args
 
-urlopen_has_ssl_context = 'context' in urlopen_args
+urlopen_has_ssl_context = "context" in urlopen_args
 
 
 def get(url, verify_ssl=True):
@@ -63,30 +63,34 @@ def get(url, verify_ssl=True):
                 else:
                     context = None
 
-                with contextlib.closing(urlopen(
-                    request,
-                    timeout=settings.HTTP_TIMEOUT,
-                    context=context,
-                )) as response:
+                with contextlib.closing(
+                    urlopen(
+                        request,
+                        timeout=settings.HTTP_TIMEOUT,
+                        context=context,
+                    )
+                ) as response:
                     return response.read()
             else:  # ssl context is not supported ;(
-                with contextlib.closing(urlopen(
-                    request,
-                    timeout=settings.HTTP_TIMEOUT,
-                )) as response:
+                with contextlib.closing(
+                    urlopen(
+                        request,
+                        timeout=settings.HTTP_TIMEOUT,
+                    )
+                ) as response:
                     return response.read()
         except (URLError, OSError) as exc:
             logger.debug(
-                'Error occurred during fetching %s',
+                "Error occurred during fetching %s",
                 url,
                 exc_info=exc,
             )
 
             if attempt == settings.HTTP_RETRIES:
-                raise FakeUserAgentError('Maximum amount of retries reached')
+                raise FakeUserAgentError("Maximum amount of retries reached")
             else:
                 logger.debug(
-                    'Sleeping for %s seconds',
+                    "Sleeping for %s seconds",
                     settings.HTTP_DELAY,
                 )
                 sleep(settings.HTTP_DELAY)
@@ -97,17 +101,14 @@ def get_browsers(verify_ssl=True):
     very very hardcoded/dirty re/split stuff, but no dependencies
     """
     html = get(settings.BROWSERS_STATS_PAGE, verify_ssl=verify_ssl)
-    html = html.decode('utf-8')
+    html = html.decode("utf-8")
     html = html.split('<table class="ws-table-all notranslate">')[1]
-    html = html.split('</table>')[0]
+    html = html.split("</table>")[0]
 
     pattern = r'\.asp">(.+?)<'
     browsers = re.findall(pattern, html, re.UNICODE)
 
-    browsers = [
-        settings.OVERRIDES.get(browser, browser)
-        for browser in browsers
-    ]
+    browsers = [settings.OVERRIDES.get(browser, browser) for browser in browsers]
 
     pattern = r'td\sclass="right">(.+?)\s'
     browsers_statistics = re.findall(pattern, html, re.UNICODE)
@@ -123,17 +124,17 @@ def get_browser_versions(browser, verify_ssl=True):
         settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)),
         verify_ssl=verify_ssl,
     )
-    html = html.decode('iso-8859-1')
-    html = html.split('<div id=\'liste\'>')[1]
-    html = html.split('</div>')[0]
+    html = html.decode("iso-8859-1")
+    html = html.split("<div id='liste'>")[1]
+    html = html.split("</div>")[0]
 
-    pattern = r'<a href=\'/.*?>(.+?)</a>'
+    pattern = r"<a href=\'/.*?>(.+?)</a>"
     browsers_iter = re.finditer(pattern, html, re.UNICODE)
 
     browsers = []
 
     for browser in browsers_iter:
-        if 'more' in browser.group(1).lower():
+        if "more" in browser.group(1).lower():
             continue
 
         browsers.append(browser.group(1))
@@ -143,7 +144,8 @@ def get_browser_versions(browser, verify_ssl=True):
 
     if not browsers:
         raise FakeUserAgentError(
-            'No browsers version found for {browser}'.format(browser=browser))
+            "No browsers version found for {browser}".format(browser=browser)
+        )
 
     return browsers
 
@@ -180,36 +182,37 @@ def load(use_cache_server=True, verify_ssl=True):
             raise exc
 
         logger.warning(
-            'Error occurred during loading data. '
-            'Trying to use cache server %s',
+            "Error occurred during loading data. " "Trying to use cache server %s",
             settings.CACHE_SERVER,
             exc_info=exc,
         )
         try:
-            ret = json.loads(get(
-                settings.CACHE_SERVER,
-                verify_ssl=verify_ssl,
-            ).decode('utf-8'))
+            ret = json.loads(
+                get(
+                    settings.CACHE_SERVER,
+                    verify_ssl=verify_ssl,
+                ).decode("utf-8")
+            )
         except (TypeError, ValueError):
-            raise FakeUserAgentError('Can not load data from cache server')
+            raise FakeUserAgentError("Can not load data from cache server")
     else:
         ret = {
-            'browsers': browsers_dict,
-            'randomize': randomize_dict,
+            "browsers": browsers_dict,
+            "randomize": randomize_dict,
         }
 
     if not isinstance(ret, dict):
-        raise FakeUserAgentError('Data is not dictionary ', ret)
+        raise FakeUserAgentError("Data is not dictionary ", ret)
 
-    for param in ['browsers', 'randomize']:
+    for param in ["browsers", "randomize"]:
         if param not in ret:
-            raise FakeUserAgentError('Missing data param: ', param)
+            raise FakeUserAgentError("Missing data param: ", param)
 
         if not isinstance(ret[param], dict):
-            raise FakeUserAgentError('Data param is not dictionary', ret[param])  # noqa
+            raise FakeUserAgentError("Data param is not dictionary", ret[param])  # noqa
 
         if not ret[param]:
-            raise FakeUserAgentError('Data param is empty', ret[param])
+            raise FakeUserAgentError("Data param is empty", ret[param])
 
     return ret
 
@@ -218,17 +221,17 @@ def load(use_cache_server=True, verify_ssl=True):
 
 
 def write(path, data):
-    with io.open(path, encoding='utf-8', mode='wt') as fp:
+    with io.open(path, encoding="utf-8", mode="wt") as fp:
         dumped = json.dumps(data)
 
         if not isinstance(dumped, text):  # Python 2
-            dumped = dumped.decode('utf-8')
+            dumped = dumped.decode("utf-8")
 
         fp.write(dumped)
 
 
 def read(path):
-    with io.open(path, encoding='utf-8', mode='rt') as fp:
+    with io.open(path, encoding="utf-8", mode="rt") as fp:
         return json.loads(fp.read())
 
 

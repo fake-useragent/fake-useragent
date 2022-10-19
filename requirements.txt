@@ -10,7 +10,7 @@ distlib==0.3.4
 enum34==1.1.10
 executing==0.8.3
 filelock==3.6.0
-flake8==4.0.1
+black==22.10.0
 iniconfig==1.1.1
 ipdb==0.13.9
 ipython==8.2.0
@@ -30,8 +30,6 @@ prompt-toolkit==3.0.28
 ptyprocess==0.7.0
 pure-eval==0.2.2
 py==1.11.0
-pycodestyle==2.8.0
-pyflakes==2.4.0
 Pygments==2.11.2
 pyparsing==3.0.7
 pytest==7.1.1

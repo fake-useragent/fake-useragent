@@ -7,42 +7,51 @@ import re
 
 from setuptools import setup
 
+
 def get_version():
     regex = r"__version__\s=\s\'(?P<version>[\d\.]+?)\'"
-    path = ('fake_useragent', 'settings.py')
-    return re.search(regex, read(*path)).group('version')
+    path = ("fake_useragent", "settings.py")
+    return re.search(regex, read(*path)).group("version")
+
 
 def read(*parts):
     filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), *parts)
-    with io.open(filename, encoding='utf-8', mode='rt') as fp:
+    with io.open(filename, encoding="utf-8", mode="rt") as fp:
         return fp.read()
 
+
 setup(
-    name='fake-useragent',
+    name="fake-useragent",
     version=get_version(),
-    author='Melroy van den Berg',
-    author_email='melroy@melroy.org',
-    url='https://github.com/danger89/fake-useragent',
-    description='Up to date simple useragent faker with real world database',
-    long_description=read('README.md'),
-    long_description_content_type='text/markdown',
-    packages=[str('fake_useragent')],
+    author="Melroy van den Berg",
+    author_email="melroy@melroy.org",
+    url="https://github.com/danger89/fake-useragent",
+    description="Up to date simple useragent faker with real world database",
+    license_files=("LICENSE",),
+    long_description=read("README.md"),
+    long_description_content_type="text/markdown",
+    packages=[str("fake_useragent")],
     include_package_data=True,
     zip_safe=False,
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache Software License',
-        'Operating System :: POSIX',
-        'Operating System :: MacOS :: MacOS X',
-        'Operating System :: Microsoft :: Windows',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3 :: Only',
-        'Operating System :: OS Independent',
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: Apache Software License",
+        "Operating System :: POSIX",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: Microsoft :: Windows",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
+        "Operating System :: OS Independent",
     ],
     keywords=[
-        'user', 'agent', 'user agent', 'useragent',
-        'fake', 'fake useragent', 'fake user agent',
+        "user",
+        "agent",
+        "user agent",
+        "useragent",
+        "fake",
+        "fake useragent",
+        "fake user agent",
     ],
 )

@@ -13,7 +13,7 @@ _used_ports = set()
 
 
 here = os.path.dirname(os.path.abspath(__file__))
-assets = os.path.join(here, 'assets')
+assets = os.path.join(here, "assets")
 
 
 def find_unused_port():
@@ -21,7 +21,7 @@ def find_unused_port():
         service = socket.socket()
 
         try:
-            service.bind(('127.0.0.1', 0))
+            service.bind(("127.0.0.1", 0))
 
             _, port = service.getsockname()
 
@@ -36,15 +36,15 @@ def find_unused_port():
 def _request(*args, **kwargs):
     assert args
 
-    denied_urls = kwargs.pop('denied_urls', [])
-    response_url = kwargs.pop('response_url', None)
+    denied_urls = kwargs.pop("denied_urls", [])
+    response_url = kwargs.pop("response_url", None)
 
     requested_url = args[0]
 
     for url in denied_urls:
         if requested_url.startswith(url):
             if response_url is None:
-                response_url = 'http://0.0.0.0:{port}'.format(
+                response_url = "http://0.0.0.0:{port}".format(
                     port=find_unused_port(),
                 )
 

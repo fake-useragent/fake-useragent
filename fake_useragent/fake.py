@@ -20,42 +20,39 @@ class FakeUserAgent(object):
         verify_ssl=True,
         safe_attrs=tuple(),
     ):
-        assert isinstance(cache, bool), \
-            'cache must be True or False'
+        assert isinstance(cache, bool), "cache must be True or False"
 
         self.cache = cache
 
-        assert isinstance(use_cache_server, bool), \
-            'use_cache_server must be True or False'
+        assert isinstance(
+            use_cache_server, bool
+        ), "use_cache_server must be True or False"
 
         self.use_cache_server = use_cache_server
 
-        assert isinstance(path, str_types), \
-            'path must be string or unicode'
+        assert isinstance(path, str_types), "path must be string or unicode"
 
         self.path = path
 
         if fallback is not None:
-            assert isinstance(fallback, str_types), \
-                'fallback must be string or unicode'
+            assert isinstance(fallback, str_types), "fallback must be string or unicode"
 
         self.fallback = fallback
 
-        assert isinstance(verify_ssl, bool), \
-            'verify_ssl must be True or False'
+        assert isinstance(verify_ssl, bool), "verify_ssl must be True or False"
 
         self.verify_ssl = verify_ssl
 
-        assert isinstance(safe_attrs, (list, set, tuple)), \
-            'safe_attrs must be list\\tuple\\set of strings or unicode'
+        assert isinstance(
+            safe_attrs, (list, set, tuple)
+        ), "safe_attrs must be list\\tuple\\set of strings or unicode"
 
         if safe_attrs:
-            str_types_safe_attrs = [
-                isinstance(attr, str_types) for attr in safe_attrs
-            ]
+            str_types_safe_attrs = [isinstance(attr, str_types) for attr in safe_attrs]
 
-            assert all(str_types_safe_attrs), \
-                'safe_attrs must be list\\tuple\\set of strings or unicode'
+            assert all(
+                str_types_safe_attrs
+            ), "safe_attrs must be list\\tuple\\set of strings or unicode"
 
         self.safe_attrs = set(safe_attrs)
 
@@ -85,23 +82,23 @@ class FakeUserAgent(object):
 
                 # TODO: change source file format
                 # version 0.1.4+ migration tool
-                self.data_randomize = list(self.data['randomize'].values())
-                self.data_browsers = self.data['browsers']
+                self.data_randomize = list(self.data["randomize"].values())
+                self.data_browsers = self.data["browsers"]
         except FakeUserAgentError:
             if self.fallback is None:
                 raise
             else:
                 logger.warning(
-                    'Error occurred during fetching data, '
-                    'but was suppressed with fallback.',
+                    "Error occurred during fetching data, "
+                    "but was suppressed with fallback.",
                 )
+
     load.lock = Lock()
 
     def update(self, cache=None):
         with self.update.lock:
             if cache is not None:
-                assert isinstance(cache, bool), \
-                    'cache must be True or False'
+                assert isinstance(cache, bool), "cache must be True or False"
 
                 self.cache = cache
 
@@ -113,6 +110,7 @@ class FakeUserAgent(object):
                 )
 
             self.load()
+
     update.lock = Lock()
 
     def __getitem__(self, attr):
@@ -128,7 +126,7 @@ class FakeUserAgent(object):
 
             attr = attr.lower()
 
-            if attr == 'random':
+            if attr == "random":
                 browser = random.choice(self.data_randomize)
             else:
                 browser = settings.SHORTCUTS.get(attr, attr)
@@ -136,11 +134,13 @@ class FakeUserAgent(object):
             return random.choice(self.data_browsers[browser])
         except (KeyError, IndexError):
             if self.fallback is None:
-                raise FakeUserAgentError('Error occurred during getting browser')  # noqa
+                raise FakeUserAgentError(
+                    "Error occurred during getting browser"
+                )  # noqa
             else:
                 logger.warning(
-                    'Error occurred during getting browser, '
-                    'but was suppressed with fallback.',
+                    "Error occurred during getting browser, "
+                    "but was suppressed with fallback.",
                 )
 
                 return self.fallback
