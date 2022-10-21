@@ -10,6 +10,14 @@ Up to date simple useragent faker with real world database
 
 ### Installation
 
+For now:
+
+```sh
+pip install .
+```
+
+_Soon again:_
+
 ```sh
 pip install fake-useragent
 ```
