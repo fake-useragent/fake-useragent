@@ -17,6 +17,7 @@ class FakeUserAgent(object):
         use_cache_server=True,
         path=settings.DB,
         fallback=None,
+        browsers=["chrome", "edge", "internet explorer", "firefox", "safari", "opera"],
         verify_ssl=True,
         safe_attrs=tuple(),
     ):
@@ -39,6 +40,10 @@ class FakeUserAgent(object):
 
         self.fallback = fallback
 
+        assert isinstance(browsers, (list, str)), "browsers must be list or string"
+
+        self.browsers = browsers
+
         assert isinstance(verify_ssl, bool), "verify_ssl must be True or False"
 
         self.verify_ssl = verify_ssl
@@ -57,10 +62,6 @@ class FakeUserAgent(object):
         self.safe_attrs = set(safe_attrs)
 
         # initial empty data
-        self.data = {}
-        # TODO: change source file format
-        # version 0.1.4+ migration tool
-        self.data_randomize = []
         self.data_browsers = {}
 
         self.load()
@@ -69,21 +70,18 @@ class FakeUserAgent(object):
         try:
             with self.load.lock:
                 if self.cache:
-                    self.data = load_cached(
+                    self.data_browsers = load_cached(
                         self.path,
+                        self.browsers,
                         use_cache_server=self.use_cache_server,
                         verify_ssl=self.verify_ssl,
                     )
                 else:
-                    self.data = load(
+                    self.data_browsers = load(
+                        self.browsers,
                         use_cache_server=self.use_cache_server,
                         verify_ssl=self.verify_ssl,
                     )
-
-                # TODO: change source file format
-                # version 0.1.4+ migration tool
-                self.data_randomize = list(self.data["randomize"].values())
-                self.data_browsers = self.data["browsers"]
         except FakeUserAgentError:
             if self.fallback is None:
                 raise
@@ -105,6 +103,7 @@ class FakeUserAgent(object):
             if self.cache:
                 update(
                     self.path,
+                    self.browsers,
                     use_cache_server=self.use_cache_server,
                     verify_ssl=self.verify_ssl,
                 )
@@ -127,19 +126,21 @@ class FakeUserAgent(object):
             attr = attr.lower()
 
             if attr == "random":
-                browser = random.choice(self.data_randomize)
+                # Pick a random browser from the browsers argument list
+                browser_name = random.choice(self.browsers)
             else:
-                browser = settings.SHORTCUTS.get(attr, attr)
+                browser_name = settings.SHORTCUTS.get(attr, attr)
 
-            return random.choice(self.data_browsers[browser])
+            # Pick a random user-agent string for a specific browser
+            return random.choice(self.data_browsers[browser_name])
         except (KeyError, IndexError):
             if self.fallback is None:
                 raise FakeUserAgentError(
-                    "Error occurred during getting browser"
+                    f"Error occurred during getting browser: {attr}"
                 )  # noqa
             else:
                 logger.warning(
-                    "Error occurred during getting browser, "
+                    f"Error occurred during getting browser: {attr}, "
                     "but was suppressed with fallback.",
                 )
 

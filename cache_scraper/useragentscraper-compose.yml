@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  useragent_scraper:
+    image: danger89/useragent_scraper:latest
+    container_name: useragent_scraper
+    volumes:
+      - /var/www/useragent.melroy.org/html:/usr/src/app/website
+    restart: always

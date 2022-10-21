@@ -96,29 +96,9 @@ def get(url, verify_ssl=True):
                 sleep(settings.HTTP_DELAY)
 
 
-def get_browsers(verify_ssl=True):
+def get_browser_user_agents(browser, verify_ssl=True):
     """
-    very very hardcoded/dirty re/split stuff, but no dependencies
-    """
-    html = get(settings.BROWSERS_STATS_PAGE, verify_ssl=verify_ssl)
-    html = html.decode("utf-8")
-    html = html.split('<table class="ws-table-all notranslate">')[1]
-    html = html.split("</table>")[0]
-
-    pattern = r'\.asp">(.+?)<'
-    browsers = re.findall(pattern, html, re.UNICODE)
-
-    browsers = [settings.OVERRIDES.get(browser, browser) for browser in browsers]
-
-    pattern = r'td\sclass="right">(.+?)\s'
-    browsers_statistics = re.findall(pattern, html, re.UNICODE)
-
-    return list(zip(browsers, browsers_statistics))
-
-
-def get_browser_versions(browser, verify_ssl=True):
-    """
-    very very hardcoded/dirty re/split stuff, but no dependencies
+    Retrieve browser user agent strings
     """
     html = get(
         settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)),
@@ -144,80 +124,55 @@ def get_browser_versions(browser, verify_ssl=True):
 
     if not browsers:
         raise FakeUserAgentError(
-            "No browsers version found for {browser}".format(browser=browser)
+            "No browser user-agent strings found for browser: {browser}".format(
+                browser=browser
+            )
         )
 
     return browsers
 
 
-def load(use_cache_server=True, verify_ssl=True):
+def load(browsers, use_cache_server=True, verify_ssl=True):
     browsers_dict = {}
-    randomize_dict = {}
 
     try:
-        for item in get_browsers(verify_ssl=verify_ssl):
-            browser, percent = item
-
-            browser_key = browser
-
-            for value, replacement in settings.REPLACEMENTS.items():
-                browser_key = browser_key.replace(value, replacement)
-
-            browser_key = browser_key.lower()
-
-            browsers_dict[browser_key] = get_browser_versions(
-                browser,
+        # For each browser receive the user-agent strings
+        for browser_name in browsers:
+            browser_name = browser_name.lower().strip()
+            browsers_dict[browser_name] = get_browser_user_agents(
+                browser_name,
                 verify_ssl=verify_ssl,
             )
-
-            # it is actually so bad way for randomizing, simple list with
-            # browser_key's is event better
-            # I've failed so much a lot of years ago.
-            # Ideas for refactoring
-            # {'chrome': <percantage|int>, 'firefox': '<percatage|int>'}
-            for _ in range(int(float(percent) * 10)):
-                randomize_dict[str(len(randomize_dict))] = browser_key
     except Exception as exc:
         if not use_cache_server:
             raise exc
 
         logger.warning(
-            "Error occurred during loading data. " "Trying to use cache server %s",
+            "Error occurred during loading data. Trying to use cache server file %s",
             settings.CACHE_SERVER,
             exc_info=exc,
         )
         try:
-            ret = json.loads(
-                get(
+            data = {}
+            jsonLines = get(
                     settings.CACHE_SERVER,
                     verify_ssl=verify_ssl,
-                ).decode("utf-8")
-            )
+                    ).decode("utf-8")
+            for line in jsonLines.splitlines():
+                data.update(json.loads(line))
+            ret = data
         except (TypeError, ValueError):
-            raise FakeUserAgentError("Can not load data from cache server")
+            raise FakeUserAgentError("Can not load JSON Lines data from cache server")
     else:
-        ret = {
-            "browsers": browsers_dict,
-            "randomize": randomize_dict,
-        }
+        ret = browsers_dict
+
+    if not ret:
+        raise FakeUserAgentError("Data dictionary is empty", ret)
 
     if not isinstance(ret, dict):
         raise FakeUserAgentError("Data is not dictionary ", ret)
 
-    for param in ["browsers", "randomize"]:
-        if param not in ret:
-            raise FakeUserAgentError("Missing data param: ", param)
-
-        if not isinstance(ret[param], dict):
-            raise FakeUserAgentError("Data param is not dictionary", ret[param])  # noqa
-
-        if not ret[param]:
-            raise FakeUserAgentError("Data param is empty", ret[param])
-
     return ret
-
-
-# TODO: drop these useless functions
 
 
 def write(path, data):
@@ -244,15 +199,17 @@ def rm(path):
         os.remove(path)
 
 
-def update(path, use_cache_server=True, verify_ssl=True):
+def update(path, browsers, use_cache_server=True, verify_ssl=True):
     rm(path)
 
-    write(path, load(use_cache_server=use_cache_server, verify_ssl=verify_ssl))
+    write(
+        path, load(browsers, use_cache_server=use_cache_server, verify_ssl=verify_ssl)
+    )
 
 
-def load_cached(path, use_cache_server=True, verify_ssl=True):
+def load_cached(path, browsers, use_cache_server=True, verify_ssl=True):
     if not exist(path):
-        update(path, use_cache_server=use_cache_server, verify_ssl=verify_ssl)
+        update(path, browsers, use_cache_server=use_cache_server, verify_ssl=verify_ssl)
 
     return read(path)
 

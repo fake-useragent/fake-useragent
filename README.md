@@ -2,11 +2,11 @@
 
 Up to date simple useragent faker with real world database
 
-
 ## Features
 
 - Grabs up to date `useragent` from [useragentstring.com](http://useragentstring.com/)
-- Randomize with real world statistic via [w3schools.com](https://www.w3schools.com/browsers/browsers_stats.asp)
+- Back-up cache server if site above is down
+- Store local cache file for improved performance
 
 ### Installation
 
@@ -41,11 +41,19 @@ ua.ff
 ua.safari
 # Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25
 
-# and the best one, random via real world browser usage statistic
+# and the best one, get a random browser user-agent string
 ua.random
 ```
 
 ### Notes
+
+If you want to specificy your own browser list, you can do that via the `browsers` argument (default is: `["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]`).
+
+```py
+from fake_useragent import UserAgent
+ua = UserAgent(browsers=['edge', 'chrome'])
+ua.random
+```
 
 `fake-useragent` store collected data at your os temp dir, like `/tmp`
 
@@ -64,7 +72,7 @@ from fake_useragent import UserAgent
 ua = UserAgent(cache=False)
 ```
 
-Sometimes, [useragentstring.com](http://useragentstring.com) or [w3schools.com](https://www.w3schools.com/browsers/browsers_stats.asp) changes their html, or down, in such case `fake-useragent` uses [heroku](https://fake-useragent.herokuapp.com/browsers/0.1.8) as fallback.
+Sometimes, [useragentstring.com](http://useragentstring.com) changes their html or is down, in such case `fake-useragent` uses the following [hosted cache server](https://useragent.melroy.org/cache.json) as fallback.
 
 If you don't want to use hosted cache server (version 0.1.5 added).
 
@@ -131,7 +139,7 @@ If you need to safe some attributes from overriding them in UserAgent by `__geta
 use `safe_attrs` you can pass there attributes names.
 At least this will prevent you from raising FakeUserAgentError when attribute not found.
 
-For example, when using fake_useragent with `injections <https://github.com/tailhook/injections>`_ you need to:
+For example, when using fake*useragent with `injections <https://github.com/tailhook/injections>`* you need to:
 
 ```py
 import fake_useragent
@@ -171,58 +179,76 @@ tox
 
 ### Changelog
 
-* 0.1.12 March 31, 2022
-    - forked
+- 0.1.13 October 21, 2022
 
-* 0.1.11 October 4, 2018
-    - moved `s3 + cloudfront` fallback to `heroku.com`, cuz someone from Florida did ~25M requests last month
+  - Implement `browsers` argument, allowing you to override the browser names you want to use
+  - Fix browser listing of Internet Explorer and Edge
+  - Don't depend on w3schools.com anymore
+  - Clean-up data (temp) file format
+  - Update fallback cache server URL / use JSON Lines as file format
 
-* 0.1.10 February 11, 2018
-    - Minor fix docs `cloudfront` url
+- 0.1.12 March 31, 2022
 
-* 0.1.9 February 11, 2018
-    - fix ``w3schools.com`` renamed `IE/Edge` to `Edge/IE`
-    - moved `heroku.com` fallback to `s3 + cloudfront`
-    - stop testing Python3.3 and pypy
+  - forked
 
-* 0.1.8 November 2, 2017
-    - fix ``useragentstring.com`` ``Can't connect to local MySQL server through socket``
+- 0.1.11 October 4, 2018
 
-* 0.1.7 April 2, 2017
-    - fix broken README.rst
+  - moved `s3 + cloudfront` fallback to `heroku.com`, cuz someone from Florida did ~25M requests last month
 
-* 0.1.6 April 2, 2017
-    - fixes bug ``use_cache_server`` do not affected anything
-    - `w3schools.com <https://www.w3schools.com/browsers/browsers_stats.asp>`_ moved to ``https``
-    - ``verify_ssl`` options added, by default it is ``True`` (``urllib.urlopen`` ssl context for Python 2.7.9- and 3.4.3- is not supported)
+- 0.1.10 February 11, 2018
 
-* 0.1.5 February 28, 2017
-    - added ``ua.edge`` alias to Internet Explorer
-    - w3schools.com starts displaying ``Edge`` statistic
-    - Python 2.6 is not tested anymore
-    - ``use_cache_server`` option added
-    - Increased ``fake_useragent.settings.HTTP_TIMEOUT`` to 5 seconds
+  - Minor fix docs `cloudfront` url
 
-* 0.1.4 December 14, 2016
-    - Added custom data file location support
-    - Added ``fallback`` browser support, in case of unavailable data sources
-    - Added alias ``fake_useragent.FakeUserAgent`` for ``fake_useragent.UserAgent``
-    - Added alias ``fake_useragent.UserAgentError`` for ``fake_useragent.FakeUserAgentError``
-    - Reduced ``fake_useragent.settings.HTTP_TIMEOUT`` to 3 seconds
-    - Started migration to new data file format
-    - Simplified a lot 4+ years out of date code
-    - Better thread/greenlet safety
-    - Added verbose logging
-    - Added ``safe_attrs`` for prevent overriding by ``__getattr__``
+- 0.1.9 February 11, 2018
 
-* 0.1.3 November 24, 2016
-    - Added hosted data file, when remote services is unavailable
-    - Raises ``fake_useragent.errors.FakeUserAgentError`` in case when there is not way to download data
-    - Raises ``fake_useragent.errors.FakeUserAgentError`` instead of ``None`` in case of unknown browser
-    - Added ``gevent.sleep`` support in ``gevent`` patched environment when trying to download data
+  - fix `w3schools.com` renamed `IE/Edge` to `Edge/IE`
+  - moved `heroku.com` fallback to `s3 + cloudfront`
+  - stop testing Python3.3 and pypy
 
-* X.X.X xxxxxxx xx, xxxx
-    - xxxxx ?????
+- 0.1.8 November 2, 2017
+
+  - fix `useragentstring.com` `Can't connect to local MySQL server through socket`
+
+- 0.1.7 April 2, 2017
+
+  - fix broken README.rst
+
+- 0.1.6 April 2, 2017
+
+  - fixes bug `use_cache_server` do not affected anything
+  - `w3schools.com <https://www.w3schools.com/browsers/browsers_stats.asp>`\_ moved to `https`
+  - `verify_ssl` options added, by default it is `True` (`urllib.urlopen` ssl context for Python 2.7.9- and 3.4.3- is not supported)
+
+- 0.1.5 February 28, 2017
+
+  - added `ua.edge` alias to Internet Explorer
+  - w3schools.com starts displaying `Edge` statistic
+  - Python 2.6 is not tested anymore
+  - `use_cache_server` option added
+  - Increased `fake_useragent.settings.HTTP_TIMEOUT` to 5 seconds
+
+- 0.1.4 December 14, 2016
+
+  - Added custom data file location support
+  - Added `fallback` browser support, in case of unavailable data sources
+  - Added alias `fake_useragent.FakeUserAgent` for `fake_useragent.UserAgent`
+  - Added alias `fake_useragent.UserAgentError` for `fake_useragent.FakeUserAgentError`
+  - Reduced `fake_useragent.settings.HTTP_TIMEOUT` to 3 seconds
+  - Started migration to new data file format
+  - Simplified a lot 4+ years out of date code
+  - Better thread/greenlet safety
+  - Added verbose logging
+  - Added `safe_attrs` for prevent overriding by `__getattr__`
+
+- 0.1.3 November 24, 2016
+
+  - Added hosted data file, when remote services is unavailable
+  - Raises `fake_useragent.errors.FakeUserAgentError` in case when there is not way to download data
+  - Raises `fake_useragent.errors.FakeUserAgentError` instead of `None` in case of unknown browser
+  - Added `gevent.sleep` support in `gevent` patched environment when trying to download data
+
+- X.X.X xxxxxxx xx, xxxx
+  - xxxxx ?????
 
 ### Authors
 
