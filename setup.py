@@ -9,8 +9,9 @@ from setuptools import setup
 
 
 def get_version():
-    regex = r"__version__\s=\s\'(?P<version>[\d\.]+?)\'"
+    regex = r'__version__\s=\s"(?P<version>[\d\.]+?)"'
     path = ("fake_useragent", "settings.py")
+    print(re.search(regex, read(*path)))
     return re.search(regex, read(*path)).group("version")
 
 
@@ -23,9 +24,9 @@ def read(*parts):
 setup(
     name="fake-useragent",
     version=get_version(),
-    author="Melroy van den Berg",
-    author_email="melroy@melroy.org",
-    url="https://github.com/danger89/fake-useragent",
+    author="Victor Kovtun, Melroy van den Berg",
+    author_email="hellysmile@gmail.com, melroy@melroy.org",
+    url="https://github.com/hellysmile/fake-useragent",
     description="Up to date simple useragent faker with real world database",
     license_files=("LICENSE",),
     long_description=read("README.md"),

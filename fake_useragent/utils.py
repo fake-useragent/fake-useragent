@@ -155,9 +155,9 @@ def load(browsers, use_cache_server=True, verify_ssl=True):
         try:
             data = {}
             jsonLines = get(
-                    settings.CACHE_SERVER,
-                    verify_ssl=verify_ssl,
-                    ).decode("utf-8")
+                settings.CACHE_SERVER,
+                verify_ssl=verify_ssl,
+            ).decode("utf-8")
             for line in jsonLines.splitlines():
                 data.update(json.loads(line))
             ret = data

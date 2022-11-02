@@ -85,7 +85,9 @@ TELNETCONSOLE_ENABLED = False
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 FILES_STORE = os.path.join(CUR_DIR, "..", "website")
 
-FEEDS = {"website/cache.json": {"format": "jsonlines", "encoding": "utf8", "overwrite": True}}
+FEEDS = {
+    "website/cache.json": {"format": "jsonlines", "encoding": "utf8", "overwrite": True}
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

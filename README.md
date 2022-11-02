@@ -194,6 +194,8 @@ tox
   - Don't depend on w3schools.com anymore
   - Clean-up data (temp) file format
   - Update fallback cache server URL / use JSON Lines as file format
+  - Move to GitHub Actions instead of Travis
+  - Using [`black`](https://pypi.org/project/black/) Python formatter in favour of Flake
 
 - 0.1.12 March 31, 2022
 
