@@ -10,14 +10,6 @@ Up to date simple useragent faker with real world database
 
 ### Installation
 
-For now:
-
-```sh
-pip install .
-```
-
-_Soon again:_
-
 ```sh
 pip install fake-useragent
 ```
@@ -136,7 +128,7 @@ Want to control location of data file? (version 0.1.4 added)
 ```py
 import fake_useragent
 
-# I am STRONGLY!!! recommend to use version suffix
+# I am strongly! recommend using a version suffix
 location = '/home/user/fake_useragent%s.json' % fake_useragent.VERSION
 
 ua = fake_useragent.UserAgent(path=location)
