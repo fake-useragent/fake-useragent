@@ -44,6 +44,7 @@ def _request(*args, **kwargs):
     for url in denied_urls:
         if requested_url.startswith(url):
             if response_url is None:
+                print("mock")
                 response_url = "http://0.0.0.0:{port}".format(
                     port=find_unused_port(),
                 )
@@ -52,5 +53,4 @@ def _request(*args, **kwargs):
         args = list(args)
         args[0] = response_url
         args = tuple(args)
-
     return Request(*args, **kwargs)

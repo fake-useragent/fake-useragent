@@ -60,95 +60,21 @@ def test_utils_get_retries():
 
 
 def test_utils_get_cache_server():
-    body = utils.get(settings.CACHE_SERVER).decode("utf-8")
-
-    data = json.loads(body)
+    jsonLines = utils.get(settings.CACHE_SERVER).decode("utf-8")
+    data = {}
+    for line in jsonLines.splitlines():
+        data.update(json.loads(line))
 
     expected = {
-        "randomize": mock.ANY,
-        "browsers": {
-            "chrome": mock.ANY,
-            "firefox": mock.ANY,
-            "opera": mock.ANY,
-            "safari": mock.ANY,
-            "internetexplorer": mock.ANY,
-        },
+        "chrome": mock.ANY,
+        "opera": mock.ANY,
+        "firefox": mock.ANY,
+        "safari": mock.ANY,
+        "edge": mock.ANY,
+        "internet explorer": mock.ANY,
     }
 
     assert expected == data
-
-
-def test_utils_get_browsers():
-    browsers = utils.get_browsers()
-
-    assert len(browsers) == 5
-
-    expected = [
-        "Firefox",
-        "Opera",
-        "Chrome",
-        "Internet Explorer",
-        "Safari",
-    ]
-
-    browser_names = [browser[0] for browser in browsers]
-
-    assert set(expected) == set(browser_names)
-
-    total = 100
-
-    for _, percentage in browsers:
-        total -= float(percentage)
-
-    assert round(total, 0) <= 2
-
-    if urlopen_has_ssl_context:
-        with mock.patch(
-            "fake_useragent.utils.Request",
-            side_effect=partial(
-                _request,
-                response_url="https://expired.badssl.com/",
-            ),
-        ):
-            with pytest.raises(errors.FakeUserAgentError):
-                utils.get_browsers()
-
-
-def test_utils_get_browser_versions():
-    browser_names = [browser[0] for browser in utils.get_browsers()]
-
-    for browser in browser_names:
-        count = len(utils.get_browser_versions(browser))
-        assert count == settings.BROWSERS_COUNT_LIMIT
-
-        if urlopen_has_ssl_context:
-            with mock.patch(
-                "fake_useragent.utils.Request",
-                side_effect=partial(
-                    _request,
-                    response_url="https://expired.badssl.com/",
-                ),
-            ):
-                with pytest.raises(errors.FakeUserAgentError):
-                    utils.get_browser_versions(browser)
-
-
-def test_utils_get_browser_versions_no_browser_versions():
-    browser_names = [browser[0] for browser in utils.get_browsers()]
-
-    for browser in browser_names:
-        with mock.patch("fake_useragent.utils.urlopen") as mocked:
-            path = os.path.join(assets, "no_browser_versions.html")
-
-            with io.open(path, mode="rb") as fp:
-                m = mock.Mock()
-                m.read = fp.read
-                mocked.return_value = m
-
-                with pytest.raises(errors.FakeUserAgentError) as ctx:
-                    utils.get_browser_versions(browser)
-
-                assert ctx.value.args[0].startswith("No browsers version")
 
 
 def test_utils_load(path):
@@ -158,19 +84,18 @@ def test_utils_load(path):
         "fake_useragent.utils.load",
         side_effect=_load,
     ) as mocked:
-        data = utils.load(use_cache_server=False)
+        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
+        data = utils.load(browsers, use_cache_server=False)
 
         mocked.assert_called()
 
     expected = {
-        "randomize": mock.ANY,
-        "browsers": {
-            "chrome": mock.ANY,
-            "firefox": mock.ANY,
-            "opera": mock.ANY,
-            "safari": mock.ANY,
-            "internetexplorer": mock.ANY,
-        },
+        "chrome": mock.ANY,
+        "edge": mock.ANY,
+        "firefox": mock.ANY,
+        "opera": mock.ANY,
+        "safari": mock.ANY,
+        "internet explorer": mock.ANY,
     }
 
     assert expected == data
@@ -230,7 +155,8 @@ def test_utils_rm(path):
 
 
 def test_utils_update(path):
-    utils.update(path, use_cache_server=False)
+    browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
+    utils.update(path, browsers, use_cache_server=False)
 
     mtime = os.path.getmtime(path)
 
@@ -240,7 +166,7 @@ def test_utils_update(path):
         "fake_useragent.utils.load",
         side_effect=_load,
     ) as mocked:
-        utils.update(path, use_cache_server=False)
+        utils.update(path, browsers, use_cache_server=False)
 
         mocked.assert_called()
 
@@ -254,19 +180,18 @@ def test_utils_load_cached(path):
         "fake_useragent.utils.load",
         side_effect=_load,
     ) as mocked:
-        data = utils.load_cached(path, use_cache_server=False)
+        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
+        data = utils.load_cached(path, browsers, use_cache_server=False)
 
         mocked.assert_called()
 
     expected = {
-        "randomize": mock.ANY,
-        "browsers": {
-            "chrome": mock.ANY,
-            "firefox": mock.ANY,
-            "opera": mock.ANY,
-            "safari": mock.ANY,
-            "internetexplorer": mock.ANY,
-        },
+        "chrome": mock.ANY,
+        "edge": mock.ANY,
+        "firefox": mock.ANY,
+        "opera": mock.ANY,
+        "safari": mock.ANY,
+        "internet explorer": mock.ANY,
     }
 
     assert expected == data
@@ -274,7 +199,8 @@ def test_utils_load_cached(path):
     expected = data
 
     with mock.patch("fake_useragent.utils.load") as mocked:
-        data = utils.load_cached(path, use_cache_server=False)
+        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
+        data = utils.load_cached(path, browsers, use_cache_server=False)
 
         mocked.assert_not_called()
 
@@ -283,45 +209,43 @@ def test_utils_load_cached(path):
 
 def test_utils_load_no_use_cache_server(path):
     denied_urls = [
-        "https://www.w3schools.com/browsers/browsers_stats.asp",
-        "http://useragentstring.com/pages/useragentstring.php",
+        "https://useragentstring.com",
     ]
 
     with mock.patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
+        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
         with pytest.raises(errors.FakeUserAgentError):
-            utils.load(use_cache_server=False)
+            utils.load(browsers, use_cache_server=False)
 
         with pytest.raises(errors.FakeUserAgentError):
-            utils.load_cached(path, use_cache_server=False)
+            utils.load_cached(path, browsers, use_cache_server=False)
 
         with pytest.raises(errors.FakeUserAgentError):
-            utils.update(path, use_cache_server=False)
+            utils.update(path, browsers, use_cache_server=False)
 
 
 def test_utils_load_use_cache_server(path):
     denied_urls = [
-        "https://www.w3schools.com/browsers/browsers_stats.asp",
-        "http://useragentstring.com/pages/useragentstring.php",
+        "https://useragentstring.com",
     ]
 
     with mock.patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
-        data = utils.load(use_cache_server=True)
+        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
+        data = utils.load(browsers, use_cache_server=True)
 
         expected = {
-            "randomize": mock.ANY,
-            "browsers": {
-                "chrome": mock.ANY,
-                "firefox": mock.ANY,
-                "opera": mock.ANY,
-                "safari": mock.ANY,
-                "internetexplorer": mock.ANY,
-            },
+            "chrome": mock.ANY,
+            "edge": mock.ANY,
+            "firefox": mock.ANY,
+            "opera": mock.ANY,
+            "safari": mock.ANY,
+            "internet explorer": mock.ANY,
         }
 
         assert expected == data
@@ -329,8 +253,7 @@ def test_utils_load_use_cache_server(path):
 
 def test_utils_load_use_cache_server_down(path):
     denied_urls = [
-        "https://www.w3schools.com/browsers/browsers_stats.asp",
-        "http://useragentstring.com/pages/useragentstring.php",
+        "https://useragentstring.com/",
         settings.CACHE_SERVER,
     ]
 
@@ -338,5 +261,6 @@ def test_utils_load_use_cache_server_down(path):
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
+        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
         with pytest.raises(errors.FakeUserAgentError):
-            utils.load(use_cache_server=True)
+            utils.load(browsers, use_cache_server=True)
