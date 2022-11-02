@@ -11,7 +11,6 @@ from setuptools import setup
 def get_version():
     regex = r'__version__\s=\s"(?P<version>[\d\.]+?)"'
     path = ("fake_useragent", "settings.py")
-    print(re.search(regex, read(*path)))
     return re.search(regex, read(*path)).group("version")
 
 
