@@ -36,7 +36,7 @@ service-identity==21.1.0
 six==1.16.0
 tldextract==3.4.0
 tomli==2.0.1
-Twisted==22.8.0
+Twisted==22.10.0
 typing_extensions==4.4.0
 urllib3==1.26.12
 w3lib==2.0.1
