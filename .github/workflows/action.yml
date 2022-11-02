@@ -4,7 +4,7 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   test:
-    runs-on: ubuntu-latest # [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ubuntu-latest # [macos-latest, windows-latest]
     strategy:
       # fail-fast: false
       matrix:
@@ -21,3 +21,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run tests
         run: tox
+      - name: Upload code coverage (HTML)
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage
+          path: htmlcov/
