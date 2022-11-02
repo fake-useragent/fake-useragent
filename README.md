@@ -1,4 +1,4 @@
-[![Test & Deploy fake-useragent](https://github.com/hellysmile/fake-useragent/actions/workflows/action.yml/badge.svg?branch=master)](https://github.com/danger89/fake-useragent/actions/workflows/action.yml?query=branch%3Amaster)
+[![Test & Deploy fake-useragent](https://github.com/hellysmile/fake-useragent/actions/workflows/action.yml/badge.svg?branch=master)](https://github.com/hellysmile/fake-useragent/actions/workflows/action.yml?query=branch%3Amaster)
 
 # fake-useragent
 
@@ -168,14 +168,14 @@ import fake_useragent
 print(fake_useragent.VERSION)
 ```
 
-And you are always welcome to post [issues](https://github.com/danger89/fake-useragent/issues).
+And you are always welcome to post [issues](https://github.com/hellysmile/fake-useragent/issues).
 
 Please do not forget mention version that you are using.
 
 ### Tests
 
 ```sh
-pip install tox
+pip install -r requirements.txt
 tox
 ```
 
