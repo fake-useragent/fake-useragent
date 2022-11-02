@@ -1,4 +1,6 @@
-# fake-useragent (Official fork)
+[![Test & Deploy fake-useragent](https://github.com/hellysmile/fake-useragent/actions/workflows/action.yml/badge.svg?branch=master)](https://github.com/danger89/fake-useragent/actions/workflows/action.yml?query=branch%3Amaster)
+
+# fake-useragent
 
 Up to date simple useragent faker with real world database
 
@@ -254,4 +256,4 @@ tox
 
 ### Authors
 
-You can visit [authors page](https://github.com/danger89/fake-useragent/blob/master/AUTHORS).
+You can visit [authors page](https://github.com/hellysmile/fake-useragent/blob/master/AUTHORS).
