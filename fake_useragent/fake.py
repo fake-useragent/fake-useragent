@@ -17,53 +17,51 @@ class FakeUserAgent(object):
         use_cache_server=True,
         path=settings.DB,
         fallback=None,
+        browsers=["chrome", "edge", "internet explorer", "firefox", "safari", "opera"],
         verify_ssl=True,
         safe_attrs=tuple(),
     ):
-        assert isinstance(cache, bool), \
-            'cache must be True or False'
+        assert isinstance(cache, bool), "cache must be True or False"
 
         self.cache = cache
 
-        assert isinstance(use_cache_server, bool), \
-            'use_cache_server must be True or False'
+        assert isinstance(
+            use_cache_server, bool
+        ), "use_cache_server must be True or False"
 
         self.use_cache_server = use_cache_server
 
-        assert isinstance(path, str_types), \
-            'path must be string or unicode'
+        assert isinstance(path, str_types), "path must be string or unicode"
 
         self.path = path
 
         if fallback is not None:
-            assert isinstance(fallback, str_types), \
-                'fallback must be string or unicode'
+            assert isinstance(fallback, str_types), "fallback must be string or unicode"
 
         self.fallback = fallback
 
-        assert isinstance(verify_ssl, bool), \
-            'verify_ssl must be True or False'
+        assert isinstance(browsers, (list, str)), "browsers must be list or string"
+
+        self.browsers = browsers
+
+        assert isinstance(verify_ssl, bool), "verify_ssl must be True or False"
 
         self.verify_ssl = verify_ssl
 
-        assert isinstance(safe_attrs, (list, set, tuple)), \
-            'safe_attrs must be list\\tuple\\set of strings or unicode'
+        assert isinstance(
+            safe_attrs, (list, set, tuple)
+        ), "safe_attrs must be list\\tuple\\set of strings or unicode"
 
         if safe_attrs:
-            str_types_safe_attrs = [
-                isinstance(attr, str_types) for attr in safe_attrs
-            ]
+            str_types_safe_attrs = [isinstance(attr, str_types) for attr in safe_attrs]
 
-            assert all(str_types_safe_attrs), \
-                'safe_attrs must be list\\tuple\\set of strings or unicode'
+            assert all(
+                str_types_safe_attrs
+            ), "safe_attrs must be list\\tuple\\set of strings or unicode"
 
         self.safe_attrs = set(safe_attrs)
 
         # initial empty data
-        self.data = {}
-        # TODO: change source file format
-        # version 0.1.4+ migration tool
-        self.data_randomize = []
         self.data_browsers = {}
 
         self.load()
@@ -72,47 +70,46 @@ class FakeUserAgent(object):
         try:
             with self.load.lock:
                 if self.cache:
-                    self.data = load_cached(
+                    self.data_browsers = load_cached(
                         self.path,
+                        self.browsers,
                         use_cache_server=self.use_cache_server,
                         verify_ssl=self.verify_ssl,
                     )
                 else:
-                    self.data = load(
+                    self.data_browsers = load(
+                        self.browsers,
                         use_cache_server=self.use_cache_server,
                         verify_ssl=self.verify_ssl,
                     )
-
-                # TODO: change source file format
-                # version 0.1.4+ migration tool
-                self.data_randomize = list(self.data['randomize'].values())
-                self.data_browsers = self.data['browsers']
         except FakeUserAgentError:
             if self.fallback is None:
                 raise
             else:
                 logger.warning(
-                    'Error occurred during fetching data, '
-                    'but was suppressed with fallback.',
+                    "Error occurred during fetching data, "
+                    "but was suppressed with fallback.",
                 )
+
     load.lock = Lock()
 
     def update(self, cache=None):
         with self.update.lock:
             if cache is not None:
-                assert isinstance(cache, bool), \
-                    'cache must be True or False'
+                assert isinstance(cache, bool), "cache must be True or False"
 
                 self.cache = cache
 
             if self.cache:
                 update(
                     self.path,
+                    self.browsers,
                     use_cache_server=self.use_cache_server,
                     verify_ssl=self.verify_ssl,
                 )
 
             self.load()
+
     update.lock = Lock()
 
     def __getitem__(self, attr):
@@ -128,19 +125,23 @@ class FakeUserAgent(object):
 
             attr = attr.lower()
 
-            if attr == 'random':
-                browser = random.choice(self.data_randomize)
+            if attr == "random":
+                # Pick a random browser from the browsers argument list
+                browser_name = random.choice(self.browsers)
             else:
-                browser = settings.SHORTCUTS.get(attr, attr)
+                browser_name = settings.SHORTCUTS.get(attr, attr)
 
-            return random.choice(self.data_browsers[browser])
+            # Pick a random user-agent string for a specific browser
+            return random.choice(self.data_browsers[browser_name])
         except (KeyError, IndexError):
             if self.fallback is None:
-                raise FakeUserAgentError('Error occurred during getting browser')  # noqa
+                raise FakeUserAgentError(
+                    f"Error occurred during getting browser: {attr}"
+                )  # noqa
             else:
                 logger.warning(
-                    'Error occurred during getting browser, '
-                    'but was suppressed with fallback.',
+                    f"Error occurred during getting browser: {attr}, "
+                    "but was suppressed with fallback.",
                 )
 
                 return self.fallback
