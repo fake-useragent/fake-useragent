@@ -157,7 +157,7 @@ This is magic for rarely extreme case.
 Make sure that you using latest version!!!
 
 ```sh
-pip install -U fake-useragent
+pip install --upgrade fake-useragent
 ```
 
 Check version via python console: (version 0.1.4 added)
