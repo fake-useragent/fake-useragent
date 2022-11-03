@@ -25,7 +25,7 @@ setup(
     version=get_version(),
     author="Victor Kovtun, Melroy van den Berg",
     author_email="hellysmile@gmail.com, melroy@melroy.org",
-    url="https://github.com/hellysmile/fake-useragent",
+    url="https://github.com/fake-useragent/fake-useragent",
     description="Up to date simple useragent faker with real world database",
     license_files=("LICENSE",),
     long_description=read("README.md"),

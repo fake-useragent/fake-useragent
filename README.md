@@ -1,4 +1,4 @@
-[![Test & Deploy fake-useragent](https://github.com/hellysmile/fake-useragent/actions/workflows/action.yml/badge.svg?branch=master)](https://github.com/hellysmile/fake-useragent/actions/workflows/action.yml?query=branch%3Amaster)
+[![Test & Deploy fake-useragent](https://github.com/fake-useragent/fake-useragent/actions/workflows/action.yml/badge.svg?branch=master)](https://github.com/fake-useragent/fake-useragent/actions/workflows/action.yml?query=branch%3Amaster)
 
 # fake-useragent
 
@@ -168,7 +168,7 @@ import fake_useragent
 print(fake_useragent.VERSION)
 ```
 
-And you are always welcome to post [issues](https://github.com/hellysmile/fake-useragent/issues).
+And you are always welcome to post [issues](https://github.com/fake-useragent/fake-useragent/issues).
 
 Please do not forget mention version that you are using.
 
@@ -256,4 +256,4 @@ tox
 
 ### Authors
 
-You can visit [authors page](https://github.com/hellysmile/fake-useragent/blob/master/AUTHORS).
+You can visit [authors page](https://github.com/fake-useragent/fake-useragent/blob/master/AUTHORS).
