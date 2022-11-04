@@ -49,7 +49,7 @@ ua.random
 
 ### Notes
 
-If you want to specificy your own browser list, you can do that via the `browsers` argument (default is: `["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]`).
+If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]`).
 
 ```py
 from fake_useragent import UserAgent
@@ -84,7 +84,7 @@ ua = UserAgent(use_cache_server=False)
 ```
 
 In very rare case, if hosted cache server and sources will be
-unavailable `fake-useragent` wont be able to download data: (version 0.1.3 added)
+unavailable `fake-useragent` won't be able to download data: (version 0.1.3 added)
 
 ```py
 from fake_useragent import UserAgent
