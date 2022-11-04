@@ -6,7 +6,7 @@ import json
 import os
 from functools import partial
 
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 import pytest
 
 from fake_useragent import errors, settings, utils
@@ -66,12 +66,12 @@ def test_utils_get_cache_server():
         data.update(json.loads(line))
 
     expected = {
-        "chrome": mock.ANY,
-        "opera": mock.ANY,
-        "firefox": mock.ANY,
-        "safari": mock.ANY,
-        "edge": mock.ANY,
-        "internet explorer": mock.ANY,
+        "chrome": ANY,
+        "opera": ANY,
+        "firefox": ANY,
+        "safari": ANY,
+        "edge": ANY,
+        "internet explorer": ANY,
     }
 
     assert expected == data
@@ -90,12 +90,12 @@ def test_utils_load(path):
         mocked.assert_called()
 
     expected = {
-        "chrome": mock.ANY,
-        "edge": mock.ANY,
-        "firefox": mock.ANY,
-        "opera": mock.ANY,
-        "safari": mock.ANY,
-        "internet explorer": mock.ANY,
+        "chrome": ANY,
+        "edge": ANY,
+        "firefox": ANY,
+        "opera": ANY,
+        "safari": ANY,
+        "internet explorer": ANY,
     }
 
     assert expected == data
@@ -186,12 +186,12 @@ def test_utils_load_cached(path):
         mocked.assert_called()
 
     expected = {
-        "chrome": mock.ANY,
-        "edge": mock.ANY,
-        "firefox": mock.ANY,
-        "opera": mock.ANY,
-        "safari": mock.ANY,
-        "internet explorer": mock.ANY,
+        "chrome": ANY,
+        "edge": ANY,
+        "firefox": ANY,
+        "opera": ANY,
+        "safari": ANY,
+        "internet explorer": ANY,
     }
 
     assert expected == data
@@ -240,12 +240,12 @@ def test_utils_load_use_cache_server(path):
         data = utils.load(browsers, use_cache_server=True)
 
         expected = {
-            "chrome": mock.ANY,
-            "edge": mock.ANY,
-            "firefox": mock.ANY,
-            "opera": mock.ANY,
-            "safari": mock.ANY,
-            "internet explorer": mock.ANY,
+            "chrome": ANY,
+            "edge": ANY,
+            "firefox": ANY,
+            "opera": ANY,
+            "safari": ANY,
+            "internet explorer": ANY,
         }
 
         assert expected == data
