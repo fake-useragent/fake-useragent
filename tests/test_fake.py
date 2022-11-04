@@ -4,7 +4,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 from functools import partial
 
-import mock
+from unittest.mock import patch
 import pytest
 
 from fake_useragent import (
@@ -101,7 +101,7 @@ def test_fake_fallback():
         settings.CACHE_SERVER,
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
@@ -118,7 +118,7 @@ def test_fake_no_fallback():
         settings.CACHE_SERVER,
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
@@ -158,7 +158,7 @@ def test_fake_update_use_cache_server():
         "https://useragentstring.com",
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
@@ -171,7 +171,7 @@ def test_fake_update_use_cache_server():
         settings.CACHE_SERVER,
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
@@ -184,7 +184,7 @@ def test_fake_not_use_cache_server():
         "https://useragentstring.com",
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
@@ -199,7 +199,7 @@ def test_fake_update_not_use_cache_server():
         "https://useragentstring.com",
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
@@ -212,7 +212,7 @@ def test_fake_use_cache_server():
         "https://useragentstring.com",
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):

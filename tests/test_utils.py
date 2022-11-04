@@ -6,7 +6,7 @@ import json
 import os
 from functools import partial
 
-import mock
+from unittest.mock import patch, ANY
 import pytest
 
 from fake_useragent import errors, settings, utils
@@ -50,7 +50,7 @@ def test_utils_get_retries():
 
     __retried_request.attempt = 0
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=__retried_request,
     ):
@@ -66,12 +66,12 @@ def test_utils_get_cache_server():
         data.update(json.loads(line))
 
     expected = {
-        "chrome": mock.ANY,
-        "opera": mock.ANY,
-        "firefox": mock.ANY,
-        "safari": mock.ANY,
-        "edge": mock.ANY,
-        "internet explorer": mock.ANY,
+        "chrome": ANY,
+        "opera": ANY,
+        "firefox": ANY,
+        "safari": ANY,
+        "edge": ANY,
+        "internet explorer": ANY,
     }
 
     assert expected == data
@@ -80,7 +80,7 @@ def test_utils_get_cache_server():
 def test_utils_load(path):
     _load = utils.load
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.load",
         side_effect=_load,
     ) as mocked:
@@ -90,12 +90,12 @@ def test_utils_load(path):
         mocked.assert_called()
 
     expected = {
-        "chrome": mock.ANY,
-        "edge": mock.ANY,
-        "firefox": mock.ANY,
-        "opera": mock.ANY,
-        "safari": mock.ANY,
-        "internet explorer": mock.ANY,
+        "chrome": ANY,
+        "edge": ANY,
+        "firefox": ANY,
+        "opera": ANY,
+        "safari": ANY,
+        "internet explorer": ANY,
     }
 
     assert expected == data
@@ -162,7 +162,7 @@ def test_utils_update(path):
 
     _load = utils.load
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.load",
         side_effect=_load,
     ) as mocked:
@@ -176,7 +176,7 @@ def test_utils_update(path):
 def test_utils_load_cached(path):
     _load = utils.load
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.load",
         side_effect=_load,
     ) as mocked:
@@ -186,19 +186,19 @@ def test_utils_load_cached(path):
         mocked.assert_called()
 
     expected = {
-        "chrome": mock.ANY,
-        "edge": mock.ANY,
-        "firefox": mock.ANY,
-        "opera": mock.ANY,
-        "safari": mock.ANY,
-        "internet explorer": mock.ANY,
+        "chrome": ANY,
+        "edge": ANY,
+        "firefox": ANY,
+        "opera": ANY,
+        "safari": ANY,
+        "internet explorer": ANY,
     }
 
     assert expected == data
 
     expected = data
 
-    with mock.patch("fake_useragent.utils.load") as mocked:
+    with patch("fake_useragent.utils.load") as mocked:
         browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
         data = utils.load_cached(path, browsers, use_cache_server=False)
 
@@ -212,7 +212,7 @@ def test_utils_load_no_use_cache_server(path):
         "https://useragentstring.com",
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
@@ -232,7 +232,7 @@ def test_utils_load_use_cache_server(path):
         "https://useragentstring.com",
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
@@ -240,12 +240,12 @@ def test_utils_load_use_cache_server(path):
         data = utils.load(browsers, use_cache_server=True)
 
         expected = {
-            "chrome": mock.ANY,
-            "edge": mock.ANY,
-            "firefox": mock.ANY,
-            "opera": mock.ANY,
-            "safari": mock.ANY,
-            "internet explorer": mock.ANY,
+            "chrome": ANY,
+            "edge": ANY,
+            "firefox": ANY,
+            "opera": ANY,
+            "safari": ANY,
+            "internet explorer": ANY,
         }
 
         assert expected == data
@@ -257,7 +257,7 @@ def test_utils_load_use_cache_server_down(path):
         settings.CACHE_SERVER,
     ]
 
-    with mock.patch(
+    with patch(
         "fake_useragent.utils.Request",
         side_effect=partial(_request, denied_urls=denied_urls),
     ):
