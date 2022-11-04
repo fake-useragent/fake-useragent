@@ -1,6 +1,15 @@
 name: Test & Deploy fake-useragent
 
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - *
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   test:
