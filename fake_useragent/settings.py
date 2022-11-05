@@ -1,7 +1,8 @@
 import os
 import tempfile
+import importlib.metadata
 
-__version__ = "0.1.13"
+__version__ = importlib.metadata.version("fake-useragent")
 
 DB = os.path.join(
     tempfile.gettempdir(),
