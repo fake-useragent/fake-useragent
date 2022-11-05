@@ -4,11 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fake-useragent"
+version = "0.1.14"
 authors = [
     {name = "Victor Kovtun", email = "hellysmile@gmail.com"},
     {name = "Melroy van den Berg", email = "melroy@melroy.org"},
 ]
-description = "Up to date simple useragent faker with real world database"
+description = "Up-to-date simple useragent faker with real world database"
 keywords = [
     "user",
     "agent",
@@ -29,8 +30,11 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     "Operating System :: OS Independent",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
 ]
-dynamic = ["version"]
 
 [project.readme]
 file = "README.md"
@@ -43,6 +47,3 @@ Homepage = "https://github.com/fake-useragent/fake-useragent"
 packages = ["fake_useragent"]
 zip-safe = false
 include-package-data = true
-
-[tool.setuptools.dynamic]
-version = {attr = "fake_useragent.settings.__version__"}
