@@ -2,7 +2,7 @@
 
 # fake-useragent
 
-Up to date simple useragent faker with real world database
+Up-to-date simple useragent faker with real world database
 
 ## Features
 
@@ -180,6 +180,15 @@ tox
 ```
 
 ### Changelog
+
+- 0.1.14 November 5, 2022
+
+  - Improve code quality stanards using modern Python >=3.7 syntax
+  - Migrated to `pyproject.toml` build system format + syntax check
+  - Add additional classifiers to the toml file
+  - Improved `tox.ini` file
+  - Improved GitHub Actions job using pip cache
+  - And various small fixes
 
 - 0.1.13 October 21, 2022
 
