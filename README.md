@@ -183,7 +183,7 @@ tox
 
 - 0.1.14 November 5, 2022
 
-  - Improve code quality stanards using modern Python >=3.7 syntax
+  - Improve code quality standards using modern Python >=3.7 syntax
   - Migrated to `pyproject.toml` build system format + syntax check
   - Add additional classifiers to the toml file
   - Improved `tox.ini` file
