@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import contextlib
 import inspect
 import io
@@ -176,7 +173,7 @@ def load(browsers, use_cache_server=True, verify_ssl=True):
 
 
 def write(path, data):
-    with io.open(path, encoding="utf-8", mode="wt") as fp:
+    with open(path, encoding="utf-8", mode="w") as fp:
         dumped = json.dumps(data)
 
         if not isinstance(dumped, text):  # Python 2
@@ -186,7 +183,7 @@ def write(path, data):
 
 
 def read(path):
-    with io.open(path, encoding="utf-8", mode="rt") as fp:
+    with open(path, encoding="utf-8") as fp:
         return json.loads(fp.read())
 
 

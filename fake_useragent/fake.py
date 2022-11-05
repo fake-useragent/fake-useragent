@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import random
 from threading import Lock
 
@@ -10,7 +7,7 @@ from fake_useragent.log import logger
 from fake_useragent.utils import load, load_cached, str_types, update
 
 
-class FakeUserAgent(object):
+class FakeUserAgent:
     def __init__(
         self,
         cache=True,

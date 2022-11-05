@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # fake-useragent documentation build configuration file, created by
 # sphinx-quickstart on Fri Nov 22 09:19:02 2013.

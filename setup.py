@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import io
 import os
 import re
@@ -16,7 +13,7 @@ def get_version():
 
 def read(*parts):
     filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), *parts)
-    with io.open(filename, encoding="utf-8", mode="rt") as fp:
+    with open(filename, encoding="utf-8") as fp:
         return fp.read()
 
 
@@ -30,7 +27,7 @@ setup(
     license_files=("LICENSE",),
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
-    packages=[str("fake_useragent")],
+    packages=["fake_useragent"],
     include_package_data=True,
     zip_safe=False,
     classifiers=[

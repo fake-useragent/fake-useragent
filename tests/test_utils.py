@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import io
 import json
 import os
@@ -106,7 +103,7 @@ def test_utils_write(path):
 
     utils.write(path, data)
 
-    with io.open(path, mode="rt", encoding="utf-8") as fp:
+    with open(path, encoding="utf-8") as fp:
         expected = json.loads(fp.read())
 
     assert expected == data
@@ -115,7 +112,7 @@ def test_utils_write(path):
 def test_utils_read(path):
     data = {"foo": "bar"}
 
-    with io.open(path, mode="wt", encoding="utf-8") as fp:
+    with open(path, mode="w", encoding="utf-8") as fp:
         dumped = json.dumps(data)
 
         if not isinstance(dumped, utils.text):  # Python 2
@@ -133,7 +130,7 @@ def test_utils_exist(path):
 
     assert not utils.exist(path)
 
-    with io.open(path, mode="wb") as fp:
+    with open(path, mode="wb") as fp:
         fp.write(b"\n")
 
     assert os.path.isfile(path)
@@ -144,7 +141,7 @@ def test_utils_exist(path):
 def test_utils_rm(path):
     assert not os.path.isfile(path)
 
-    with io.open(path, mode="wb") as fp:
+    with open(path, mode="wb") as fp:
         fp.write(b"\n")
 
     assert os.path.isfile(path)
