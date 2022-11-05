@@ -1,8 +1,13 @@
 import os
 import tempfile
-import importlib.metadata
 
-__version__ = importlib.metadata.version("fake-useragent")
+try:
+    from importlib import metadata
+except ImportError:
+    # Running on pre-3.8 Python; use importlib-metadata package
+    import importlib_metadata as metadata
+
+__version__ = metadata.version("fake-useragent")
 
 DB = os.path.join(
     tempfile.gettempdir(),
