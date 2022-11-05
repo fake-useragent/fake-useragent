@@ -32,7 +32,6 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "Operating System :: OS Independent",
 ]
-dynamic = ["version"]
 
 [project.readme]
 file = "README.md"
@@ -45,6 +44,3 @@ Homepage = "https://github.com/fake-useragent/fake-useragent"
 packages = ["fake_useragent"]
 zip-safe = false
 include-package-data = true
-
-[tool.setuptools.dynamic]
-version = {attr = "fake_useragent.settings.__version__"}
