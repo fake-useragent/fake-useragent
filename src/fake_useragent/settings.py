@@ -16,8 +16,6 @@ DB = os.path.join(
     ),
 )
 
-CACHE_SERVER = "https://useragent.melroy.org/cache.json"
-
 BROWSER_BASE_PAGE = "https://useragentstring.com/pages/{browser}/"  # noqa
 
 BROWSERS_COUNT_LIMIT = 50

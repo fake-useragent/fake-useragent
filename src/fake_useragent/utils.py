@@ -8,6 +8,11 @@ import ssl
 
 from fake_useragent.log import logger
 
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
+
 try:  # Python 2 # pragma: no cover
     from urllib import quote_plus
 
@@ -93,9 +98,9 @@ def get(url, verify_ssl=True):
                 sleep(settings.HTTP_DELAY)
 
 
-def get_browser_user_agents(browser, verify_ssl=True):
+def get_browser_user_agents_online(browser, verify_ssl=True):
     """
-    Retrieve browser user agent strings
+    Retrieve browser user agent strings from website
     """
     html = get(
         settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)),
@@ -129,39 +134,41 @@ def get_browser_user_agents(browser, verify_ssl=True):
     return browsers
 
 
-def load(browsers, use_cache_server=True, verify_ssl=True):
-    browsers_dict = {}
-
-    try:
-        # For each browser receive the user-agent strings
-        for browser_name in browsers:
-            browser_name = browser_name.lower().strip()
-            browsers_dict[browser_name] = get_browser_user_agents(
-                browser_name,
-                verify_ssl=verify_ssl,
-            )
-    except Exception as exc:
-        if not use_cache_server:
-            raise exc
-
-        logger.warning(
-            "Error occurred during loading data. Trying to use cache server file %s",
-            settings.CACHE_SERVER,
-            exc_info=exc,
-        )
+def load(browsers, use_local_file=True, verify_ssl=True):
+    data = {}
+    fetch_online = True
+    if use_local_file:
         try:
-            data = {}
-            jsonLines = get(
-                settings.CACHE_SERVER,
-                verify_ssl=verify_ssl,
-            ).decode("utf-8")
-            for line in jsonLines.splitlines():
+            json_lines = (
+                files("fake_useragent.data").joinpath("browsers.json").read_text()
+            )
+            for line in json_lines.splitlines():
                 data.update(json.loads(line))
+        except Exception as exc:
+            # Empty data again
+            data = {}
+            logger.warning(
+                "Could not find local data/json file or could not parse the contents. Fallback to external resource.",
+                exc_info=exc,
+            )
+        else:
+            fetch_online = False
             ret = data
-        except (TypeError, ValueError):
-            raise FakeUserAgentError("Can not load JSON Lines data from cache server")
-    else:
-        ret = browsers_dict
+
+    # Fallback behaviour or use_external_data parameter is explicitly set to True
+    if fetch_online:
+        try:
+            # For each browser receive the user-agent strings
+            for browser_name in browsers:
+                browser_name = browser_name.lower().strip()
+                data[browser_name] = get_browser_user_agents_online(
+                    browser_name,
+                    verify_ssl=verify_ssl,
+                )
+        except Exception:
+            raise FakeUserAgentError("Could not load data from external website")
+        else:
+            ret = data
 
     if not ret:
         raise FakeUserAgentError("Data dictionary is empty", ret)
@@ -196,19 +203,17 @@ def rm(path):
         os.remove(path)
 
 
-def update(path, browsers, use_cache_server=True, verify_ssl=True):
-    rm(path)
+def update(tmp_path, browsers, verify_ssl=True):
+    rm(tmp_path)
 
-    write(
-        path, load(browsers, use_cache_server=use_cache_server, verify_ssl=verify_ssl)
-    )
+    write(tmp_path, load(browsers, use_local_file=False, verify_ssl=verify_ssl))
 
 
-def load_cached(path, browsers, use_cache_server=True, verify_ssl=True):
-    if not exist(path):
-        update(path, browsers, use_cache_server=use_cache_server, verify_ssl=verify_ssl)
+def load_cached(tmp_path, browsers, verify_ssl=True):
+    if not exist(tmp_path):
+        update(tmp_path, browsers, verify_ssl=verify_ssl)
 
-    return read(path)
+    return read(tmp_path)
 
 
 from fake_useragent import settings  # noqa # isort:skip

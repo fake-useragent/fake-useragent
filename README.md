@@ -6,9 +6,9 @@ Up-to-date simple useragent faker with real world database
 
 ## Features
 
-- Grabs up to date `useragent` from [useragentstring.com](http://useragentstring.com/)
-- Back-up cache server if site above is down
-- Store local cache file for improved performance
+- Data is pre-downloaded from [useragentstring.com](http://useragentstring.com/) and part of the package
+- Retrieves user-agent strings locally
+- _Fallback_ to external resource ([useragentstring.com](http://useragentstring.com/)) + caching
 
 ### Installation
 
@@ -57,65 +57,7 @@ ua = UserAgent(browsers=['edge', 'chrome'])
 ua.random
 ```
 
-`fake-useragent` store collected data at your os temp dir, like `/tmp`
-
-If you want to update saved database just:
-
-```py
-from fake_useragent import UserAgent
-ua = UserAgent()
-ua.update()
-```
-
-If you don't want cache database or no writable file system:
-
-```py
-from fake_useragent import UserAgent
-ua = UserAgent(cache=False)
-```
-
-Sometimes, [useragentstring.com](http://useragentstring.com) changes their html or is down, in such case `fake-useragent` uses the following [hosted cache server](https://useragent.melroy.org/cache.json) as fallback.
-
-If you don't want to use hosted cache server (version 0.1.5 added).
-
-```py
-from fake_useragent import UserAgent
-ua = UserAgent(use_cache_server=False)
-```
-
-In very rare case, if hosted cache server and sources will be
-unavailable `fake-useragent` won't be able to download data: (version 0.1.3 added)
-
-```py
-from fake_useragent import UserAgent
-ua = UserAgent()
-
-# Traceback (most recent call last):
-#   ...
-# fake_useragent.errors.FakeUserAgentError
-
-# you can catch it via
-
-from fake_useragent import FakeUserAgentError
-
-try:
-    ua = UserAgent()
-except FakeUserAgentError:
-    pass
-```
-
-If you will try to get unknown browser: (version 0.1.3 changed)
-
-```py
-from fake_useragent import UserAgent
-ua = UserAgent()
-ua.best_browser
-# Traceback (most recent call last):
-#   ...
-# fake_useragent.errors.FakeUserAgentError
-```
-
-You can completely disable ANY annoying exception with adding `fallback`: (version 0.1.4 added)
+You can add your own fallback string using the `fallback` parameter, in rare cases everything else failed: (version 0.1.4 added)
 
 ```py
 import fake_useragent
@@ -125,7 +67,37 @@ ua = fake_useragent.UserAgent(fallback='your favorite Browser')
 ua.random == 'your favorite Browser'
 ```
 
-Want to control location of data file? (version 0.1.4 added)
+If you will try to get unknown browser: (version 0.1.3 changed)
+
+```py
+from fake_useragent import UserAgent
+ua = UserAgent()
+ua.unknown
+# Traceback (most recent call last):
+#   ...
+# fake_useragent.errors.FakeUserAgentError: Error occurred during getting browser: unknown
+```
+
+By default `fake-useragent` will use it's local ([`browsers.json`](./fake_useragent/data/browsers.json)) data file as user-agent data source.
+
+If you don't want to use the local data, but use the external data source to retrieve the user-agents. Set `use_external_data` to True:
+
+```py
+from fake_useragent import UserAgent
+ua = UserAgent(use_external_data=True)
+```
+
+As a fallback method `fake-useragent` will retrieve it's data from an external data source and stores in in a temp file _or_ when `use_external_data` set to True.
+You can trigger an update to this cache file by calling `update()`:
+
+```py
+from fake_useragent import UserAgent
+ua = UserAgent()
+ua.update()
+```
+
+The default location of the external resource cache file is in your os temp dir, like `/tmp`.  
+You can change the temp directory by changing `tmp_path` (mainly useful together when `use_external_data` is set to True).
 
 ```py
 import fake_useragent
@@ -133,7 +105,7 @@ import fake_useragent
 # I am strongly! recommend using a version suffix
 location = '/home/user/fake_useragent%s.json' % fake_useragent.VERSION
 
-ua = fake_useragent.UserAgent(path=location)
+ua = fake_useragent.UserAgent(use_external_data=True, tmp_path=location)
 ua.random
 ```
 
@@ -171,6 +143,14 @@ print(fake_useragent.VERSION)
 And you are always welcome to post [issues](https://github.com/fake-useragent/fake-useragent/issues).
 
 Please do not forget mention version that you are using.
+
+### Developers
+
+Since GitHub Actions is unable to reach useragentstring.com. Thus run the script below to automatically scrape the user-agent data from the external data source. The script will as copy this file to the `src/fake_useragent/data` directory. Execute:
+
+```sh
+./update_data_file.sh
+```
 
 ### Tests
 
