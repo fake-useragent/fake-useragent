@@ -1,4 +1,5 @@
 import os
+import urllib.request
 from functools import partial
 
 import unittest
@@ -22,9 +23,19 @@ class TestFake(unittest.TestCase):
         except OSError:
             pass
 
+        try:
+            os.remove("/tmp/custom.json")
+        except OSError:
+            pass
+
     def tearDown(self):
         try:
             os.remove(settings.DB)
+        except OSError:
+            pass
+
+        try:
+            os.remove("/tmp/custom.json")
         except OSError:
             pass
 
@@ -47,10 +58,28 @@ class TestFake(unittest.TestCase):
         ua["random"]
         ua.edge
 
+    def test_fake_init(self):
+        ua = UserAgent()
+
+        self.assertTrue(ua.chrome)
+        self.assertIsInstance(ua.chrome, str)
+        self.assertTrue(ua.edge)
+        self.assertIsInstance(ua.edge, str)
+        self.assertTrue(ua["internet explorer"])
+        self.assertIsInstance(ua["internet explorer"], str)
+        self.assertTrue(ua.firefox)
+        self.assertIsInstance(ua.firefox, str)
+        self.assertTrue(ua.safari)
+        self.assertIsInstance(ua.safari, str)
+        self.assertTrue(ua.opera)
+        self.assertIsInstance(ua.opera, str)
+        self.assertTrue(ua.random)
+        self.assertIsInstance(ua.random, str)
+
     def test_fake_user_agent_browsers(self):
         ua = UserAgent()
 
-        _probe(ua)
+        self._probe(ua)
 
         with pytest.raises(FakeUserAgentError):
             ua.non_existing
@@ -68,15 +97,6 @@ class TestFake(unittest.TestCase):
         assert data1 == data2
 
         assert data1 is not data2
-
-    def test_fake_user_agent_path(self, path):
-        assert not os.path.isfile(path)
-
-        ua = UserAgent(tmp_path=path, use_external_data=True)
-
-        assert path == ua.tmp_path
-
-        assert os.path.isfile(path)
 
     def test_fake_default_path(self):
         assert not os.path.isfile(settings.DB)
@@ -98,8 +118,8 @@ class TestFake(unittest.TestCase):
             "fake_useragent.utils.Request",
             side_effect=partial(_request, denied_urls=denied_urls),
         ):
-            # Raise error
-            ua = self.assertRaises(FakeUserAgentError, UserAgent, fallback=fallback)
+            # This should trigger an error internally (since the site url is denied), causing to call the fallback string
+            ua = UserAgent(use_external_data=True, fallback=fallback)
 
         assert ua.random == fallback
 
@@ -114,47 +134,67 @@ class TestFake(unittest.TestCase):
             "fake_useragent.utils.Request",
             side_effect=partial(_request, denied_urls=denied_urls),
         ):
+            # Since the website is denied and we didn't specify a fallback string,
+            # this should raise an error
             with pytest.raises(FakeUserAgentError):
-                UserAgent()
+                UserAgent(use_external_data=True)
 
-    def test_fake_update(self):
-        ua = UserAgent(use_external_data=True)
+    def test_fake_update_external(self):
+        data = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=data):
+            ua = UserAgent(use_external_data=True)
 
         ua.update()
 
-        _probe(ua)
+        self._probe(ua)
 
-    def test_fake_update_cache(self, path):
-        assert not os.path.isfile(path)
+    def test_fake_check_tmp_path_external_data(self):
+        custom_path = "/tmp/custom.json"
+        assert not os.path.isfile(custom_path)
 
-        ua = UserAgent(tmp_path=path, use_external_data=True)
+        data = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=data):
+            ua = UserAgent(tmp_path=custom_path, use_external_data=True)
 
-        assert not os.path.isfile(path)
+        assert custom_path == ua.tmp_path
+
+        assert os.path.isfile(custom_path)
+
+    def test_fake_update_external_chrome_only(self):
+        data = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=data):
+            ua = UserAgent(browsers=["chrome"], use_external_data=True)
+
+        ua.update()
+
+        # Check not being empty
+        self.assertTrue(ua.chrome)
+        # Is string
+        self.assertIsInstance(ua.chrome, str)
+
+    def test_fake_update_external_data_cache(self):
+        custom_path = "/tmp/custom.json"
+        assert not os.path.isfile(custom_path)
+
+        data = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=data):
+            ua = UserAgent(
+                tmp_path=custom_path, browsers=["chrome"], use_external_data=True
+            )
 
         with pytest.raises(AssertionError):
-            ua.update(cache="y")
+            ua.update(use_external_data="y")
 
-        ua.update(cache=True)
+        ua.update(use_external_data=True)
 
-        assert os.path.isfile(path)
+        assert os.path.isfile(custom_path)
 
-        _probe(ua)
+        self.assertTrue(ua.chrome)
+        self.assertIsInstance(ua.chrome, str)
+        self.assertTrue(ua.random)
+        self.assertIsInstance(ua.random, str)
 
-    def test_fake_update_use_external_data(self):
-        ua = UserAgent(use_external_data=True)
-
-        denied_urls = [
-            "https://useragentstring.com",
-        ]
-
-        with patch(
-            "fake_useragent.utils.Request",
-            side_effect=partial(_request, denied_urls=denied_urls),
-        ):
-            ua.update()
-
-            _probe(ua)
-
+    def test_fake_update_external_data_cache_bad_weather(self):
         denied_urls = [
             "https://useragentstring.com",
         ]
@@ -164,20 +204,7 @@ class TestFake(unittest.TestCase):
             side_effect=partial(_request, denied_urls=denied_urls),
         ):
             with pytest.raises(FakeUserAgentError):
-                ua.update()
-
-    def test_fake_use_external_data(self):
-        denied_urls = [
-            "https://useragentstring.com",
-        ]
-
-        with patch(
-            "fake_useragent.utils.Request",
-            side_effect=partial(_request, denied_urls=denied_urls),
-        ):
-            ua = UserAgent(cache=False, use_external_data=True)
-
-        _probe(ua)
+                ua = UserAgent(use_external_data=True)
 
     def test_fake_external_data_boolean(self):
         with pytest.raises(AssertionError):

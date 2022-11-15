@@ -5,42 +5,28 @@ import json
 import os
 import re
 import ssl
+import time
 
 from fake_useragent.log import logger
 
 try:
     from importlib.resources import files
-except ImportError:
+except ImportError:  # Python 2
     from importlib_resources import files
 
-try:  # Python 2 # pragma: no cover
-    from urllib import quote_plus
-
-    from urllib2 import Request, URLError, urlopen
-
-    str_types = (unicode, str)  # noqa
-    text = unicode  # noqa
-except ImportError:  # Python 3 # pragma: no cover
+try:
     from urllib.error import URLError
     from urllib.parse import quote_plus
     from urllib.request import Request, urlopen
 
     str_types = (str,)
     text = str
+except ImportError:  # Python2
+    from urllib import quote_plus
+    from urllib2 import Request, URLError, urlopen
 
-# gevent monkey patched environment check
-try:  # pragma: no cover
-    import socket
-
-    import gevent.socket
-
-    if socket.socket is gevent.socket.socket:
-        from gevent import sleep
-    else:
-        from time import sleep
-except (ImportError, AttributeError):  # pragma: no cover
-    from time import sleep
-
+    str_types = (unicode, str)  # noqa
+    text = unicode  # noqa
 
 try:
     urlopen_args = inspect.getfullargspec(urlopen).kwonlyargs
@@ -95,7 +81,7 @@ def get(url, verify_ssl=True):
                     "Sleeping for %s seconds",
                     settings.HTTP_DELAY,
                 )
-                sleep(settings.HTTP_DELAY)
+                time.sleep(settings.HTTP_DELAY)
 
 
 def get_browser_user_agents_online(browser, verify_ssl=True):

@@ -1,13 +1,12 @@
 import os
 import socket
 
-try:  # Python 2 # pragma: no cover
-    from urllib2 import Request
-except ImportError:  # Python 3 # pragma: no cover
+try:
     from urllib.request import Request
+except ImportError:  # Python 2
+    from urllib2 import Request
 
 _used_ports = set()
-
 
 here = os.path.dirname(os.path.abspath(__file__))
 assets = os.path.join(here, "assets")
