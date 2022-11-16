@@ -97,7 +97,7 @@ ua.update()
 ```
 
 The default location of the external resource cache file is in your os temp dir, like `/tmp`.  
-You can change the temp directory by changing `tmp_path` (mainly useful together when `use_external_data` is set to True).
+You can change the temp directory by changing `cache_path` (mainly useful together when `use_external_data` is set to True).
 
 ```py
 import fake_useragent
@@ -105,7 +105,7 @@ import fake_useragent
 # I am strongly! recommend using a version suffix
 location = '/home/user/fake_useragent%s.json' % fake_useragent.VERSION
 
-ua = fake_useragent.UserAgent(use_external_data=True, tmp_path=location)
+ua = fake_useragent.UserAgent(use_external_data=True, cache_path=location)
 ua.random
 ```
 
