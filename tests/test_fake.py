@@ -1,5 +1,5 @@
 import os
-import urllib.request
+import urllib
 from functools import partial
 
 import unittest
@@ -103,7 +103,7 @@ class TestFake(unittest.TestCase):
 
         ua = UserAgent(use_external_data=True)
 
-        assert settings.DB == ua.tmp_path
+        assert settings.DB == ua.cache_path
 
         assert os.path.isfile(settings.DB)
 
@@ -148,15 +148,15 @@ class TestFake(unittest.TestCase):
 
         self._probe(ua)
 
-    def test_fake_check_tmp_path_external_data(self):
+    def test_fake_check_cache_path_external_data(self):
         custom_path = "/tmp/custom.json"
         assert not os.path.isfile(custom_path)
 
         data = open("tests/assets/chrome.html", "r", encoding="utf-8")
         with patch.object(urllib.request, "urlopen", return_value=data):
-            ua = UserAgent(tmp_path=custom_path, use_external_data=True)
+            ua = UserAgent(cache_path=custom_path, use_external_data=True)
 
-        assert custom_path == ua.tmp_path
+        assert custom_path == ua.cache_path
 
         assert os.path.isfile(custom_path)
 
@@ -179,7 +179,7 @@ class TestFake(unittest.TestCase):
         data = open("tests/assets/chrome.html", "r", encoding="utf-8")
         with patch.object(urllib.request, "urlopen", return_value=data):
             ua = UserAgent(
-                tmp_path=custom_path, browsers=["chrome"], use_external_data=True
+                cache_path=custom_path, browsers=["chrome"], use_external_data=True
             )
 
         with pytest.raises(AssertionError):
@@ -212,7 +212,7 @@ class TestFake(unittest.TestCase):
 
     def test_fake_path_str_types(self):
         with pytest.raises(AssertionError):
-            UserAgent(tmp_path=10)
+            UserAgent(cache_path=10)
 
     def test_fake_fallback_str_types(self):
         with pytest.raises(AssertionError):

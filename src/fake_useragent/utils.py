@@ -8,31 +8,15 @@ import ssl
 import time
 
 from fake_useragent.log import logger
+from importlib.resources import files
 
-try:
-    from importlib.resources import files
-except ImportError:  # Python 2
-    from importlib_resources import files
+from urllib.error import URLError
+from urllib.parse import quote_plus
+from urllib import request
 
-try:
-    from urllib.error import URLError
-    from urllib.parse import quote_plus
-    from urllib.request import Request, urlopen
-
-    str_types = (str,)
-    text = str
-except ImportError:  # Python2
-    from urllib import quote_plus
-    from urllib2 import Request, URLError, urlopen
-
-    str_types = (unicode, str)  # noqa
-    text = unicode  # noqa
-
-try:
-    urlopen_args = inspect.getfullargspec(urlopen).kwonlyargs
-except AttributeError:
-    urlopen_args = inspect.getargspec(urlopen).args
-
+str_types = (str,)
+text = str
+urlopen_args = inspect.getfullargspec(request.urlopen).kwonlyargs
 urlopen_has_ssl_context = "context" in urlopen_args
 
 
@@ -40,7 +24,7 @@ def get(url, verify_ssl=True):
     attempt = 0
 
     while True:
-        request = Request(url)
+        requestObj = request.Request(url)
 
         attempt += 1
 
@@ -52,8 +36,8 @@ def get(url, verify_ssl=True):
                     context = None
 
                 with contextlib.closing(
-                    urlopen(
-                        request,
+                    request.urlopen(
+                        requestObj,
                         timeout=settings.HTTP_TIMEOUT,
                         context=context,
                     )
@@ -61,8 +45,8 @@ def get(url, verify_ssl=True):
                     return response.read()
             else:  # ssl context is not supported ;(
                 with contextlib.closing(
-                    urlopen(
-                        request,
+                    request.urlopen(
+                        requestObj,
                         timeout=settings.HTTP_TIMEOUT,
                     )
                 ) as response:
@@ -92,7 +76,10 @@ def get_browser_user_agents_online(browser, verify_ssl=True):
         settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)),
         verify_ssl=verify_ssl,
     )
-    html = html.decode("iso-8859-1")
+    try:
+        html = html.decode("utf-8")
+    except (UnicodeDecodeError, AttributeError):
+        pass
     html = html.split("<div id='liste'>")[1]
     html = html.split("</div>")[0]
 
@@ -189,17 +176,17 @@ def rm(path):
         os.remove(path)
 
 
-def update(tmp_path, browsers, verify_ssl=True):
-    rm(tmp_path)
+def update(cache_path, browsers, verify_ssl=True):
+    rm(cache_path)
 
-    write(tmp_path, load(browsers, use_local_file=False, verify_ssl=verify_ssl))
+    write(cache_path, load(browsers, use_local_file=False, verify_ssl=verify_ssl))
 
 
-def load_cached(tmp_path, browsers, verify_ssl=True):
-    if not exist(tmp_path):
-        update(tmp_path, browsers, verify_ssl=verify_ssl)
+def load_cached(cache_path, browsers, verify_ssl=True):
+    if not exist(cache_path):
+        update(cache_path, browsers, verify_ssl=verify_ssl)
 
-    return read(tmp_path)
+    return read(cache_path)
 
 
 from fake_useragent import settings  # noqa # isort:skip

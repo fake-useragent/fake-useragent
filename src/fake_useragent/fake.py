@@ -11,7 +11,7 @@ class FakeUserAgent:
     def __init__(
         self,
         use_external_data=False,
-        tmp_path=settings.DB,
+        cache_path=settings.DB,
         fallback=None,
         browsers=["chrome", "edge", "internet explorer", "firefox", "safari", "opera"],
         verify_ssl=True,
@@ -23,9 +23,9 @@ class FakeUserAgent:
 
         self.use_external_data = use_external_data
 
-        assert isinstance(tmp_path, str_types), "tmp_path must be string or unicode"
+        assert isinstance(cache_path, str_types), "cache_path must be string or unicode"
 
-        self.tmp_path = tmp_path
+        self.cache_path = cache_path
 
         if fallback is not None:
             assert isinstance(fallback, str_types), "fallback must be string or unicode"
@@ -64,7 +64,7 @@ class FakeUserAgent:
                 if self.use_external_data:
                     # Use external resource to retrieve browser data
                     self.data_browsers = load_cached(
-                        self.tmp_path,
+                        self.cache_path,
                         self.browsers,
                         verify_ssl=self.verify_ssl,
                     )
@@ -97,7 +97,7 @@ class FakeUserAgent:
             # Update tmp cache file from external data source
             if self.use_external_data:
                 update(
-                    self.tmp_path,
+                    self.cache_path,
                     self.browsers,
                     verify_ssl=self.verify_ssl,
                 )

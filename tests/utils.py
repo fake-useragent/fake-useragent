@@ -1,15 +1,8 @@
 import os
 import socket
-
-try:
-    from urllib.request import Request
-except ImportError:  # Python 2
-    from urllib2 import Request
+from urllib.request import Request
 
 _used_ports = set()
-
-here = os.path.dirname(os.path.abspath(__file__))
-assets = os.path.join(here, "assets")
 
 
 def find_unused_port():

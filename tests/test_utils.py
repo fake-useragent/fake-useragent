@@ -1,21 +1,17 @@
 import io
 import json
 import os
-import urllib.request
 from functools import partial
 
+import urllib
+from urllib.error import HTTPError
 import unittest
 from unittest.mock import patch
 import pytest
 
 from fake_useragent import errors, settings, utils
 from fake_useragent.utils import urlopen_has_ssl_context
-from tests.utils import _request, find_unused_port, assets
-
-try:  # Python 2 # pragma: no cover
-    from urllib2 import Request
-except ImportError:  # Python 3 # pragma: no cover
-    from urllib.request import Request
+from tests.utils import _request
 
 
 class TestUtils(unittest.TestCase):
@@ -32,34 +28,24 @@ class TestUtils(unittest.TestCase):
             pass
 
     def test_utils_get(self):
+        # Good weather test, using local asset as data to be used for mocking
         data = open("tests/assets/chrome.html", "r", encoding="utf-8")
         with patch.object(urllib.request, "urlopen", return_value=data):
-            res = utils.get("https://websitethatmightexists.com")
+            res = utils.get("https://websitesthatdoesexists.com")
+            # Res should contain the HTML page now
             self.assertTrue(res)
-            print(data)
+            self.assertIsInstance(res, str)
 
     def test_utils_get_retries(self):
-        def __retried_request(*args, **kwargs):  # noqa
-            __retried_request.attempt += 1
-
-            if __retried_request.attempt < settings.HTTP_RETRIES:
-                return Request(
-                    "http://0.0.0.0:{port}".format(
-                        port=find_unused_port(),
-                    )
-                )
-
-            return Request(*args, **kwargs)
-
-        __retried_request.attempt = 0
-
-        with patch(
-            "fake_useragent.utils.Request",
-            side_effect=__retried_request,
-        ):
-            assert utils.get("http://google.com") is not None
-
-        assert __retried_request.attempt == 2
+        # Raise time-out exception on urlopen method
+        with patch.object(urllib.request, "urlopen") as mocked_urlopen:
+            mocked_urlopen.side_effect = HTTPError(
+                "https://exampe.com", 404, "oopsy", [], []
+            )
+            with pytest.raises(
+                errors.FakeUserAgentError, match="Maximum amount of retries reached"
+            ):
+                utils.get("https://sitethattimesout.com")
 
     def test_utils_load(self):
         _load = utils.load
@@ -233,8 +219,9 @@ class TestUtils(unittest.TestCase):
             "https://useragentstring.com",
         ]
 
-        with patch(
-            "fake_useragent.utils.Request",
+        with patch.object(
+            urllib.request,
+            "Request",
             side_effect=partial(_request, denied_urls=denied_urls),
         ):
             browsers = [
@@ -259,8 +246,9 @@ class TestUtils(unittest.TestCase):
             "https://useragentstring.com/",
         ]
 
-        with patch(
-            "fake_useragent.utils.Request",
+        with patch.object(
+            urllib.request,
+            "Request",
             side_effect=partial(_request, denied_urls=denied_urls),
         ):
             browsers = [
