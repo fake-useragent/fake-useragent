@@ -7,18 +7,16 @@ import re
 import ssl
 import time
 
-from fake_useragent.log import logger
-
 try:
     import importlib.resources as ilr
 except ImportError:
     # Running on pre-3.9 Python; use importlib-resources package
     import importlib_resources as ilr
 
-
 from urllib.error import URLError
 from urllib.parse import quote_plus
 from urllib import request
+from fake_useragent.log import logger
 
 str_types = (str,)
 text = str
