@@ -175,7 +175,7 @@ tox
   - Make the JSON Lines data file part of the Python package, data is retrieved locally
     - Extend the `myproject.toml` file with `package-data` support
   - Remove centralized caching server implementation
-  - Make real unit-tests which should run
+  - Make real unit-tests which should run reliable, fast, independent and without Internet connection
 
 - 0.1.14 November 5, 2022
 
