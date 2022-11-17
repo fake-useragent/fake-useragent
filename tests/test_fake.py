@@ -1,5 +1,6 @@
 import os
 import urllib
+from urllib import request
 from functools import partial
 
 import unittest
@@ -114,8 +115,9 @@ class TestFake(unittest.TestCase):
             "https://useragentstring.com",
         ]
 
-        with patch(
-            "fake_useragent.utils.Request",
+        with patch.object(
+            request,
+            "Request",
             side_effect=partial(_request, denied_urls=denied_urls),
         ):
             # This should trigger an error internally (since the site url is denied), causing to call the fallback string
@@ -130,8 +132,9 @@ class TestFake(unittest.TestCase):
             "https://useragentstring.com",
         ]
 
-        with patch(
-            "fake_useragent.utils.Request",
+        with patch.object(
+            request,
+            "Request",
             side_effect=partial(_request, denied_urls=denied_urls),
         ):
             # Since the website is denied and we didn't specify a fallback string,
@@ -142,11 +145,11 @@ class TestFake(unittest.TestCase):
     def test_fake_update_external(self):
         data = open("tests/assets/chrome.html", "r", encoding="utf-8")
         with patch.object(urllib.request, "urlopen", return_value=data):
-            ua = UserAgent(use_external_data=True)
+            ua = UserAgent(use_external_data=True, browsers=["chrome"])
 
         ua.update()
-
-        self._probe(ua)
+        self.assertTrue(ua.chrome)
+        self.assertIsInstance(ua.chrome, str)
 
     def test_fake_check_cache_path_external_data(self):
         custom_path = "/tmp/custom.json"
@@ -154,16 +157,18 @@ class TestFake(unittest.TestCase):
 
         data = open("tests/assets/chrome.html", "r", encoding="utf-8")
         with patch.object(urllib.request, "urlopen", return_value=data):
-            ua = UserAgent(cache_path=custom_path, use_external_data=True)
+            ua = UserAgent(
+                cache_path=custom_path, use_external_data=True, browsers=["chrome"]
+            )
 
-        assert custom_path == ua.cache_path
+            assert custom_path == ua.cache_path
 
         assert os.path.isfile(custom_path)
 
     def test_fake_update_external_chrome_only(self):
         data = open("tests/assets/chrome.html", "r", encoding="utf-8")
         with patch.object(urllib.request, "urlopen", return_value=data):
-            ua = UserAgent(browsers=["chrome"], use_external_data=True)
+            ua = UserAgent(use_external_data=True, browsers=["chrome"])
 
         ua.update()
 
@@ -179,7 +184,7 @@ class TestFake(unittest.TestCase):
         data = open("tests/assets/chrome.html", "r", encoding="utf-8")
         with patch.object(urllib.request, "urlopen", return_value=data):
             ua = UserAgent(
-                cache_path=custom_path, browsers=["chrome"], use_external_data=True
+                cache_path=custom_path, use_external_data=True, browsers=["chrome"]
             )
 
         with pytest.raises(AssertionError):
@@ -199,8 +204,9 @@ class TestFake(unittest.TestCase):
             "https://useragentstring.com",
         ]
 
-        with patch(
-            "fake_useragent.utils.Request",
+        with patch.object(
+            request,
+            "Request",
             side_effect=partial(_request, denied_urls=denied_urls),
         ):
             with pytest.raises(FakeUserAgentError):
