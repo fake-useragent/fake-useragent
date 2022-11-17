@@ -102,7 +102,9 @@ class TestFake(unittest.TestCase):
     def test_fake_default_path(self):
         assert not os.path.isfile(settings.DB)
 
-        ua = UserAgent(use_external_data=True)
+        data = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=data):
+            ua = UserAgent(use_external_data=True, browsers=["chrome"])
 
         assert settings.DB == ua.cache_path
 
@@ -147,7 +149,11 @@ class TestFake(unittest.TestCase):
         with patch.object(urllib.request, "urlopen", return_value=data):
             ua = UserAgent(use_external_data=True, browsers=["chrome"])
 
-        ua.update()
+        # Open the chrome.html file for 2nd time, for the update()
+        data = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=data):
+            ua.update()
+
         self.assertTrue(ua.chrome)
         self.assertIsInstance(ua.chrome, str)
 
@@ -170,7 +176,10 @@ class TestFake(unittest.TestCase):
         with patch.object(urllib.request, "urlopen", return_value=data):
             ua = UserAgent(use_external_data=True, browsers=["chrome"])
 
-        ua.update()
+        # Open the chrome.html file for 2nd time, for the update()
+        data = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=data):
+            ua.update()
 
         # Check not being empty
         self.assertTrue(ua.chrome)
@@ -190,7 +199,10 @@ class TestFake(unittest.TestCase):
         with pytest.raises(AssertionError):
             ua.update(use_external_data="y")
 
-        ua.update(use_external_data=True)
+        # Open the chrome.html file for 2nd time, for the update()
+        data = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=data):
+            ua.update(use_external_data=True)
 
         assert os.path.isfile(custom_path)
 

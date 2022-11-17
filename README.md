@@ -8,12 +8,19 @@ Up-to-date simple useragent faker with real world database
 
 - Data is pre-downloaded from [useragentstring.com](http://useragentstring.com/) and part of the package
 - Retrieves user-agent strings locally
+- Supports Python 3.x
 - _Fallback_ to external resource ([useragentstring.com](http://useragentstring.com/)) + caching
 
 ### Installation
 
 ```sh
 pip install fake-useragent
+```
+
+Or if you have multiple Python / pip versions installed, use `pip3`:
+
+```sh
+pip3 install fake-useragent
 ```
 
 ### Usage
@@ -57,7 +64,7 @@ ua = UserAgent(browsers=['edge', 'chrome'])
 ua.random
 ```
 
-You can add your own fallback string using the `fallback` parameter, in rare cases everything else failed: (version 0.1.4 added)
+You can add your own fallback string using the `fallback` parameter, in rare cases everything else failed:
 
 ```py
 import fake_useragent
@@ -67,7 +74,7 @@ ua = fake_useragent.UserAgent(fallback='your favorite Browser')
 ua.random == 'your favorite Browser'
 ```
 
-If you will try to get unknown browser: (version 0.1.3 changed)
+If you will try to get unknown browser:
 
 ```py
 from fake_useragent import UserAgent
@@ -78,17 +85,17 @@ ua.unknown
 # fake_useragent.errors.FakeUserAgentError: Error occurred during getting browser: unknown
 ```
 
-By default `fake-useragent` will use it's local ([`browsers.json`](./fake_useragent/data/browsers.json)) data file as user-agent data source.
+By default `fake-useragent` will use it's local ([`browsers.json`](./fake_useragent/data/browsers.json)) data file as the data source.
 
-If you don't want to use the local data, but use the external data source to retrieve the user-agents. Set `use_external_data` to True:
+If you don't want to use the local data, but use the external data source to retrieve the user-agents. Set `use_external_data` to `True`:
 
 ```py
 from fake_useragent import UserAgent
 ua = UserAgent(use_external_data=True)
 ```
 
-As a fallback method `fake-useragent` will retrieve it's data from an external data source and stores in in a temp file _or_ when `use_external_data` set to True.
-You can trigger an update to this cache file by calling `update()`:
+As a fallback method `fake-useragent` will retrieve it's data from an external data source and stores in a cache file _or_ when you expcility set `use_external_data=True` as parameter.
+You can trigger an update to the cache file by calling `update()`:
 
 ```py
 from fake_useragent import UserAgent
@@ -124,15 +131,15 @@ ua = fake_useragent.UserAgent(safe_attrs=('__injections__',))
 Please, do not use if you don't understand why you need this.
 This is magic for rarely extreme case.
 
-### Experiencing issues???
+### Experiencing issues?
 
-Make sure that you using latest version!!!
+Make sure that you using latest version!
 
 ```sh
 pip install --upgrade fake-useragent
 ```
 
-Check version via python console: (version 0.1.4 added)
+Check version via python console:
 
 ```py
 import fake_useragent
@@ -142,15 +149,17 @@ print(fake_useragent.VERSION)
 
 And you are always welcome to post [issues](https://github.com/fake-useragent/fake-useragent/issues).
 
-Please do not forget mention version that you are using.
+Please do not forget to mention the version that you are using.
 
 ### Developers
 
-Since GitHub Actions is unable to reach useragentstring.com. Thus run the script below to automatically scrape the user-agent data from the external data source. The script will as copy this file to the `src/fake_useragent/data` directory. Execute:
+Since GitHub Actions is unable to reach useragentstring.com. We can run the script below to automatically scrape the user-agent strings from the external data source. The script will copy the [JSONlines](https://jsonlines.org/) file to the `src/fake_useragent/data` directory. Execute:
 
 ```sh
 ./update_data_file.sh
 ```
+
+The data JSON file is part of the Python package, see [pyproject.toml](pyproject.toml). Read more about [Data files support](https://setuptools.pypa.io/en/latest/userguide/datafiles.html).
 
 ### Tests
 
@@ -160,6 +169,13 @@ tox
 ```
 
 ### Changelog
+
+- 1.0.0 November 17, 2022
+
+  - Make the JSON Lines data file part of the Python package, data is retrieved locally
+    - Extend the `myproject.toml` file with `package-data` support
+  - Remove centralized caching server implementation
+  - Make real unit-tests which should run
 
 - 0.1.14 November 5, 2022
 

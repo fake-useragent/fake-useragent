@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import time
 from functools import partial
 
 import urllib
@@ -129,18 +130,26 @@ class TestUtils(unittest.TestCase):
 
     def test_utils_update(self):
         path = "/tmp/custom.json"
-        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
-        utils.update(path, browsers)
+
+        file = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=file):
+            utils.update(path, ["chrome"])
 
         mtime = os.path.getmtime(path)
 
         _load = utils.load
 
+        # We need to add a sleep in the unit test (not ideal),
+        # otherwise the test could run so fast, we get the same last modification time
+        time.sleep(0.1)
+
         with patch(
             "fake_useragent.utils.load",
             side_effect=_load,
         ) as mocked:
-            utils.update(path, browsers)
+            file = open("tests/assets/chrome.html", "r", encoding="utf-8")
+            with patch.object(urllib.request, "urlopen", return_value=file):
+                utils.update(path, ["chrome"])
 
             mocked.assert_called()
 
@@ -158,6 +167,12 @@ class TestUtils(unittest.TestCase):
         # By default use_local_file is also True during production
         data = utils.load(browsers, use_local_file=True)
 
+        self.assertTrue(data["chrome"])
+        self.assertTrue(data["edge"])
+        self.assertTrue(data["firefox"])
+        self.assertTrue(data["opera"])
+        self.assertTrue(data["safari"])
+        self.assertTrue(data["internet explorer"])
         self.assertIsInstance(data["chrome"], list)
         self.assertIsInstance(data["edge"], list)
         self.assertIsInstance(data["firefox"], list)
@@ -173,45 +188,25 @@ class TestUtils(unittest.TestCase):
             "fake_useragent.utils.load",
             side_effect=_load,
         ) as mocked:
-            browsers = [
-                "chrome",
-                "edge",
-                "internet explorer",
-                "firefox",
-                "safari",
-                "opera",
-            ]
-            data = utils.load_cached(path, browsers)
+            file = open("tests/assets/chrome.html", "r", encoding="utf-8")
+            with patch.object(urllib.request, "urlopen", return_value=file):
+                data = utils.load_cached(path, ["chrome"])
 
             mocked.assert_called()
 
+        self.assertTrue(data["chrome"])
         self.assertIsInstance(data["chrome"], list)
-        self.assertIsInstance(data["edge"], list)
-        self.assertIsInstance(data["firefox"], list)
-        self.assertIsInstance(data["opera"], list)
-        self.assertIsInstance(data["safari"], list)
-        self.assertIsInstance(data["internet explorer"], list)
 
         data = []
         with patch("fake_useragent.utils.load") as mocked:
-            browsers = [
-                "chrome",
-                "edge",
-                "internet explorer",
-                "firefox",
-                "safari",
-                "opera",
-            ]
-            data = utils.load_cached(path, browsers)
+            file = open("tests/assets/chrome.html", "r", encoding="utf-8")
+            with patch.object(urllib.request, "urlopen", return_value=file):
+                data = utils.load_cached(path, ["chrome"])
 
             mocked.assert_not_called()
 
+        self.assertTrue(data["chrome"])
         self.assertIsInstance(data["chrome"], list)
-        self.assertIsInstance(data["edge"], list)
-        self.assertIsInstance(data["firefox"], list)
-        self.assertIsInstance(data["opera"], list)
-        self.assertIsInstance(data["safari"], list)
-        self.assertIsInstance(data["internet explorer"], list)
 
     def test_utils_load_no_local_file_external_data_bad_weather(self):
         path = "/tmp/custom.json"
