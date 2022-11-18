@@ -1,263 +1,258 @@
 import io
 import json
 import os
+import time
 from functools import partial
 
-from unittest.mock import patch, ANY
+import urllib
+from urllib.error import HTTPError
+import unittest
+from unittest.mock import patch
 import pytest
 
 from fake_useragent import errors, settings, utils
 from fake_useragent.utils import urlopen_has_ssl_context
-from tests.utils import _request, find_unused_port, assets
-
-try:  # Python 2 # pragma: no cover
-    from urllib2 import Request
-except ImportError:  # Python 3 # pragma: no cover
-    from urllib.request import Request
+from tests.utils import _request
 
 
-def test_utils_get():
-    assert utils.get("http://google.com") is not None
+class TestUtils(unittest.TestCase):
+    def setUp(self):
+        try:
+            os.remove("/tmp/custom.json")
+        except OSError:
+            pass
 
-    if urlopen_has_ssl_context:
-        with pytest.raises(errors.FakeUserAgentError):
-            utils.get("https://expired.badssl.com/")
+    def tearDown(self):
+        try:
+            os.remove("/tmp/custom.json")
+        except OSError:
+            pass
 
-        assert (
-            utils.get(
-                "https://expired.badssl.com/",
-                verify_ssl=False,
+    def test_utils_get(self):
+        # Good weather test, using local asset as data to be used for mocking
+        data = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=data):
+            res = utils.get("https://websitesthatdoesexists.com")
+            # Res should contain the HTML page now
+            self.assertTrue(res)
+            self.assertIsInstance(res, str)
+
+    def test_utils_get_retries(self):
+        # Raise time-out exception on urlopen method
+        with patch.object(urllib.request, "urlopen") as mocked_urlopen:
+            mocked_urlopen.side_effect = HTTPError(
+                "https://exampe.com", 404, "oopsy", [], []
             )
-            is not None
-        )
-
-
-def test_utils_get_retries():
-    def __retried_request(*args, **kwargs):  # noqa
-        __retried_request.attempt += 1
-
-        if __retried_request.attempt < settings.HTTP_RETRIES:
-            return Request(
-                "http://0.0.0.0:{port}".format(
-                    port=find_unused_port(),
-                )
-            )
-
-        return Request(*args, **kwargs)
-
-    __retried_request.attempt = 0
-
-    with patch(
-        "fake_useragent.utils.Request",
-        side_effect=__retried_request,
-    ):
-        assert utils.get("http://google.com") is not None
-
-    assert __retried_request.attempt == 2
-
-
-def test_utils_get_cache_server():
-    jsonLines = utils.get(settings.CACHE_SERVER).decode("utf-8")
-    data = {}
-    for line in jsonLines.splitlines():
-        data.update(json.loads(line))
-
-    expected = {
-        "chrome": ANY,
-        "opera": ANY,
-        "firefox": ANY,
-        "safari": ANY,
-        "edge": ANY,
-        "internet explorer": ANY,
-    }
-
-    assert expected == data
-
-
-def test_utils_load(path):
-    _load = utils.load
-
-    with patch(
-        "fake_useragent.utils.load",
-        side_effect=_load,
-    ) as mocked:
-        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
-        data = utils.load(browsers, use_cache_server=False)
-
-        mocked.assert_called()
-
-    expected = {
-        "chrome": ANY,
-        "edge": ANY,
-        "firefox": ANY,
-        "opera": ANY,
-        "safari": ANY,
-        "internet explorer": ANY,
-    }
-
-    assert expected == data
-
-
-def test_utils_write(path):
-    data = {"foo": "bar"}
-
-    utils.write(path, data)
-
-    with open(path, encoding="utf-8") as fp:
-        expected = json.loads(fp.read())
-
-    assert expected == data
-
-
-def test_utils_read(path):
-    data = {"foo": "bar"}
-
-    with open(path, mode="w", encoding="utf-8") as fp:
-        dumped = json.dumps(data)
-
-        if not isinstance(dumped, utils.text):  # Python 2
-            dumped = dumped.decode("utf-8")
-
-        fp.write(dumped)
-
-    expected = utils.read(path)
-
-    assert expected == data
-
-
-def test_utils_exist(path):
-    assert not os.path.isfile(path)
-
-    assert not utils.exist(path)
-
-    with open(path, mode="wb") as fp:
-        fp.write(b"\n")
-
-    assert os.path.isfile(path)
-
-    assert utils.exist(path)
-
-
-def test_utils_rm(path):
-    assert not os.path.isfile(path)
-
-    with open(path, mode="wb") as fp:
-        fp.write(b"\n")
-
-    assert os.path.isfile(path)
-
-    utils.rm(path)
-
-    assert not os.path.isfile(path)
-
-
-def test_utils_update(path):
-    browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
-    utils.update(path, browsers, use_cache_server=False)
-
-    mtime = os.path.getmtime(path)
-
-    _load = utils.load
-
-    with patch(
-        "fake_useragent.utils.load",
-        side_effect=_load,
-    ) as mocked:
-        utils.update(path, browsers, use_cache_server=False)
-
-        mocked.assert_called()
-
-    assert os.path.getmtime(path) != mtime
-
-
-def test_utils_load_cached(path):
-    _load = utils.load
-
-    with patch(
-        "fake_useragent.utils.load",
-        side_effect=_load,
-    ) as mocked:
-        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
-        data = utils.load_cached(path, browsers, use_cache_server=False)
-
-        mocked.assert_called()
-
-    expected = {
-        "chrome": ANY,
-        "edge": ANY,
-        "firefox": ANY,
-        "opera": ANY,
-        "safari": ANY,
-        "internet explorer": ANY,
-    }
-
-    assert expected == data
-
-    expected = data
-
-    with patch("fake_useragent.utils.load") as mocked:
-        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
-        data = utils.load_cached(path, browsers, use_cache_server=False)
-
-        mocked.assert_not_called()
-
-    assert expected == data
-
-
-def test_utils_load_no_use_cache_server(path):
-    denied_urls = [
-        "https://useragentstring.com",
-    ]
-
-    with patch(
-        "fake_useragent.utils.Request",
-        side_effect=partial(_request, denied_urls=denied_urls),
-    ):
-        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
-        with pytest.raises(errors.FakeUserAgentError):
-            utils.load(browsers, use_cache_server=False)
-
-        with pytest.raises(errors.FakeUserAgentError):
-            utils.load_cached(path, browsers, use_cache_server=False)
-
-        with pytest.raises(errors.FakeUserAgentError):
-            utils.update(path, browsers, use_cache_server=False)
-
-
-def test_utils_load_use_cache_server(path):
-    denied_urls = [
-        "https://useragentstring.com",
-    ]
-
-    with patch(
-        "fake_useragent.utils.Request",
-        side_effect=partial(_request, denied_urls=denied_urls),
-    ):
-        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
-        data = utils.load(browsers, use_cache_server=True)
-
-        expected = {
-            "chrome": ANY,
-            "edge": ANY,
-            "firefox": ANY,
-            "opera": ANY,
-            "safari": ANY,
-            "internet explorer": ANY,
-        }
+            with pytest.raises(
+                errors.FakeUserAgentError, match="Maximum amount of retries reached"
+            ):
+                utils.get("https://sitethattimesout.com")
+
+    def test_utils_load(self):
+        _load = utils.load
+
+        with patch(
+            "fake_useragent.utils.load",
+            side_effect=_load,
+        ) as mocked:
+            browsers = [
+                "chrome",
+                "edge",
+                "internet explorer",
+                "firefox",
+                "safari",
+                "opera",
+            ]
+            data = utils.load(browsers)
+
+            mocked.assert_called()
+
+        self.assertIsInstance(data["chrome"], list)
+        self.assertIsInstance(data["edge"], list)
+        self.assertIsInstance(data["firefox"], list)
+        self.assertIsInstance(data["opera"], list)
+        self.assertIsInstance(data["safari"], list)
+        self.assertIsInstance(data["internet explorer"], list)
+
+    def test_utils_write(self):
+        path = "/tmp/custom.json"
+        data = {"foo": "bar"}
+
+        utils.write(path, data)
+
+        with open(path, encoding="utf-8") as fp:
+            expected = json.loads(fp.read())
 
         assert expected == data
 
+    def test_utils_read(self):
+        path = "/tmp/custom.json"
+        data = {"foo": "bar"}
 
-def test_utils_load_use_cache_server_down(path):
-    denied_urls = [
-        "https://useragentstring.com/",
-        settings.CACHE_SERVER,
-    ]
+        with open(path, mode="w", encoding="utf-8") as fp:
+            dumped = json.dumps(data)
 
-    with patch(
-        "fake_useragent.utils.Request",
-        side_effect=partial(_request, denied_urls=denied_urls),
-    ):
-        browsers = ["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]
-        with pytest.raises(errors.FakeUserAgentError):
-            utils.load(browsers, use_cache_server=True)
+            if not isinstance(dumped, utils.text):  # Python 2
+                dumped = dumped.decode("utf-8")
+
+            fp.write(dumped)
+
+        expected = utils.read(path)
+
+        assert expected == data
+
+    def test_utils_exist(self):
+        path = "/tmp/custom.json"
+
+        assert not os.path.isfile(path)
+
+        assert not utils.exist(path)
+
+        with open(path, mode="wb") as fp:
+            fp.write(b"\n")
+
+        assert os.path.isfile(path)
+
+        assert utils.exist(path)
+
+    def test_utils_rm(self):
+        path = "/tmp/custom.json"
+        assert not os.path.isfile(path)
+
+        with open(path, mode="wb") as fp:
+            fp.write(b"\n")
+
+        assert os.path.isfile(path)
+
+        utils.rm(path)
+
+        assert not os.path.isfile(path)
+
+    def test_utils_update(self):
+        path = "/tmp/custom.json"
+
+        file = open("tests/assets/chrome.html", "r", encoding="utf-8")
+        with patch.object(urllib.request, "urlopen", return_value=file):
+            utils.update(path, ["chrome"])
+
+        mtime = os.path.getmtime(path)
+
+        _load = utils.load
+
+        # We need to add a sleep in the unit test (not ideal),
+        # otherwise the test could run so fast, we get the same last modification time
+        time.sleep(0.1)
+
+        with patch(
+            "fake_useragent.utils.load",
+            side_effect=_load,
+        ) as mocked:
+            file = open("tests/assets/chrome.html", "r", encoding="utf-8")
+            with patch.object(urllib.request, "urlopen", return_value=file):
+                utils.update(path, ["chrome"])
+
+            mocked.assert_called()
+
+        assert os.path.getmtime(path) != mtime
+
+    def test_utils_load_use_local_file(self):
+        browsers = [
+            "chrome",
+            "edge",
+            "internet explorer",
+            "firefox",
+            "safari",
+            "opera",
+        ]
+        # By default use_local_file is also True during production
+        data = utils.load(browsers, use_local_file=True)
+
+        self.assertTrue(data["chrome"])
+        self.assertTrue(data["edge"])
+        self.assertTrue(data["firefox"])
+        self.assertTrue(data["opera"])
+        self.assertTrue(data["safari"])
+        self.assertTrue(data["internet explorer"])
+        self.assertIsInstance(data["chrome"], list)
+        self.assertIsInstance(data["edge"], list)
+        self.assertIsInstance(data["firefox"], list)
+        self.assertIsInstance(data["opera"], list)
+        self.assertIsInstance(data["safari"], list)
+        self.assertIsInstance(data["internet explorer"], list)
+
+    def test_utils_load_cached(self):
+        path = "/tmp/custom.json"
+        _load = utils.load
+
+        with patch(
+            "fake_useragent.utils.load",
+            side_effect=_load,
+        ) as mocked:
+            file = open("tests/assets/chrome.html", "r", encoding="utf-8")
+            with patch.object(urllib.request, "urlopen", return_value=file):
+                data = utils.load_cached(path, ["chrome"])
+
+            mocked.assert_called()
+
+        self.assertTrue(data["chrome"])
+        self.assertIsInstance(data["chrome"], list)
+
+        data = []
+        with patch("fake_useragent.utils.load") as mocked:
+            file = open("tests/assets/chrome.html", "r", encoding="utf-8")
+            with patch.object(urllib.request, "urlopen", return_value=file):
+                data = utils.load_cached(path, ["chrome"])
+
+            mocked.assert_not_called()
+
+        self.assertTrue(data["chrome"])
+        self.assertIsInstance(data["chrome"], list)
+
+    def test_utils_load_no_local_file_external_data_bad_weather(self):
+        path = "/tmp/custom.json"
+        denied_urls = [
+            "https://useragentstring.com",
+        ]
+
+        with patch.object(
+            urllib.request,
+            "Request",
+            side_effect=partial(_request, denied_urls=denied_urls),
+        ):
+            browsers = [
+                "chrome",
+                "edge",
+                "internet explorer",
+                "firefox",
+                "safari",
+                "opera",
+            ]
+            with pytest.raises(errors.FakeUserAgentError):
+                utils.load(browsers, use_local_file=False)
+
+            with pytest.raises(errors.FakeUserAgentError):
+                utils.load_cached(path, browsers)
+
+            with pytest.raises(errors.FakeUserAgentError):
+                utils.update(path, browsers)
+
+    def test_utils_load_use_not_local_file_external_is_down(self):
+        denied_urls = [
+            "https://useragentstring.com/",
+        ]
+
+        with patch.object(
+            urllib.request,
+            "Request",
+            side_effect=partial(_request, denied_urls=denied_urls),
+        ):
+            browsers = [
+                "chrome",
+                "edge",
+                "internet explorer",
+                "firefox",
+                "safari",
+                "opera",
+            ]
+            with pytest.raises(errors.FakeUserAgentError):
+                utils.load(browsers, use_local_file=False)

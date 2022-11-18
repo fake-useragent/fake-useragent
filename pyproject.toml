@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.2"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "fake-useragent"
-version = "0.1.14"
+version = "1.0.0"
 authors = [
     {name = "Victor Kovtun", email = "hellysmile@gmail.com"},
     {name = "Melroy van den Berg", email = "melroy@melroy.org"},
@@ -44,6 +44,7 @@ content-type = "text/markdown"
 Homepage = "https://github.com/fake-useragent/fake-useragent"
 
 [tool.setuptools]
-packages = ["fake_useragent"]
 zip-safe = false
-include-package-data = true
+
+[tool.setuptools.package-data]
+"fake_useragent.data" = ["*.json"]

@@ -10,27 +10,22 @@ from fake_useragent.utils import load, load_cached, str_types, update
 class FakeUserAgent:
     def __init__(
         self,
-        cache=True,
-        use_cache_server=True,
-        path=settings.DB,
+        use_external_data=False,
+        cache_path=settings.DB,
         fallback=None,
         browsers=["chrome", "edge", "internet explorer", "firefox", "safari", "opera"],
         verify_ssl=True,
         safe_attrs=tuple(),
     ):
-        assert isinstance(cache, bool), "cache must be True or False"
-
-        self.cache = cache
-
         assert isinstance(
-            use_cache_server, bool
-        ), "use_cache_server must be True or False"
+            use_external_data, bool
+        ), "use_external_data must be True or False"
 
-        self.use_cache_server = use_cache_server
+        self.use_external_data = use_external_data
 
-        assert isinstance(path, str_types), "path must be string or unicode"
+        assert isinstance(cache_path, str_types), "cache_path must be string or unicode"
 
-        self.path = path
+        self.cache_path = cache_path
 
         if fallback is not None:
             assert isinstance(fallback, str_types), "fallback must be string or unicode"
@@ -66,17 +61,17 @@ class FakeUserAgent:
     def load(self):
         try:
             with self.load.lock:
-                if self.cache:
+                if self.use_external_data:
+                    # Use external resource to retrieve browser data
                     self.data_browsers = load_cached(
-                        self.path,
+                        self.cache_path,
                         self.browsers,
-                        use_cache_server=self.use_cache_server,
                         verify_ssl=self.verify_ssl,
                     )
                 else:
+                    # By default we will try to load our local file
                     self.data_browsers = load(
                         self.browsers,
-                        use_cache_server=self.use_cache_server,
                         verify_ssl=self.verify_ssl,
                     )
         except FakeUserAgentError:
@@ -90,18 +85,20 @@ class FakeUserAgent:
 
     load.lock = Lock()
 
-    def update(self, cache=None):
+    def update(self, use_external_data=None):
         with self.update.lock:
-            if cache is not None:
-                assert isinstance(cache, bool), "cache must be True or False"
+            if use_external_data is not None:
+                assert isinstance(
+                    use_external_data, bool
+                ), "use_external_data must be True or False"
 
-                self.cache = cache
+                self.use_external_data = use_external_data
 
-            if self.cache:
+            # Update tmp cache file from external data source
+            if self.use_external_data:
                 update(
-                    self.path,
+                    self.cache_path,
                     self.browsers,
-                    use_cache_server=self.use_cache_server,
                     verify_ssl=self.verify_ssl,
                 )
 

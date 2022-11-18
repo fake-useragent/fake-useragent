@@ -5,43 +5,22 @@ import json
 import os
 import re
 import ssl
-
-from fake_useragent.log import logger
-
-try:  # Python 2 # pragma: no cover
-    from urllib import quote_plus
-
-    from urllib2 import Request, URLError, urlopen
-
-    str_types = (unicode, str)  # noqa
-    text = unicode  # noqa
-except ImportError:  # Python 3 # pragma: no cover
-    from urllib.error import URLError
-    from urllib.parse import quote_plus
-    from urllib.request import Request, urlopen
-
-    str_types = (str,)
-    text = str
-
-# gevent monkey patched environment check
-try:  # pragma: no cover
-    import socket
-
-    import gevent.socket
-
-    if socket.socket is gevent.socket.socket:
-        from gevent import sleep
-    else:
-        from time import sleep
-except (ImportError, AttributeError):  # pragma: no cover
-    from time import sleep
-
+import time
 
 try:
-    urlopen_args = inspect.getfullargspec(urlopen).kwonlyargs
-except AttributeError:
-    urlopen_args = inspect.getargspec(urlopen).args
+    import importlib.resources as ilr
+except ImportError:
+    # Running on pre-3.9 Python; use importlib-resources package
+    import importlib_resources as ilr
 
+from urllib.error import URLError
+from urllib.parse import quote_plus
+from urllib import request
+from fake_useragent.log import logger
+
+str_types = (str,)
+text = str
+urlopen_args = inspect.getfullargspec(request.urlopen).kwonlyargs
 urlopen_has_ssl_context = "context" in urlopen_args
 
 
@@ -49,7 +28,7 @@ def get(url, verify_ssl=True):
     attempt = 0
 
     while True:
-        request = Request(url)
+        requestObj = request.Request(url)
 
         attempt += 1
 
@@ -61,8 +40,8 @@ def get(url, verify_ssl=True):
                     context = None
 
                 with contextlib.closing(
-                    urlopen(
-                        request,
+                    request.urlopen(
+                        requestObj,
                         timeout=settings.HTTP_TIMEOUT,
                         context=context,
                     )
@@ -70,8 +49,8 @@ def get(url, verify_ssl=True):
                     return response.read()
             else:  # ssl context is not supported ;(
                 with contextlib.closing(
-                    urlopen(
-                        request,
+                    request.urlopen(
+                        requestObj,
                         timeout=settings.HTTP_TIMEOUT,
                     )
                 ) as response:
@@ -90,18 +69,21 @@ def get(url, verify_ssl=True):
                     "Sleeping for %s seconds",
                     settings.HTTP_DELAY,
                 )
-                sleep(settings.HTTP_DELAY)
+                time.sleep(settings.HTTP_DELAY)
 
 
-def get_browser_user_agents(browser, verify_ssl=True):
+def get_browser_user_agents_online(browser, verify_ssl=True):
     """
-    Retrieve browser user agent strings
+    Retrieve browser user agent strings from website
     """
     html = get(
         settings.BROWSER_BASE_PAGE.format(browser=quote_plus(browser)),
         verify_ssl=verify_ssl,
     )
-    html = html.decode("iso-8859-1")
+    try:
+        html = html.decode("utf-8")
+    except (UnicodeDecodeError, AttributeError):
+        pass
     html = html.split("<div id='liste'>")[1]
     html = html.split("</div>")[0]
 
@@ -129,39 +111,41 @@ def get_browser_user_agents(browser, verify_ssl=True):
     return browsers
 
 
-def load(browsers, use_cache_server=True, verify_ssl=True):
-    browsers_dict = {}
-
-    try:
-        # For each browser receive the user-agent strings
-        for browser_name in browsers:
-            browser_name = browser_name.lower().strip()
-            browsers_dict[browser_name] = get_browser_user_agents(
-                browser_name,
-                verify_ssl=verify_ssl,
-            )
-    except Exception as exc:
-        if not use_cache_server:
-            raise exc
-
-        logger.warning(
-            "Error occurred during loading data. Trying to use cache server file %s",
-            settings.CACHE_SERVER,
-            exc_info=exc,
-        )
+def load(browsers, use_local_file=True, verify_ssl=True):
+    data = {}
+    fetch_online = True
+    if use_local_file:
         try:
-            data = {}
-            jsonLines = get(
-                settings.CACHE_SERVER,
-                verify_ssl=verify_ssl,
-            ).decode("utf-8")
-            for line in jsonLines.splitlines():
+            json_lines = (
+                ilr.files("fake_useragent.data").joinpath("browsers.json").read_text()
+            )
+            for line in json_lines.splitlines():
                 data.update(json.loads(line))
+        except Exception as exc:
+            # Empty data again
+            data = {}
+            logger.warning(
+                "Could not find local data/json file or could not parse the contents. Fallback to external resource.",
+                exc_info=exc,
+            )
+        else:
+            fetch_online = False
             ret = data
-        except (TypeError, ValueError):
-            raise FakeUserAgentError("Can not load JSON Lines data from cache server")
-    else:
-        ret = browsers_dict
+
+    # Fallback behaviour or use_external_data parameter is explicitly set to True
+    if fetch_online:
+        try:
+            # For each browser receive the user-agent strings
+            for browser_name in browsers:
+                browser_name = browser_name.lower().strip()
+                data[browser_name] = get_browser_user_agents_online(
+                    browser_name,
+                    verify_ssl=verify_ssl,
+                )
+        except Exception:
+            raise FakeUserAgentError("Could not load data from external website")
+        else:
+            ret = data
 
     if not ret:
         raise FakeUserAgentError("Data dictionary is empty", ret)
@@ -196,19 +180,17 @@ def rm(path):
         os.remove(path)
 
 
-def update(path, browsers, use_cache_server=True, verify_ssl=True):
-    rm(path)
+def update(cache_path, browsers, verify_ssl=True):
+    rm(cache_path)
 
-    write(
-        path, load(browsers, use_cache_server=use_cache_server, verify_ssl=verify_ssl)
-    )
+    write(cache_path, load(browsers, use_local_file=False, verify_ssl=verify_ssl))
 
 
-def load_cached(path, browsers, use_cache_server=True, verify_ssl=True):
-    if not exist(path):
-        update(path, browsers, use_cache_server=use_cache_server, verify_ssl=verify_ssl)
+def load_cached(cache_path, browsers, verify_ssl=True):
+    if not exist(cache_path):
+        update(cache_path, browsers, verify_ssl=verify_ssl)
 
-    return read(path)
+    return read(cache_path)
 
 
 from fake_useragent import settings  # noqa # isort:skip
