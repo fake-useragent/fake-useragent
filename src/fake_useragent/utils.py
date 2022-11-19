@@ -1,3 +1,4 @@
+import sys
 import contextlib
 import inspect
 import io
@@ -7,10 +8,11 @@ import re
 import ssl
 import time
 
-try:
+
+# We need files() from Python 3.10 or higher
+if sys.version_info >= (3, 10):
     import importlib.resources as ilr
-except ImportError:
-    # Running on pre-3.9 Python; use importlib-resources package
+else:
     import importlib_resources as ilr
 
 from urllib.error import URLError
