@@ -170,6 +170,13 @@ tox
 
 ### Changelog
 
+- 1.0.1 November 10, 2022
+
+  - Add `importlib-metadata` & `importlib-resources` as dependencies
+  - Check on specific Python version regarding the importlib resources (python v3.10 or higher) in order to have `files()` working
+  - `importlib_metadata` should now also work on Python version before 3.8
+  - Remove obsolete `MANIFEST.in` file
+
 - 1.0.0 November 17, 2022
 
   - Make the JSON Lines data file part of the Python package, data is retrieved locally
