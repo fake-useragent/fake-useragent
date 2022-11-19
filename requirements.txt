@@ -6,6 +6,7 @@ coverage==6.5.0
 distlib==0.3.6
 exceptiongroup==1.0.0
 filelock==3.8.0
+importlib-metadata==5.0.0
 importlib-resources==5.10.0
 iniconfig==1.1.1
 isort==5.10.1
@@ -23,3 +24,4 @@ six==1.16.0
 tomli==2.0.1
 tox==3.27.0
 virtualenv==20.16.6
+zipp==3.10.0
