@@ -8,10 +8,9 @@ import ssl
 import time
 
 try:
-    import importlib.resources as ilr
-except ImportError:
-    # Running on pre-3.9 Python; use importlib-resources package
     import importlib_resources as ilr
+except ImportError:  # Python 3.10
+    import importlib.resources as ilr
 
 from urllib.error import URLError
 from urllib.parse import quote_plus
