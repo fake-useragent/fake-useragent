@@ -170,6 +170,10 @@ tox
 
 ### Changelog
 
+- 1.1.0 November 26, 2022
+
+  - Add `pkg_resource` as fallback mechanism in trying to retrieve the local JSON data file
+
 - 1.0.1 November 10, 2022
 
   - Add `importlib-metadata` & `importlib-resources` as dependencies
