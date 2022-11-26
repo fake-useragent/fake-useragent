@@ -1,8 +1,14 @@
-import io
-import json
+import sys
 import os
 import time
+import io
+import json
 from functools import partial
+
+if sys.version_info >= (3, 10):
+    import importlib.resources as ilr
+else:
+    import importlib_resources as ilr
 
 import urllib
 from urllib.error import HTTPError
@@ -166,6 +172,43 @@ class TestUtils(unittest.TestCase):
         ]
         # By default use_local_file is also True during production
         data = utils.load(browsers, use_local_file=True)
+
+        self.assertTrue(data["chrome"])
+        self.assertTrue(data["edge"])
+        self.assertTrue(data["firefox"])
+        self.assertTrue(data["opera"])
+        self.assertTrue(data["safari"])
+        self.assertTrue(data["internet explorer"])
+        self.assertIsInstance(data["chrome"], list)
+        self.assertIsInstance(data["edge"], list)
+        self.assertIsInstance(data["firefox"], list)
+        self.assertIsInstance(data["opera"], list)
+        self.assertIsInstance(data["safari"], list)
+        self.assertIsInstance(data["internet explorer"], list)
+
+    def test_utils_load_use_local_file_pkg_resource_fallback(self):
+        browsers = [
+            "chrome",
+            "edge",
+            "internet explorer",
+            "firefox",
+            "safari",
+            "opera",
+        ]
+        denied_urls = [
+            "https://useragentstring.com",
+        ]
+
+        with patch.object(
+            urllib.request,
+            "Request",
+            side_effect=partial(_request, denied_urls=denied_urls),
+        ):
+            # By default use_local_file is also True during production
+            with patch.object(ilr, "files") as mocked_importlib_resources_files:
+                # This exception should trigger the alternative path, trying to use pkg_resource next
+                mocked_importlib_resources_files.side_effect = Exception("Error")
+                data = utils.load(browsers, use_local_file=True)
 
         self.assertTrue(data["chrome"])
         self.assertTrue(data["edge"])
