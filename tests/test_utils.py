@@ -1,8 +1,14 @@
-import io
-import json
+import sys
 import os
 import time
+import io
+import json
 from functools import partial
+
+if sys.version_info >= (3, 10):
+    import importlib.resources as ilr
+else:
+    import importlib_resources as ilr
 
 import urllib
 from urllib.error import HTTPError
@@ -166,6 +172,35 @@ class TestUtils(unittest.TestCase):
         ]
         # By default use_local_file is also True during production
         data = utils.load(browsers, use_local_file=True)
+
+        self.assertTrue(data["chrome"])
+        self.assertTrue(data["edge"])
+        self.assertTrue(data["firefox"])
+        self.assertTrue(data["opera"])
+        self.assertTrue(data["safari"])
+        self.assertTrue(data["internet explorer"])
+        self.assertIsInstance(data["chrome"], list)
+        self.assertIsInstance(data["edge"], list)
+        self.assertIsInstance(data["firefox"], list)
+        self.assertIsInstance(data["opera"], list)
+        self.assertIsInstance(data["safari"], list)
+        self.assertIsInstance(data["internet explorer"], list)
+
+    def test_utils_load_use_local_file_pkg_resource_fallback(self):
+        browsers = [
+            "chrome",
+            "edge",
+            "internet explorer",
+            "firefox",
+            "safari",
+            "opera",
+        ]
+        # By default use_local_file is also True during production
+        # We will not allow the default importlib resources to be used, by triggering an Exception
+        with patch.object(ilr, "files") as mocked_importlib_resources_files:
+            # This exception should trigger the alternative path, trying to use pkg_resource as fallback
+            mocked_importlib_resources_files.side_effect = Exception("Error")
+            data = utils.load(browsers, use_local_file=True)
 
         self.assertTrue(data["chrome"])
         self.assertTrue(data["edge"])

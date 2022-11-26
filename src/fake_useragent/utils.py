@@ -20,6 +20,12 @@ from urllib.parse import quote_plus
 from urllib import request
 from fake_useragent.log import logger
 
+# Fallback method for retrieving data file
+try:
+    from pkg_resources import resource_filename
+except:
+    pass
+
 str_types = (str,)
 text = str
 urlopen_args = inspect.getfullargspec(request.urlopen).kwonlyargs
@@ -123,16 +129,31 @@ def load(browsers, use_local_file=True, verify_ssl=True):
             )
             for line in json_lines.splitlines():
                 data.update(json.loads(line))
-        except Exception as exc:
-            # Empty data again
-            data = {}
-            logger.warning(
-                "Could not find local data/json file or could not parse the contents. Fallback to external resource.",
-                exc_info=exc,
-            )
-        else:
             fetch_online = False
             ret = data
+        except Exception as exc:
+            # Empty data just to be sure
+            data = {}
+            logger.warning(
+                "Unable to find local data/json file or could not parse the contents using importlib-resources. Try pkg-resource next.",
+                exc_info=exc,
+            )
+            try:
+                with open(
+                    resource_filename("fake_useragent", "data/browsers.json")
+                ) as file:
+                    json_lines = file.read()
+                    for line in json_lines.splitlines():
+                        data.update(json.loads(line))
+                fetch_online = False
+                ret = data
+            except Exception as exc2:
+                # Empty data just to be sure
+                data = {}
+                logger.warning(
+                    "Could not find local data/json file or could not parse the contents using pkg-resource. Fallback to external resource.",
+                    exc_info=exc2,
+                )
 
     # Fallback behaviour or use_external_data parameter is explicitly set to True
     if fetch_online:
