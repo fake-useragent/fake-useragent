@@ -195,20 +195,12 @@ class TestUtils(unittest.TestCase):
             "safari",
             "opera",
         ]
-        denied_urls = [
-            "https://useragentstring.com",
-        ]
-
-        with patch.object(
-            urllib.request,
-            "Request",
-            side_effect=partial(_request, denied_urls=denied_urls),
-        ):
-            # By default use_local_file is also True during production
-            with patch.object(ilr, "files") as mocked_importlib_resources_files:
-                # This exception should trigger the alternative path, trying to use pkg_resource next
-                mocked_importlib_resources_files.side_effect = Exception("Error")
-                data = utils.load(browsers, use_local_file=True)
+        # By default use_local_file is also True during production
+        # We will not allow the default importlib resources to be used, by triggering an Exception
+        with patch.object(ilr, "files") as mocked_importlib_resources_files:
+            # This exception should trigger the alternative path, trying to use pkg_resource as fallback
+            mocked_importlib_resources_files.side_effect = Exception("Error")
+            data = utils.load(browsers, use_local_file=True)
 
         self.assertTrue(data["chrome"])
         self.assertTrue(data["edge"])
