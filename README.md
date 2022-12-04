@@ -170,6 +170,10 @@ tox
 
 ### Changelog
 
+- 1.1.1 December 4, 2022
+
+  - Remove whitespaces from user agent strings, this is a patch release
+
 - 1.1.0 November 26, 2022
 
   - Add `pkg_resource` as fallback mechanism in trying to retrieve the local JSON data file
