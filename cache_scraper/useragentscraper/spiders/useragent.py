@@ -24,5 +24,7 @@ class UserAgentSpider(scrapy.Spider):
         browserName = browserName.replace("%20", " ")
         # Retrieve all useragent strings from hyperlinks on the website
         agents = response.css("#liste li a::text").getall()
+        # Remove all whitespaces of each element
+        agents = [s.strip() for s in agents]
         # Push data
         yield {browserName: agents}
