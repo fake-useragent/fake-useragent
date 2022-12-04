@@ -11,4 +11,4 @@ pip3 install -r ./requirements.txt
 ./start_spider.py
 
 # Copy to data file of fake_useragent Python project
-cp website/cache.json ../fake_useragent/data/browsers.json
+cp website/cache.json ../src/fake_useragent/data/browsers.json
