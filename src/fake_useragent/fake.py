@@ -152,32 +152,26 @@ class FakeUserAgent:
     def edge(self):
         return self.__getattr__("edge")
 
-    
     @property
     def edge(self):
         return self.__getattr__("edge")
 
-    
     @property
     def ie(self):
         return self.__getattr__("ie")
 
-    
     @property
     def internetexplorer(self):
         return self.ie
 
-    
     @property
     def msie(self):
         return self.ie
 
-    
     @property
     def firefox(self):
         return self.__getattr__("firefox")
 
-    
     @property
     def ff(self):
         return self.firefox
