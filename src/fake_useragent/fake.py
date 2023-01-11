@@ -140,6 +140,50 @@ class FakeUserAgent:
 
                 return self.fallback
 
+    @property
+    def chrome(self):
+        return self.__getattr__("chrome")
+
+    @property
+    def googlechrome(self):
+        return self.chrome
+
+    @property
+    def edge(self):
+        return self.__getattr__("edge")
+
+    @property
+    def ie(self):
+        return self.__getattr__("ie")
+
+    @property
+    def internetexplorer(self):
+        return self.ie
+
+    @property
+    def msie(self):
+        return self.ie
+
+    @property
+    def firefox(self):
+        return self.__getattr__("firefox")
+
+    @property
+    def ff(self):
+        return self.firefox
+
+    @property
+    def safari(self):
+        return self.__getattr__("safari")
+
+    @property
+    def opera(self):
+        return self.__getattr__("opera")
+
+    @property
+    def random(self):
+        return self.__getattr__("random")
+
 
 # common alias
 UserAgent = FakeUserAgent
