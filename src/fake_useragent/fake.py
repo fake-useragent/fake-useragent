@@ -153,10 +153,6 @@ class FakeUserAgent:
         return self.__getattr__("edge")
 
     @property
-    def edge(self):
-        return self.__getattr__("edge")
-
-    @property
     def ie(self):
         return self.__getattr__("ie")
 
