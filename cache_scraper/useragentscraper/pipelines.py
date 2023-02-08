@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 # from itemadapter import ItemAdapter
 # from scrapy.exceptions import DropItem
 
+
 # Template:
 class ScraperPipeline:
     def process_item(self, item, spider):

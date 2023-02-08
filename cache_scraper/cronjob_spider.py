@@ -12,6 +12,7 @@ from useragentscraper.spiders.useragent import (
 
 from twisted.internet import reactor
 
+
 # Create Process around the CrawlerRunner
 class CrawlerRunnerProcess(Process):
     def __init__(self, spider):
