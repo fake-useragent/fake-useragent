@@ -1,8 +1,7 @@
-import sys
-import os
-import time
-import io
 import json
+import os
+import sys
+import time
 from functools import partial
 
 if sys.version_info >= (3, 10):
@@ -10,14 +9,14 @@ if sys.version_info >= (3, 10):
 else:
     import importlib_resources as ilr
 
-import urllib
-from urllib.error import HTTPError
 import unittest
+import urllib
 from unittest.mock import patch
+from urllib.error import HTTPError
+
 import pytest
 
-from fake_useragent import errors, settings, utils
-from fake_useragent.utils import urlopen_has_ssl_context
+from fake_useragent import errors, utils
 from tests.utils import _request
 
 

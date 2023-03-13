@@ -1,13 +1,11 @@
-import sys
 import contextlib
 import inspect
-import io
 import json
 import os
 import re
 import ssl
+import sys
 import time
-
 
 # We need files() from Python 3.10 or higher
 if sys.version_info >= (3, 10):
@@ -15,15 +13,16 @@ if sys.version_info >= (3, 10):
 else:
     import importlib_resources as ilr
 
+from urllib import request
 from urllib.error import URLError
 from urllib.parse import quote_plus
-from urllib import request
+
 from fake_useragent.log import logger
 
 # Fallback method for retrieving data file
 try:
     from pkg_resources import resource_filename
-except:
+except ImportError:
     pass
 
 str_types = (str,)

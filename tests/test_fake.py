@@ -1,10 +1,10 @@
 import os
-import urllib
-from urllib import request
-from functools import partial
-
 import unittest
+import urllib
+from functools import partial
 from unittest.mock import patch
+from urllib import request
+
 import pytest
 
 from fake_useragent import (
@@ -222,7 +222,7 @@ class TestFake(unittest.TestCase):
             side_effect=partial(_request, denied_urls=denied_urls),
         ):
             with pytest.raises(FakeUserAgentError):
-                ua = UserAgent(use_external_data=True)
+                _ua = UserAgent(use_external_data=True)
 
     def test_fake_external_data_boolean(self):
         with pytest.raises(AssertionError):

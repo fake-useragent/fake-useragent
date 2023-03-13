@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 from multiprocessing import Process
 
-from scrapy.crawler import CrawlerRunner
-from scrapy.utils.project import get_project_settings
-from scrapy.utils.log import configure_logging
 from apscheduler.schedulers.blocking import BlockingScheduler
-
+from scrapy.crawler import CrawlerRunner
+from scrapy.utils.log import configure_logging
+from scrapy.utils.project import get_project_settings
+from twisted.internet import reactor
 from useragentscraper.spiders.useragent import (
     UserAgentSpider,
 )
-
-from twisted.internet import reactor
 
 
 # Create Process around the CrawlerRunner
