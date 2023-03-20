@@ -26,6 +26,7 @@ pyproject_api==1.5.0
 pyproject_hooks==1.0.0
 pytest==7.2.2
 pytest-cov==4.0.0
+ruff==0.0.257
 six==1.16.0
 tomli==2.0.1
 tox==4.4.6
