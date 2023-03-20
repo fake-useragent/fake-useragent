@@ -2,14 +2,14 @@
 
 # fake-useragent
 
-Up-to-date simple useragent faker with real world database
+Up-to-date simple useragent faker with real world database.
 
 ## Features
 
-- Data is pre-downloaded from [useragentstring.com](http://useragentstring.com/) and part of the package
+- Data is pre-downloaded from [useragentstring.com](http://useragentstring.com/) and the data is part of the package
 - Retrieves user-agent strings locally
 - Supports Python 3.x
-- _Fallback_ to external resource ([useragentstring.com](http://useragentstring.com/)) + caching
+- _Fallback_ to external resource ([useragentstring.com](http://useragentstring.com/))
 
 ### Installation
 
@@ -139,7 +139,13 @@ Make sure that you using latest version!
 pip install --upgrade fake-useragent
 ```
 
-Check version via python console:
+Or if that isn't working, try to install the latest package version like this (`1.1.3` is an example, check what the [latest version is on PyPi](https://pypi.org/project/fake-useragent/#history)):
+
+```sh
+pip install fake-useragent==1.1.3
+```
+
+Check version via the Python console:
 
 ```py
 import fake_useragent
