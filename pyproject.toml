@@ -47,6 +47,27 @@ content-type = "text/markdown"
 [project.urls]
 Homepage = "https://github.com/fake-useragent/fake-useragent"
 
+[tool.ruff]
+line-length = 142
+select = ["B", "C4", "C9", "E", "F", "I", "PL", "S", "SIM", "U", "W", "YTT"]
+ignore = ["B904", "C408", "PLW2901", "SIM105", "SIM108"]
+target-version = "py37"
+
+[tool.ruff.isort]
+known-first-party = ["fake_useragent"]
+
+[tool.ruff.mccabe]
+max-complexity = 13
+
+[tool.ruff.per-file-ignores]
+"src/fake_useragent/__init__.py" = ["F401"]
+"src/fake_useragent/fake.py" = ["B006", "S101"]
+"tests/*" = ["S", "SIM", "UP015"]
+
+[tool.ruff.pylint]
+max-args = 7
+max-branches = 13
+
 [tool.setuptools]
 zip-safe = false
 

@@ -1,5 +1,6 @@
-from fake_useragent import errors
 import unittest
+
+from fake_useragent import errors
 
 
 class TestErrors(unittest.TestCase):

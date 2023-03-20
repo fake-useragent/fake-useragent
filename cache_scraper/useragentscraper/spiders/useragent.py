@@ -1,6 +1,6 @@
-import scrapy
-
 from urllib.parse import urlparse
+
+import scrapy
 
 
 class UserAgentSpider(scrapy.Spider):
