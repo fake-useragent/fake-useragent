@@ -174,6 +174,15 @@ pip install -r requirements.txt
 tox
 ```
 
+### Linting
+
+To fix imports:
+
+```sh
+pip install -r requirements.txt
+ruff --select="I" --fix .
+```
+
 ### Changelog
 
 - 1.1.1 December 4, 2022
