@@ -6,10 +6,10 @@ Up-to-date simple useragent faker with real world database.
 
 ## Features
 
-- Data is pre-downloaded from [useragentstring.com](http://useragentstring.com/) and the data is part of the package
+- Data is pre-downloaded from [techblog.willshouse.com](https://techblog.willshouse.com/2012/01/03/most-common-user-agents/) and the data is part of the package
 - Retrieves user-agent strings locally
 - Supports Python 3.x
-- _Fallback_ to external resource ([useragentstring.com](http://useragentstring.com/))
+- _Fallback_ to external resource ([techblog.willshouse.com](https://techblog.willshouse.com/2012/01/03/most-common-user-agents/))
 
 ### Installation
 
@@ -159,7 +159,7 @@ Please do not forget to mention the version that you are using.
 
 ### Developers
 
-Since GitHub Actions is unable to reach useragentstring.com. We can run the script below to automatically scrape the user-agent strings from the external data source. The script will copy the [JSONlines](https://jsonlines.org/) file to the `src/fake_useragent/data` directory. Execute:
+Since GitHub Actions is unable to reach willshouse.com and has Cloudflare protection. We can run the script below to automatically scrape the user-agent strings from the external data source. The script will copy the [JSONlines](https://jsonlines.org/) file to the `src/fake_useragent/data` directory. Execute:
 
 ```sh
 ./update_data_file.sh
@@ -184,6 +184,18 @@ ruff --select="I" --fix .
 ```
 
 ### Changelog
+
+- 1.2.0
+
+  - Move to a new data source for user-agent strings
+
+- 1.1.3 March 20, 2023
+
+  - Update dependencies
+
+- 1.1.2 February 8, 2023
+
+  - Security fixes
 
 - 1.1.1 December 4, 2022
 

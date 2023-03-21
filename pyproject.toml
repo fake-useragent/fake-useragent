@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fake-useragent"
-version = "1.1.3"
+version = "1.2.0"
 authors = [
     {name = "Victor Kovtun", email = "hellysmile@gmail.com"},
     {name = "Melroy van den Berg", email = "melroy@melroy.org"},
