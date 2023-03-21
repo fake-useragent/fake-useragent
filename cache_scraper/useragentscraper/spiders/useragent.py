@@ -1,30 +1,34 @@
 from urllib.parse import urlparse
 
 import scrapy
+import json
 
 
 class UserAgentSpider(scrapy.Spider):
     name = "useragent"
     allowed_domains = ["useragentstring.com"]
+    # We use the Google Web Cache, to go around Cloudflare
     start_urls = [
-        "https://useragentstring.com/pages/Chrome/",
-        "https://useragentstring.com/pages/Opera/",
-        "https://useragentstring.com/pages/Firefox/",
-        "https://useragentstring.com/pages/Safari/",
-        "https://useragentstring.com/pages/Edge/",
-        "https://useragentstring.com/pages/Internet Explorer/",
+        "https://webcache.googleusercontent.com/search?q=cache:https%3A%2F%2Ftechblog.willshouse.com%2F2012%2F01%2F03%2Fmost-common-user-agents%2F",
     ]
 
     def parse(self, response):
-        # Retrieve last section from the URL path (first strip the last slash)
-        browserName = urlparse(response.url).path.rstrip("/").split("/")[-1]
-        # Lowercase
-        browserName = browserName.lower()
-        # Replace space (%20) with a real space if present
-        browserName = browserName.replace("%20", " ")
-        # Retrieve all useragent strings from hyperlinks on the website
-        agents = response.css("#liste li a::text").getall()
-        # Remove all whitespaces of each element
-        agents = [s.strip() for s in agents]
-        # Push data
-        yield {browserName: agents}
+        # Retrieve the JSON textarea content
+        data = response.css("textarea.get-the-list::text")[1].get()
+        # Convert JSON to Python object
+        agents = json.loads(data)
+
+        for agent in agents:
+            try:
+                [browser, version, os] = agent["system"].split()
+                # Remove percentage icon & convert to float
+                agent["percent"] = float(agent["percent"][:-1])
+                # Add additional fields
+                agent["browser"] = browser.lower()  # To lower-case
+                agent["version"] = float(version)  # Convert to float
+                agent["os"] = os.lower()  # To lower-case
+                # Yield each agent object at the time
+                yield agent
+            except ValueError:
+                # Ignore user-agent strings that could not be parsed (eg. bot agent strings)
+                pass

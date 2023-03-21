@@ -13,16 +13,17 @@ BOT_NAME = "useragentscraper"
 SPIDER_MODULES = ["useragentscraper.spiders"]
 NEWSPIDER_MODULE = "useragentscraper.spiders"
 
+REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 
 # Enable fake user agent provider
 FAKEUSERAGENT_PROVIDERS = [
-    "scrapy_fake_useragent.providers.FakeUserAgentProvider",  # this is the first provider we'll try
-    "scrapy_fake_useragent.providers.FakerProvider",  # if FakeUserAgentProvider fails, we'll use faker to generate a user-agent string for us
+    # "scrapy_fake_useragent.providers.FakeUserAgentProvider",  # this is the first provider we'll try
+    # "scrapy_fake_useragent.providers.FakerProvider",  # if FakeUserAgentProvider fails, we'll use faker to generate a user-agent string for us
     "scrapy_fake_useragent.providers.FixedUserAgentProvider",  # fall back to USER_AGENT value
 ]
 
 # Fallback user-agent
-USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64)"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
