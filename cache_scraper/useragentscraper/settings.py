@@ -18,8 +18,8 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 # Enable fake user agent provider
 FAKEUSERAGENT_PROVIDERS = [
     # "scrapy_fake_useragent.providers.FakeUserAgentProvider",  # this is the first provider we'll try
-    # "scrapy_fake_useragent.providers.FakerProvider",  # if FakeUserAgentProvider fails, we'll use faker to generate a user-agent string for us
-    "scrapy_fake_useragent.providers.FixedUserAgentProvider",  # fall back to USER_AGENT value
+    # "scrapy_fake_useragent.providers.FakerProvider",  # Generate a user-agent string for us
+    "scrapy_fake_useragent.providers.FixedUserAgentProvider",  # Use the USER_AGENT value below
 ]
 
 # Fallback user-agent
