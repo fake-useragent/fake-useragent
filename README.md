@@ -157,7 +157,7 @@ And you are always welcome to post [issues](https://github.com/fake-useragent/fa
 
 Please do not forget to mention the version that you are using.
 
-### Developers
+### For Developers
 
 Since GitHub Actions is unable to reach willshouse.com and has Cloudflare protection. We can run the script below to automatically scrape the user-agent strings from the external data source. The script will copy the [JSONlines](https://jsonlines.org/) file to the `src/fake_useragent/data` directory. Execute:
 
@@ -167,14 +167,23 @@ Since GitHub Actions is unable to reach willshouse.com and has Cloudflare protec
 
 The data JSON file is part of the Python package, see [pyproject.toml](pyproject.toml). Read more about [Data files support](https://setuptools.pypa.io/en/latest/userguide/datafiles.html).
 
-### Tests
+### Python Virtual Environment
+
+We encourage to use Python virtual environment before installing Pip packages, like so:
+
+```sh
+python -m virtualenv env
+source env/bin/activate
+```
+
+#### Tests
 
 ```sh
 pip install -r requirements.txt
 tox
 ```
 
-### Linting
+#### Linting
 
 To fix imports:
 
