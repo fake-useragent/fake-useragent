@@ -85,7 +85,7 @@ ua.unknown
 # fake_useragent.errors.FakeUserAgentError: Error occurred during getting browser: unknown
 ```
 
-By default `fake-useragent` will use it's local ([`browsers.json`](./fake_useragent/data/browsers.json)) data file as the data source.
+By default `fake-useragent` will use its local ([`browsers.json`](./fake_useragent/data/browsers.json)) data file as the data source.
 
 If you don't want to use the local data, but use the external data source to retrieve the user-agents. Set `use_external_data` to `True`:
 
@@ -94,7 +94,7 @@ from fake_useragent import UserAgent
 ua = UserAgent(use_external_data=True)
 ```
 
-As a fallback method `fake-useragent` will retrieve it's data from an external data source and stores in a cache file _or_ when you expcility set `use_external_data=True` as parameter.
+As a fallback method `fake-useragent` will retrieve its data from an external data source and stores in a cache file _or_ when you expcility set `use_external_data=True` as parameter.
 You can trigger an update to the cache file by calling `update()`:
 
 ```py
