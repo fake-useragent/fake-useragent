@@ -9,7 +9,6 @@ Up-to-date simple useragent faker with real world database.
 - Data is pre-downloaded from [techblog.willshouse.com](https://techblog.willshouse.com/2012/01/03/most-common-user-agents/) and the data is part of the package
 - Retrieves user-agent strings locally
 - Supports Python 3.x
-- _Fallback_ to external resource ([techblog.willshouse.com](https://techblog.willshouse.com/2012/01/03/most-common-user-agents/))
 
 ### Installation
 
@@ -25,38 +24,36 @@ pip3 install fake-useragent
 
 ### Usage
 
+Simple usage example, see below for more examples:
+
 ```py
 from fake_useragent import UserAgent
 ua = UserAgent()
 
-ua.ie
-# Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US);
-ua.msie
-# Mozilla/5.0 (compatible; MSIE 10.0; Macintosh; Intel Mac OS X 10_7_3; Trident/6.0)'
-ua['Internet Explorer']
-# Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; GTB7.4; InfoPath.2; SV1; .NET CLR 3.3.69573; WOW64; en-US)
-ua.opera
-# Opera/9.80 (X11; Linux i686; U; ru) Presto/2.8.131 Version/11.11
+# Get a random browser user-agent string
+ua.random
+
+# Or get user-agent string from a specific browser
 ua.chrome
-# Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.2 (KHTML, like Gecko) Chrome/22.0.1216.0 Safari/537.2'
+# Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
 ua.google
 # Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/537.13 (KHTML, like Gecko) Chrome/24.0.1290.1 Safari/537.13
 ua['google chrome']
-# Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11
+# Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
 ua.firefox
-# Mozilla/5.0 (Windows NT 6.2; Win64; x64; rv:16.0.1) Gecko/20121011 Firefox/16.0.1
+# Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0
 ua.ff
-# Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1
+# Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
 ua.safari
-# Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25
-
-# and the best one, get a random browser user-agent string
-ua.random
+# Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15
 ```
 
-### Notes
+#### Additional usage
 
-If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["chrome", "edge", "internet explorer", "firefox", "safari", "opera"]`).
+Additional features that fake-useragent now offers since v1.2.0.
+
+If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["chrome", "edge", "firefox", "safari"]`).  
+This example will only return random useragents from Edge and Chrome:
 
 ```py
 from fake_useragent import UserAgent
@@ -64,7 +61,35 @@ ua = UserAgent(browsers=['edge', 'chrome'])
 ua.random
 ```
 
-You can add your own fallback string using the `fallback` parameter, in rare cases everything else failed:
+_Note:_ Fakeuser-agent knowns about: Chrome, Edge, Firefox and Safari. Other browsers are not popular enough and aren't part of our dataset we use.
+
+---
+
+If you want to specify your own operating systems, you can do that via the `os` argument (default is: `["windows", "macos", "linux"]`).  
+In this example you will only get Linux useragents back:
+
+```py
+from fake_useragent import UserAgent
+ua = UserAgent(os='linux')
+ua.random
+```
+
+---
+
+If you want to return more popular useragent strings, you can play with the `min_percentage` argument (default is: `0.0`, meaning all useragents will match).  
+In this example you get only useragents that have a minimum usage percentage of 1.3% (or higher):
+
+```py
+from fake_useragent import UserAgent
+ua = UserAgent(min_percentage=1.3)
+ua.random
+```
+
+_Hint:_ Of-course you can **combine all those arguments** to you liking!
+
+### Notes
+
+You can override the fallback string using the `fallback` parameter, in very rare cases something failed:
 
 ```py
 import fake_useragent
@@ -83,37 +108,6 @@ ua.unknown
 # Traceback (most recent call last):
 #   ...
 # fake_useragent.errors.FakeUserAgentError: Error occurred during getting browser: unknown
-```
-
-By default `fake-useragent` will use its local ([`browsers.json`](./fake_useragent/data/browsers.json)) data file as the data source.
-
-If you don't want to use the local data, but use the external data source to retrieve the user-agents. Set `use_external_data` to `True`:
-
-```py
-from fake_useragent import UserAgent
-ua = UserAgent(use_external_data=True)
-```
-
-As a fallback method `fake-useragent` will retrieve its data from an external data source and stores in a cache file _or_ when you expcility set `use_external_data=True` as parameter.
-You can trigger an update to the cache file by calling `update()`:
-
-```py
-from fake_useragent import UserAgent
-ua = UserAgent()
-ua.update()
-```
-
-The default location of the external resource cache file is in your os temp dir, like `/tmp`.  
-You can change the temp directory by changing `cache_path` (mainly useful together when `use_external_data` is set to True).
-
-```py
-import fake_useragent
-
-# I am strongly! recommend using a version suffix
-location = '/home/user/fake_useragent%s.json' % fake_useragent.VERSION
-
-ua = fake_useragent.UserAgent(use_external_data=True, cache_path=location)
-ua.random
 ```
 
 If you need to safe some attributes from overriding them in UserAgent by `__getattr__` method
@@ -139,10 +133,10 @@ Make sure that you using latest version!
 pip install --upgrade fake-useragent
 ```
 
-Or if that isn't working, try to install the latest package version like this (`1.1.3` is an example, check what the [latest version is on PyPi](https://pypi.org/project/fake-useragent/#history)):
+Or if that isn't working, try to install the latest package version like this (`1.2.0` is an example, check what the [latest version is on PyPi](https://pypi.org/project/fake-useragent/#history)):
 
 ```sh
-pip install fake-useragent==1.1.3
+pip install fake-useragent==1.2.0
 ```
 
 Check version via the Python console:
@@ -194,9 +188,12 @@ ruff --select="I" --fix .
 
 ### Changelog
 
-- 1.2.0
+- 1.2.0 August 2, 2023
 
-  - Move to a new data source for user-agent strings
+  - Updated browser useragent data
+  - Allow filters on browser, OS and usage percentage
+  - Update the cache scraper to scape the new data source for user-agent strings
+  - Adapted the code to work with the new JSON data format
 
 - 1.1.3 March 20, 2023
 
