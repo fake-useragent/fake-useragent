@@ -21,8 +21,3 @@ SHORTCUTS = {
     "googlechrome": "chrome",
     "ff": "firefox",
 }
-
-OVERRIDES = {
-    "Edge/IE": "Internet Explorer",
-    "IE/Edge": "Internet Explorer",
-}
