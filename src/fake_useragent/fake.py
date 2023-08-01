@@ -5,6 +5,7 @@ from fake_useragent.errors import FakeUserAgentError
 from fake_useragent.log import logger
 from fake_useragent.utils import load, str_types
 
+
 class FakeUserAgent:
     def __init__(
         self,
@@ -24,9 +25,16 @@ class FakeUserAgent:
         # OS replacement (windows -> win10)
         if isinstance(os, str):
             os = [os]
-        self.os = [settings.OS_REPLACEMENTS[os_name] if os_name in settings.OS_REPLACEMENTS else os_name for os_name in os]
+        self.os = [
+            settings.OS_REPLACEMENTS[os_name]
+            if os_name in settings.OS_REPLACEMENTS
+            else os_name
+            for os_name in os
+        ]
 
-        assert isinstance(min_percentage, float), "Minimum usage percentage must be float"
+        assert isinstance(
+            min_percentage, float
+        ), "Minimum usage percentage must be float"
         self.min_percentage = min_percentage
 
         assert isinstance(fallback, str), "fallback must be string"
@@ -66,17 +74,31 @@ class FakeUserAgent:
                 # And based on OS list
                 # And percentage is bigger then min percentage
                 # And convert the iterator back to a list
-                filtered_browsers = list(filter(lambda x: x['browser'] in self.browsers and x['os'] in self.os and x['percent'] > self.min_percentage, self.data_browsers))
+                filtered_browsers = list(
+                    filter(
+                        lambda x: x["browser"] in self.browsers
+                        and x["os"] in self.os
+                        and x["percent"] > self.min_percentage,
+                        self.data_browsers,
+                    )
+                )
             else:
                 # Or when random isn't select, we filter the browsers array based on the 'attr' using lamba
                 # And based on OS list
                 # And percentage is bigger then min percentage
                 # And convert the iterator back to a list
-                filtered_browsers = list(filter(lambda x: x['browser'] == attr and x['os'] in self.os and x['percent'] > self.min_percentage, self.data_browsers))
-            
+                filtered_browsers = list(
+                    filter(
+                        lambda x: x["browser"] == attr
+                        and x["os"] in self.os
+                        and x["percent"] > self.min_percentage,
+                        self.data_browsers,
+                    )
+                )
+
             # Pick a random browser user-agent from the filtered browsers
             # And return the useragent string.
-            return random.choice(filtered_browsers).get('useragent')
+            return random.choice(filtered_browsers).get("useragent")
         except (KeyError, IndexError):
             if self.fallback is None:
                 raise FakeUserAgentError(
@@ -117,6 +139,7 @@ class FakeUserAgent:
     @property
     def random(self):
         return self.__getattr__("random")
+
 
 # common alias
 UserAgent = FakeUserAgent
