@@ -1,10 +1,4 @@
-import os
 import unittest
-import urllib
-from functools import partial
-from unittest.mock import patch
-from urllib import request
-
 import pytest
 
 from fake_useragent import (

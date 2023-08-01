@@ -1,22 +1,11 @@
-import json
-import os
-import sys
-import time
-from functools import partial
-
 if sys.version_info >= (3, 10):
     import importlib.resources as ilr
 else:
     import importlib_resources as ilr
 
 import unittest
-import urllib
 from unittest.mock import patch
-from urllib.error import HTTPError
-
-import pytest
-
-from fake_useragent import errors, utils
+from fake_useragent import utils
 
 
 class TestUtils(unittest.TestCase):
