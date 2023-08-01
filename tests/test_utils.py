@@ -7,6 +7,7 @@ else:
 
 import unittest
 from unittest.mock import patch
+
 from fake_useragent import utils
 
 

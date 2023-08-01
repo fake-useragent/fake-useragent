@@ -1,13 +1,7 @@
 import unittest
-import pytest
 
-from fake_useragent import (
-    VERSION,
-    FakeUserAgent,
-    FakeUserAgentError,
-    UserAgent,
-    settings,
-)
+import pytest
+from fake_useragent import VERSION, FakeUserAgent, UserAgent, settings
 
 
 class TestFake(unittest.TestCase):
