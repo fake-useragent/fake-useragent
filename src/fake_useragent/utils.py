@@ -17,6 +17,7 @@ except ImportError:
 
 str_types = (str,)
 
+
 # Load all lines from browser.json file
 # Returns array of objects
 def load():
