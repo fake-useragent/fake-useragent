@@ -1,3 +1,5 @@
+import sys
+
 if sys.version_info >= (3, 10):
     import importlib.resources as ilr
 else:
