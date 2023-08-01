@@ -1,4 +1,3 @@
-import inspect
 import json
 import sys
 
@@ -7,8 +6,6 @@ if sys.version_info >= (3, 10):
     import importlib.resources as ilr
 else:
     import importlib_resources as ilr
-
-from urllib import request
 
 from fake_useragent.log import logger
 

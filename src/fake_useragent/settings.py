@@ -1,6 +1,3 @@
-import os
-import tempfile
-
 try:
     from importlib import metadata
 except ImportError:
