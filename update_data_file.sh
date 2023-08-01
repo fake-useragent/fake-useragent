@@ -4,6 +4,13 @@
 
 # Go to the Useragent scraper folder
 cd cache_scraper
+
+# Prepare virtual environment
+python -m virtualenv env
+
+# Activate virtual env
+source env/bin/activate
+
 # Install Python deps
 pip3 install -r ./requirements.txt
 

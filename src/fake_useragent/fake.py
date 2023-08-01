@@ -1,44 +1,44 @@
 import random
-from threading import Lock
 
 from fake_useragent import settings
 from fake_useragent.errors import FakeUserAgentError
 from fake_useragent.log import logger
-from fake_useragent.utils import load, load_cached, str_types, update
+from fake_useragent.utils import load, str_types
 
 
 class FakeUserAgent:
     def __init__(
         self,
-        use_external_data=False,
-        cache_path=settings.DB,
-        fallback=None,
-        browsers=["chrome", "edge", "internet explorer", "firefox", "safari", "opera"],
-        verify_ssl=True,
+        browsers=["chrome", "edge", "firefox", "safari"],
+        os=["windows", "macos", "linux"],
+        min_percentage=0.0,
+        fallback="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
         safe_attrs=tuple(),
     ):
-        assert isinstance(
-            use_external_data, bool
-        ), "use_external_data must be True or False"
-
-        self.use_external_data = use_external_data
-
-        assert isinstance(cache_path, str_types), "cache_path must be string or unicode"
-
-        self.cache_path = cache_path
-
-        if fallback is not None:
-            assert isinstance(fallback, str_types), "fallback must be string or unicode"
-
-        self.fallback = fallback
-
+        # Check inputs
         assert isinstance(browsers, (list, str)), "browsers must be list or string"
-
+        if isinstance(browsers, str):
+            browsers = [browsers]
         self.browsers = browsers
 
-        assert isinstance(verify_ssl, bool), "verify_ssl must be True or False"
+        assert isinstance(os, (list, str)), "OS must be list or string"
+        # OS replacement (windows -> win10)
+        if isinstance(os, str):
+            os = [os]
+        self.os = [
+            settings.OS_REPLACEMENTS[os_name]
+            if os_name in settings.OS_REPLACEMENTS
+            else os_name
+            for os_name in os
+        ]
 
-        self.verify_ssl = verify_ssl
+        assert isinstance(
+            min_percentage, float
+        ), "Minimum usage percentage must be float"
+        self.min_percentage = min_percentage
+
+        assert isinstance(fallback, str), "fallback must be string"
+        self.fallback = fallback
 
         assert isinstance(
             safe_attrs, (list, set, tuple)
@@ -50,61 +50,10 @@ class FakeUserAgent:
             assert all(
                 str_types_safe_attrs
             ), "safe_attrs must be list\\tuple\\set of strings or unicode"
-
         self.safe_attrs = set(safe_attrs)
 
-        # initial empty data
-        self.data_browsers = {}
-
-        self.load()
-
-    def load(self):
-        try:
-            with self.load.lock:
-                if self.use_external_data:
-                    # Use external resource to retrieve browser data
-                    self.data_browsers = load_cached(
-                        self.cache_path,
-                        self.browsers,
-                        verify_ssl=self.verify_ssl,
-                    )
-                else:
-                    # By default we will try to load our local file
-                    self.data_browsers = load(
-                        self.browsers,
-                        verify_ssl=self.verify_ssl,
-                    )
-        except FakeUserAgentError:
-            if self.fallback is None:
-                raise
-            else:
-                logger.warning(
-                    "Error occurred during fetching data, "
-                    "but was suppressed with fallback.",
-                )
-
-    load.lock = Lock()
-
-    def update(self, use_external_data=None):
-        with self.update.lock:
-            if use_external_data is not None:
-                assert isinstance(
-                    use_external_data, bool
-                ), "use_external_data must be True or False"
-
-                self.use_external_data = use_external_data
-
-            # Update tmp cache file from external data source
-            if self.use_external_data:
-                update(
-                    self.cache_path,
-                    self.browsers,
-                    verify_ssl=self.verify_ssl,
-                )
-
-            self.load()
-
-    update.lock = Lock()
+        # Next, load our local data file into memory (browsers.json)
+        self.data_browsers = load()
 
     def __getitem__(self, attr):
         return self.__getattr__(attr)
@@ -114,19 +63,42 @@ class FakeUserAgent:
             return super(UserAgent, self).__getattr__(attr)
 
         try:
+            # Handle input value
             for value, replacement in settings.REPLACEMENTS.items():
                 attr = attr.replace(value, replacement)
-
             attr = attr.lower()
+            attr = settings.SHORTCUTS.get(attr, attr)
 
             if attr == "random":
-                # Pick a random browser from the browsers argument list
-                browser_name = random.choice(self.browsers)
+                # Filter the browser list based on the browsers array using lambda
+                # And based on OS list
+                # And percentage is bigger then min percentage
+                # And convert the iterator back to a list
+                filtered_browsers = list(
+                    filter(
+                        lambda x: x["browser"] in self.browsers
+                        and x["os"] in self.os
+                        and x["percent"] > self.min_percentage,
+                        self.data_browsers,
+                    )
+                )
             else:
-                browser_name = settings.SHORTCUTS.get(attr, attr)
+                # Or when random isn't select, we filter the browsers array based on the 'attr' using lamba
+                # And based on OS list
+                # And percentage is bigger then min percentage
+                # And convert the iterator back to a list
+                filtered_browsers = list(
+                    filter(
+                        lambda x: x["browser"] == attr
+                        and x["os"] in self.os
+                        and x["percent"] > self.min_percentage,
+                        self.data_browsers,
+                    )
+                )
 
-            # Pick a random user-agent string for a specific browser
-            return random.choice(self.data_browsers[browser_name])
+            # Pick a random browser user-agent from the filtered browsers
+            # And return the useragent string.
+            return random.choice(filtered_browsers).get("useragent")
         except (KeyError, IndexError):
             if self.fallback is None:
                 raise FakeUserAgentError(
@@ -153,18 +125,6 @@ class FakeUserAgent:
         return self.__getattr__("edge")
 
     @property
-    def ie(self):
-        return self.__getattr__("ie")
-
-    @property
-    def internetexplorer(self):
-        return self.ie
-
-    @property
-    def msie(self):
-        return self.ie
-
-    @property
     def firefox(self):
         return self.__getattr__("firefox")
 
@@ -175,10 +135,6 @@ class FakeUserAgent:
     @property
     def safari(self):
         return self.__getattr__("safari")
-
-    @property
-    def opera(self):
-        return self.__getattr__("opera")
 
     @property
     def random(self):

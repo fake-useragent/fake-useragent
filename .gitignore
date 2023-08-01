@@ -5,6 +5,8 @@ env*
 build
 dist
 .cache
+.ruff_cache
+.pytest_cache
 .eggs
 *.egg-info
 *.egg
