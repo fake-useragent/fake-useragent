@@ -187,6 +187,11 @@ ruff --select="I" --fix .
 
 ### Changelog
 
+- 1.2.1 August 2, 2023
+
+  - Small improvements in the `min_percentage` check
+  - Update all Pip package dependencies
+
 - 1.2.0 August 2, 2023
 
   - Updated browser useragent data
