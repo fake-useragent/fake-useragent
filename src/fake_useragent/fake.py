@@ -78,7 +78,7 @@ class FakeUserAgent:
                     filter(
                         lambda x: x["browser"] in self.browsers
                         and x["os"] in self.os
-                        and x["percent"] > self.min_percentage,
+                        and x["percent"] >= self.min_percentage,
                         self.data_browsers,
                     )
                 )
@@ -91,7 +91,7 @@ class FakeUserAgent:
                     filter(
                         lambda x: x["browser"] == attr
                         and x["os"] in self.os
-                        and x["percent"] > self.min_percentage,
+                        and x["percent"] >= self.min_percentage,
                         self.data_browsers,
                     )
                 )
