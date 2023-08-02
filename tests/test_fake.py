@@ -12,19 +12,6 @@ class TestFake(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def _probe(self, ua):
-        ua.edge
-        ua.google
-        ua.chrome
-        ua.googlechrome
-        ua.google_chrome
-        ua["google chrome"]
-        ua.firefox
-        ua.ff
-        ua.safari
-        ua.random
-        ua["random"]
-
     def test_fake_init(self):
         ua = UserAgent()
 
@@ -41,10 +28,19 @@ class TestFake(unittest.TestCase):
         self.assertTrue(ua.random)
         self.assertIsInstance(ua.random, str)
 
-    def test_fake_user_agent_browsers(self):
+    def test_fake_probe_user_agent_browsers(self):
         ua = UserAgent()
-
-        self._probe(ua)
+        ua.edge  # noqa: B018
+        ua.google  # noqa: B018
+        ua.chrome  # noqa: B018
+        ua.googlechrome  # noqa: B018
+        ua.google_chrome  # noqa: B018
+        ua["google chrome"]  # noqa: B018
+        ua.firefox  # noqa: B018
+        ua.ff  # noqa: B018
+        ua.safari  # noqa: B018
+        ua.random  # noqa: B018
+        ua["random"]  # noqa: B018
 
     def test_fake_data_browser_type(self):
         ua = UserAgent()
@@ -84,7 +80,7 @@ class TestFake(unittest.TestCase):
         ua = UserAgent(safe_attrs=("__injections__",))
 
         with pytest.raises(AttributeError):
-            ua.__injections__
+            ua.__injections__  # noqa: B018
 
     def test_fake_version(self):
         assert VERSION == settings.__version__

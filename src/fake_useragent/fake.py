@@ -78,7 +78,7 @@ class FakeUserAgent:
                     filter(
                         lambda x: x["browser"] in self.browsers
                         and x["os"] in self.os
-                        and x["percent"] > self.min_percentage,
+                        and x["percent"] >= self.min_percentage,
                         self.data_browsers,
                     )
                 )
@@ -91,14 +91,14 @@ class FakeUserAgent:
                     filter(
                         lambda x: x["browser"] == attr
                         and x["os"] in self.os
-                        and x["percent"] > self.min_percentage,
+                        and x["percent"] >= self.min_percentage,
                         self.data_browsers,
                     )
                 )
 
             # Pick a random browser user-agent from the filtered browsers
             # And return the useragent string.
-            return random.choice(filtered_browsers).get("useragent")
+            return random.choice(filtered_browsers).get("useragent")  # noqa: S311
         except (KeyError, IndexError):
             if self.fallback is None:
                 raise FakeUserAgentError(
