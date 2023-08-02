@@ -32,4 +32,4 @@ tomli==2.0.1
 tox==4.4.6
 validate-pyproject==0.12.1
 virtualenv==20.20.0
-zipp==3.15.0
+zipp==3.16.2
