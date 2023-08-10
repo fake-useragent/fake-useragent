@@ -198,6 +198,7 @@ ruff --select="I" --fix .
   - Allow filters on browser, OS and usage percentage
   - Update the cache scraper to scape the new data source for user-agent strings
   - Adapted the code to work with the new JSON data format
+  - Parameter `use_external_data=True` is removed. If you use this parameter, just remove it!
 
 - 1.1.3 March 20, 2023
 
