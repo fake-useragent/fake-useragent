@@ -44,5 +44,5 @@ typing_extensions==4.7.1
 tzdata==2023.3
 tzlocal==5.0.1
 urllib3==2.0.4
-w3lib==2.1.1
+w3lib==2.1.2
 zope.interface==6.0
