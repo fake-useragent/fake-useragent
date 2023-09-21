@@ -7,7 +7,7 @@ cffi==1.15.1
 charset-normalizer==3.2.0
 click==8.1.6
 constantly==15.1.0
-cryptography==41.0.3
+cryptography==41.0.4
 cssselect==1.2.0
 filelock==3.12.2
 hyperlink==21.0.0
