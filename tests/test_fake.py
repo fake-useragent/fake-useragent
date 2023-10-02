@@ -73,7 +73,8 @@ class TestFake(unittest.TestCase):
         fallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 
         ua = UserAgent()
-        self.assertEqual(ua.getBrowser("non_existing"), fallback)
+        self.assertIsInstance(ua.getBrowser("non_existing"), dict)
+        self.assertEqual(ua.getBrowser("non_existing").get("useragent"), fallback)
 
     def test_fake_fallback_str_types(self):
         with pytest.raises(AssertionError):
