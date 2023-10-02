@@ -28,6 +28,17 @@ class TestFake(unittest.TestCase):
         self.assertTrue(ua.random)
         self.assertIsInstance(ua.random, str)
 
+        self.assertTrue(ua.getChrome)
+        self.assertIsInstance(ua.getChrome, dict)
+        self.assertTrue(ua.getEdge)
+        self.assertIsInstance(ua.getEdge, dict)
+        self.assertTrue(ua.getFirefox)
+        self.assertIsInstance(ua.getFirefox, dict)
+        self.assertTrue(ua.getSafari)
+        self.assertIsInstance(ua.getSafari, dict)
+        self.assertTrue(ua.getRandom)
+        self.assertIsInstance(ua.getRandom, dict)
+
     def test_fake_probe_user_agent_browsers(self):
         ua = UserAgent()
         ua.edge  # noqa: B018
@@ -41,6 +52,11 @@ class TestFake(unittest.TestCase):
         ua.safari  # noqa: B018
         ua.random  # noqa: B018
         ua["random"]  # noqa: B018
+        ua.getEdge  # noqa: B018
+        ua.getChrome  # noqa: B018
+        ua.getFirefox  # noqa: B018
+        ua.getSafari  # noqa: B018
+        ua.getRandom  # noqa: B018
 
     def test_fake_data_browser_type(self):
         ua = UserAgent()
@@ -52,6 +68,13 @@ class TestFake(unittest.TestCase):
         ua = UserAgent()
         self.assertEqual(ua.non_existing, fallback)
         self.assertEqual(ua["non_existing"], fallback)
+
+    def test_fake_fallback_dictionary(self):
+        fallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+
+        ua = UserAgent()
+        self.assertIsInstance(ua.getBrowser("non_existing"), dict)
+        self.assertEqual(ua.getBrowser("non_existing").get("useragent"), fallback)
 
     def test_fake_fallback_str_types(self):
         with pytest.raises(AssertionError):
