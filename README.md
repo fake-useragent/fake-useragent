@@ -185,6 +185,13 @@ pip install -r requirements.txt
 ruff --select="I" --fix .
 ```
 
+Fix black code formatting errors:
+
+```sh
+pip install -r requirements.txt
+black .
+```
+
 ### Changelog
 
 - 1.2.1 August 2, 2023
