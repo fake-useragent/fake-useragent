@@ -40,7 +40,7 @@ six==1.16.0
 tldextract==3.4.4
 tomli==2.0.1
 Twisted==22.10.0
-typing_extensions==4.7.1
+typing_extensions==4.8.0
 tzdata==2023.3
 tzlocal==5.0.1
 urllib3==2.0.4
