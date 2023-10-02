@@ -8,6 +8,7 @@ Up-to-date simple useragent faker with real world database.
 
 - Data is pre-downloaded from [techblog.willshouse.com](https://techblog.willshouse.com/2012/01/03/most-common-user-agents/) and the data is part of the package
 - Retrieves user-agent strings locally
+- Retrieve user-agent Python dictionary
 - Supports Python 3.x
 
 ### Installation
