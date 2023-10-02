@@ -12,7 +12,7 @@ REPLACEMENTS = {
 }
 
 OS_REPLACEMENTS = {
-    "windows": "win10",
+    "windows": ["win10", "win7"],
 }
 
 SHORTCUTS = {

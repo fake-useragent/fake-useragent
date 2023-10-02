@@ -22,15 +22,15 @@ class FakeUserAgent:
         self.browsers = browsers
 
         assert isinstance(os, (list, str)), "OS must be list or string"
-        # OS replacement (windows -> win10)
         if isinstance(os, str):
             os = [os]
-        self.os = [
-            settings.OS_REPLACEMENTS[os_name]
-            if os_name in settings.OS_REPLACEMENTS
-            else os_name
-            for os_name in os
-        ]
+        # OS replacement (windows -> [win10, win7])
+        self.os = []
+        for os_name in os:
+            if os_name in settings.OS_REPLACEMENTS:
+                self.os.extend(settings.OS_REPLACEMENTS[os_name])
+            else:
+                self.os.append(os_name)
 
         assert isinstance(
             min_percentage, float
@@ -55,9 +55,72 @@ class FakeUserAgent:
         # Next, load our local data file into memory (browsers.json)
         self.data_browsers = load()
 
+    # This method will return an object
+    # Usage: ua.getBrowser('firefox')
+    def getBrowser(self, request):
+        try:
+            # Handle request value
+            for value, replacement in settings.REPLACEMENTS.items():
+                request = request.replace(value, replacement)
+            request = request.lower()
+            request = settings.SHORTCUTS.get(request, request)
+
+            if request == "random":
+                # Filter the browser list based on the browsers array using lambda
+                # And based on OS list
+                # And percentage is bigger then min percentage
+                # And convert the iterator back to a list
+                filtered_browsers = list(
+                    filter(
+                        lambda x: x["browser"] in self.browsers
+                        and x["os"] in self.os
+                        and x["percent"] >= self.min_percentage,
+                        self.data_browsers,
+                    )
+                )
+            else:
+                # Or when random isn't select, we filter the browsers array based on the 'request' using lamba
+                # And based on OS list
+                # And percentage is bigger then min percentage
+                # And convert the iterator back to a list
+                filtered_browsers = list(
+                    filter(
+                        lambda x: x["browser"] == request
+                        and x["os"] in self.os
+                        and x["percent"] >= self.min_percentage,
+                        self.data_browsers,
+                    )
+                )
+
+            # Pick a random browser user-agent from the filtered browsers
+            # And return the full dict
+            return random.choice(filtered_browsers)
+        except (KeyError, IndexError):
+            if self.fallback is None:
+                raise FakeUserAgentError(
+                    f"Error occurred during getting browser: {request}"
+                )  # noqa
+            else:
+                logger.warning(
+                    f"Error occurred during getting browser: {request}, "
+                    "but was suppressed with fallback.",
+                )
+                # Return fallback object
+                return {
+                    "useragent": self.fallback,
+                    "system": "Chrome 114.0 Win10",
+                    "browser": "chrome",
+                    "version": 114.0,
+                    "os": "win10",
+                }
+
+    # This method will use the method below, returning a string
+    # Usage: ua['random']
     def __getitem__(self, attr):
         return self.__getattr__(attr)
 
+    # This method will returns a string
+    # Usage: ua.random
     def __getattr__(self, attr):
         if attr in self.safe_attrs:
             return super(UserAgent, self).__getattr__(attr)
@@ -139,6 +202,27 @@ class FakeUserAgent:
     @property
     def random(self):
         return self.__getattr__("random")
+
+    # The following 'get' methods return an object rather than only the UA string
+    @property
+    def getFirefox(self):
+        return self.getBrowser("firefox")
+
+    @property
+    def getChrome(self):
+        return self.getBrowser("chrome")
+
+    @property
+    def getEdge(self):
+        return self.getBrowser("edge")
+
+    @property
+    def getSafari(self):
+        return self.getBrowser("safari")
+
+    @property
+    def getRandom(self):
+        return self.getBrowser("random")
 
 
 # common alias
