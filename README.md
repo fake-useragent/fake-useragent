@@ -92,11 +92,11 @@ _Hint:_ Of-course you can **combine all those arguments** to you liking!
 Since version 1.3.0 we now also offer you the following "get" properties which return the whole Python dictionary of the UA, instead of only the user-agent string:
 
 > **Warning**
-> Raw JSON object "as is" (in a Python dictionary) is returned.
-> This data structure could change in the future!
+> Raw JSON objects (in a Python dictionaries) are returned "as is".
+> Meaning, this data structure could change in the future!
 >
 > Be aware that these "get" properties below might not return the same key/value pairs in the future.
-> Use `ua.random` or alike, if you want to use a stable interface.
+> Use `ua.random` or alike as mentioned above, if you want to use a stable interface.
 
 ```py
 from fake_useragent import UserAgent
