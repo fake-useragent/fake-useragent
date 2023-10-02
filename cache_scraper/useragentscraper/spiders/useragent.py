@@ -20,10 +20,7 @@ class UserAgentSpider(scrapy.Spider):
         for agent in agents:
             try:
                 system_splitted = agent["system"].split()
-                if len(system_splitted) > 3:
-                    [browser, version, os] = agent["system"].split()
-                else:
-                    [browser, version, os] = agent["system"].split()
+                [browser, version, os] = agent["system"].split()
                 # Remove percentage icon & convert to float
                 agent["percent"] = float(agent["percent"][:-1])
                 # Add additional fields
@@ -36,7 +33,7 @@ class UserAgentSpider(scrapy.Spider):
                 agent["os"] = os.lower()  # To lower-case
                 # Yield each agent object at the time
                 yield agent
-            except ValueError as e:
+            except ValueError:
                 # Ignore user-agent strings that could not be parsed (eg. bot agent strings)
                 # (eg. bot agent strings like headless chrome, but also Yandex Browser and iOS)
                 pass

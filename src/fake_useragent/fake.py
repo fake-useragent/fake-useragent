@@ -94,7 +94,7 @@ class FakeUserAgent:
 
             # Pick a random browser user-agent from the filtered browsers
             # And return the full dict
-            return random.choice(filtered_browsers)
+            return random.choice(filtered_browsers) # noqa: S311
         except (KeyError, IndexError):
             if self.fallback is None:
                 raise FakeUserAgentError(
