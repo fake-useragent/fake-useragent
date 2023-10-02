@@ -24,7 +24,7 @@ pip3 install fake-useragent
 
 ### Usage
 
-Simple usage example, see below for more examples:
+Simple usage examples below, see also next chapters in this readme for more advanced usages:
 
 ```py
 from fake_useragent import UserAgent
@@ -86,6 +86,37 @@ ua.random
 ```
 
 _Hint:_ Of-course you can **combine all those arguments** to you liking!
+
+#### User-agent Python Dictionary
+
+Since version 1.3.0 we now also offer you the following "get" properties which return the whole Python dictionary of the UA, instead of only the user-agent string:
+
+> **Warning**
+> Raw JSON object "as is" (in a Python dictionary) is returned.
+> This data structure could change in the future!
+>
+> Be aware that these "get" properties below might not return the same key/value pairs in the future.
+> Use `ua.random` or alike, if you want to use a stable interface.
+
+```py
+from fake_useragent import UserAgent
+ua = UserAgent()
+
+# Random user-agent dictionary (object)
+ua.getRandom
+# {'percent': 0.8, 'useragent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.76', 'system': 'Edge 116.0 Win10', 'browser': 'edge', 'version': 116.0, 'os': 'win10'}
+
+# More get properties:
+ua.getFirefox
+# {'percent': 0.3, 'useragent': 'Mozilla/5.0 (Windows NT 10.0; rv:109.0) Gecko/20100101 Firefox/118.0', 'system': 'Firefox 118.0 Win10', 'browser': 'firefox', 'version': 118.0, 'os': 'win10'}
+ua.getChrome
+ua.getSafari
+ua.getEdge
+
+# And a method with an argument.
+# This is exactly the same as using: ua.getFirefox
+ua.getBrowser('firefox')
+```
 
 ### Notes
 
@@ -193,6 +224,15 @@ black .
 ```
 
 ### Changelog
+
+- 1.3.0 October 2, 2023
+
+  - Introducing new `ua.getRandom`, `ua.getFirefox`, `ua.getChrome`, `ua.getSafari`. And a generic method: `ua.getBrowser(..)` (eg. `getBrowser('firefox')`)
+    - These new properties above allows you to retrieve the whole raw Python dictionary, instead of only the UA string.
+    - These properties might return different key/values pairs in the future!
+  - Fix the `os` argument 'windows' to check for both `win10`and `win7` values (previously only checking on `win10`), thus returning more UAs
+  - Improved user-agent scraper (now also containing Safari browser again)
+  - Updated browsers.json data file
 
 - 1.2.1 August 2, 2023
 
