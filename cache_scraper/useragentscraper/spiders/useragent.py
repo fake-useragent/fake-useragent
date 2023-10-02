@@ -19,7 +19,6 @@ class UserAgentSpider(scrapy.Spider):
 
         for agent in agents:
             try:
-                system_splitted = agent["system"].split()
                 [browser, version, os] = agent["system"].split()
                 # Remove percentage icon & convert to float
                 agent["percent"] = float(agent["percent"][:-1])
