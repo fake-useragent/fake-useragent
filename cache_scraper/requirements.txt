@@ -5,7 +5,7 @@ black==23.7.0
 certifi==2023.7.22
 cffi==1.16.0
 charset-normalizer==3.2.0
-click==8.1.6
+click==8.1.7
 constantly==15.1.0
 cryptography==41.0.4
 cssselect==1.2.0
