@@ -30,6 +30,6 @@ ruff==0.0.287
 six==1.16.0
 tomli==2.0.1
 tox==4.6.4
-validate-pyproject==0.13
+validate-pyproject==0.15
 virtualenv==20.24.2
 zipp==3.16.2
