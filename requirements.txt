@@ -9,7 +9,7 @@ coverage==7.3.1
 distlib==0.3.7
 exceptiongroup==1.1.2
 fastjsonschema==2.18.0
-filelock==3.12.4
+filelock==3.13.0
 importlib-metadata==6.8.0
 importlib-resources==6.0.1
 iniconfig==2.0.0

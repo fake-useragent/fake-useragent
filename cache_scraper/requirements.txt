@@ -9,7 +9,7 @@ click==8.1.7
 constantly==15.1.0
 cryptography==41.0.4
 cssselect==1.2.0
-filelock==3.12.4
+filelock==3.13.0
 hyperlink==21.0.0
 idna==3.4
 incremental==22.10.0
