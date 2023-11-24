@@ -210,11 +210,11 @@ tox
 
 #### Linting
 
-To fix imports:
+To fix imports using ruff:
 
 ```sh
 pip install -r requirements.txt
-ruff --select="I" --fix .
+ruff check --select="I" --fix .
 ```
 
 Fix black code formatting errors:
@@ -224,7 +224,16 @@ pip install -r requirements.txt
 black .
 ```
 
+_Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instead of `black`.
+
 ### Changelog
+
+- 1.4.0 November 24, 2023
+
+  - Update all PIP packages
+  - Support Python 3.12 (thanks @vladkens)
+  - Fix package conflict in cache scraper
+  - Improve ruff CLI calls
 
 - 1.3.0 October 2, 2023
 
