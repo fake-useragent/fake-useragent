@@ -1,7 +1,8 @@
 import json
 import sys
-# Ignore warnings, we know we use deprecated methods on purpose for fallback behaviour
 import warnings
+
+# Ignore warnings, we know we use deprecated methods on purpose for fallback behaviour
 warnings.filterwarnings("ignore")
 
 # We need files() from Python 3.10 or higher
@@ -12,19 +13,13 @@ else:
 
 from fake_useragent.log import logger
 
-# Fallback method for retrieving data file
-try:
-    from pkg_resources import resource_filename
-except ImportError:
-    pass
-
 str_types = (str,)
 
 
 # Load all lines from browser.json file
 # Returns array of objects
 def load():
-    data = []
+    data, ret = [], None
     try:
         json_lines = (
             ilr.files("fake_useragent.data").joinpath("browsers.json").read_text()
@@ -40,6 +35,9 @@ def load():
             exc_info=exc,
         )
         try:
+            # Fallback method for retrieving data file
+            from pkg_resources import resource_filename
+
             with open(
                 resource_filename("fake_useragent", "data/browsers.json")
             ) as file:
