@@ -5,7 +5,7 @@ if sys.version_info >= (3, 10):
 else:
     import importlib_resources as ilr
 
-import unittest
+import unittestImprove skip unit test
 from unittest.mock import patch
 
 from fake_useragent import utils
@@ -26,11 +26,9 @@ class TestUtils(unittest.TestCase):
         self.assertIsInstance(data[0], object)
         self.assertIsInstance(data[0]["useragent"], str)
 
+    # https://github.com/python/cpython/issues/95299
+    @unittest.skipIf(sys.version_info >= (3, 12), "not compatible with Python 3.12 (or higher)")
     def test_utils_load_pkg_resource_fallback(self):
-        # https://github.com/python/cpython/issues/95299
-        if sys.version_info >= (3, 12):
-            return self.skipTest("This test is not supported on Python 3.12 or higher")
-
         # By default use_local_file is also True during production
         # We will not allow the default importlib resources to be used, by triggering an Exception
         with patch.object(ilr, "files") as mocked_importlib_resources_files:
