@@ -1,5 +1,8 @@
 import json
 import sys
+# Ignore warnings, we know we use deprecated methods on purpose for fallback behaviour
+import warnings
+warnings.filterwarnings("ignore")
 
 # We need files() from Python 3.10 or higher
 if sys.version_info >= (3, 10):
