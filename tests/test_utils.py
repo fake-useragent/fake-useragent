@@ -5,7 +5,7 @@ if sys.version_info >= (3, 10):
 else:
     import importlib_resources as ilr
 
-import unittestImprove skip unit test
+import unittest
 from unittest.mock import patch
 
 from fake_useragent import utils
