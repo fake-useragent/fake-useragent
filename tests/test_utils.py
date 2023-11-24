@@ -26,6 +26,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsInstance(data[0], object)
         self.assertIsInstance(data[0]["useragent"], str)
 
+    @unittest.skipIf(sys.version_info >= (3, 12), "not compatible with Python 3.12 (or higher)")
     def test_utils_load_pkg_resource_fallback(self):
         # By default use_local_file is also True during production
         # We will not allow the default importlib resources to be used, by triggering an Exception
