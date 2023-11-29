@@ -39,7 +39,7 @@ service-identity==23.1.0
 six==1.16.0
 tldextract==5.1.1
 tomli==2.0.1
-Twisted==22.10.0
+Twisted==23.10.0
 typing_extensions==4.8.0
 tzdata==2023.3
 tzlocal==5.2
