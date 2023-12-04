@@ -32,5 +32,5 @@ tomli==2.0.1
 tox==4.11.4
 typing_extensions==4.8.0
 validate-pyproject==0.15
-virtualenv==20.24.7
+virtualenv==20.25.0
 zipp==3.17.0
