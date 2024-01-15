@@ -13,7 +13,7 @@ filelock==3.13.1
 importlib-metadata==7.0.0
 importlib-resources==6.1.1
 iniconfig==2.0.0
-isort==5.12.0
+isort==5.13.2
 mypy-extensions==1.0.0
 packaging==23.2
 pathspec==0.11.2
