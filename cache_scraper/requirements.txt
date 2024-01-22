@@ -35,7 +35,7 @@ queuelib==1.6.2
 requests==2.31.0
 requests-file==1.5.1
 Scrapy==2.11.0
-service-identity==23.1.0
+service-identity==24.1.0
 six==1.16.0
 tldextract==5.1.1
 tomli==2.0.1
