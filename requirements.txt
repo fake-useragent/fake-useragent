@@ -8,7 +8,7 @@ colorama==0.4.6
 coverage==7.3.2
 distlib==0.3.7
 exceptiongroup==1.2.0
-fastjsonschema==2.19.0
+fastjsonschema==2.19.1
 filelock==3.13.1
 importlib-metadata==7.0.1
 importlib-resources==6.1.1
