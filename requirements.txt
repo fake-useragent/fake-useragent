@@ -1,5 +1,5 @@
 attrs==23.1.0
-black==23.11.0
+black==24.1.1
 build==1.0.3
 cachetools==5.3.2
 chardet==5.2.0
