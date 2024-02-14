@@ -2,7 +2,7 @@ APScheduler==3.10.4
 attrs==23.1.0
 Automat==22.10.0
 black==24.1.1
-certifi==2023.11.17
+certifi==2024.2.2
 cffi==1.16.0
 charset-normalizer==3.3.2
 click==8.1.7
@@ -21,7 +21,7 @@ mypy-extensions==1.0.0
 packaging==23.2
 parsel==1.8.1
 pathspec==0.12.1
-platformdirs==4.1.0
+platformdirs==4.2.0
 Protego==0.3.0
 pyasn1==0.5.1
 pyasn1-modules==0.3.0
@@ -41,7 +41,7 @@ tldextract==5.1.1
 tomli==2.0.1
 Twisted==23.10.0
 typing_extensions==4.9.0
-tzdata==2023.3
+tzdata==2024.1
 tzlocal==5.2
 urllib3==2.1.0
 w3lib==2.1.2
