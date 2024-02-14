@@ -1,7 +1,7 @@
 APScheduler==3.10.4
 attrs==23.1.0
 Automat==22.10.0
-black==23.11.0
+black==24.2.0
 certifi==2024.2.2
 cffi==1.16.0
 charset-normalizer==3.3.2
