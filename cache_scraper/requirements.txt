@@ -45,4 +45,4 @@ tzdata==2024.1
 tzlocal==5.2
 urllib3==2.1.0
 w3lib==2.1.2
-zope.interface==6.1
+zope.interface==6.2
