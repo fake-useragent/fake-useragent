@@ -12,6 +12,7 @@ class FakeUserAgent:
         browsers=["chrome", "edge", "firefox", "safari"],
         os=["windows", "macos", "linux", "android", "ios"],
         min_version=0.0,
+        min_percentage=0.0,
         platforms=["pc", "mobile", "tablet"],
         fallback="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
         safe_attrs=tuple(),
@@ -32,6 +33,11 @@ class FakeUserAgent:
                 self.os.extend(settings.OS_REPLACEMENTS[os_name])
             else:
                 self.os.append(os_name)
+
+        assert isinstance(min_percentage, (float, int)), "Minimum usage percentage must be float or int"
+        if isinstance(min_percentage, int):
+            min_percentage = float(min_percentage)
+        self.min_percentage = min_percentage
 
         assert isinstance(min_version, (float, int)), "Minimum version must be float or int"
         if isinstance(min_version, int):
@@ -66,7 +72,8 @@ class FakeUserAgent:
                 lambda x: x["browser"] in self.browsers
                 and x["os"] in self.os
                 and x["type"] in self.platforms
-                and x["version"] >= self.min_version,
+                and x["version"] >= self.min_version
+                and x["percent"] >= self.min_percentage,
                 self.data_browsers,
             )
         )

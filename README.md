@@ -98,6 +98,13 @@ ua = UserAgent(min_version=120.0)
 ua.random
 ```
 
+---
+
+For backwards compability, a minimum usage percentage can still be specified with the `min_percentage` argument. However, the current list of useragents does
+not contain this statistic. Therefore all of the useragents will match.
+
+---
+
 _Hint:_ Of-course you can **combine all those arguments** to you liking!
 
 #### User-agent Python Dictionary
