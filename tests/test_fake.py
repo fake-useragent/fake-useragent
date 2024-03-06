@@ -63,14 +63,22 @@ class TestFake(unittest.TestCase):
         assert isinstance(ua.data_browsers, list)
 
     def test_fake_fallback(self):
-        fallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+        fallback = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
+        )
 
         ua = UserAgent()
         self.assertEqual(ua.non_existing, fallback)
         self.assertEqual(ua["non_existing"], fallback)
 
     def test_fake_fallback_dictionary(self):
-        fallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+        fallback = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
+        )
 
         ua = UserAgent()
         self.assertIsInstance(ua.getBrowser("non_existing"), dict)
