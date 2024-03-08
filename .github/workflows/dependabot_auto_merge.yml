@@ -23,6 +23,6 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Approve a PR
         run: gh pr review --approve "$PR_URL"
-      - name: Enable auto-merge for Dependabot PRs
-        if: ${{ contains(steps.metadata.outputs.package-ecosystem, 'pip') && contains(steps.metadata.outputs.target-branch, 'main') && (steps.metadata.outputs.update-type == 'version-update:semver-minor' || steps.metadata.outputs.update-type == 'version-update:semver-patch') }}
-        run: gh pr merge --auto --squash "$PR_URL"
+#      - name: Enable auto-merge for Dependabot PRs
+#        if: ${{ contains(steps.metadata.outputs.package-ecosystem, 'pip') && contains(steps.metadata.outputs.target-branch, 'main') && (steps.metadata.outputs.update-type == 'version-update:semver-minor' || steps.metadata.outputs.update-type == 'version-update:semver-patch') }}
+#        run: gh pr merge --auto --squash "$PR_URL"
