@@ -3,14 +3,13 @@ name: Dependabot auto-approve
     branches:
       - main
 
-permissions:
-  pull-requests: write
-
 jobs:
   dependabot:
     runs-on: ubuntu-latest
     # Only for dependabot user
     if: github.actor == 'dependabot[bot]'
+    permissions:
+      pull-requests: write
     steps:
       - name: Dependabot metadata
         id: metadata
