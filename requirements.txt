@@ -5,7 +5,7 @@ cachetools==5.3.2
 chardet==5.2.0
 click==8.1.7
 colorama==0.4.6
-coverage==7.4.1
+coverage==7.4.3
 distlib==0.3.8
 exceptiongroup==1.2.0
 fastjsonschema==2.19.1
