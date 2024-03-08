@@ -1,7 +1,5 @@
 [![Test & Deploy fake-useragent](https://github.com/fake-useragent/fake-useragent/actions/workflows/action.yml/badge.svg?branch=main)](https://github.com/fake-useragent/fake-useragent/actions/workflows/action.yml?query=branch%3Amain)
-
 [![Ruff linter](https://github.com/fake-useragent/fake-useragent/actions/workflows/ruff.yml/badge.svg?branch=main)](https://github.com/fake-useragent/fake-useragent/actions/workflows/ruff.yml?query=branch%3Amain)
-
 [![CodeQL](https://github.com/fake-useragent/fake-useragent/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/fake-useragent/fake-useragent/actions/workflows/codeql.yml?query=branch%3Amain)
 
 # fake-useragent
