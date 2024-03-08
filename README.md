@@ -6,7 +6,8 @@ Up-to-date simple useragent faker with real world database.
 
 ## Features
 
-- Data is pre-downloaded from [techblog.willshouse.com](https://techblog.willshouse.com/2012/01/03/most-common-user-agents/) and the data is part of the package
+- Data is pre-downloaded from [https://user-agents.net/](https://user-agents.net/download) and the data is part of the package
+- The data consists of the current browser versions or one version lower
 - Retrieves user-agent strings locally
 - Retrieve user-agent Python dictionary
 - Supports Python 3.x
@@ -77,14 +78,32 @@ ua.random
 
 ---
 
-If you want to return more popular useragent strings, you can play with the `min_percentage` argument (default is: `0.0`, meaning all useragents will match).  
-In this example you get only useragents that have a minimum usage percentage of 1.3% (or higher):
+You can also specify the type of platforms you want to use, you can do that via the `platforms` argument (default is `["pc", "mobile", "tablet"]`.
+This example will only return random useragents from a mobile device:
 
 ```py
 from fake_useragent import UserAgent
-ua = UserAgent(min_percentage=1.3)
+ua = UserAgent(platforms='mobile')
 ua.random
 ```
+
+---
+
+If you want to return more recent useragent strings, you can play with the `min_version` argument (default is: `0.0`, meaning all useragents will match).  
+In this example you get only useragents that have a minimum version of 120.0:
+
+```py
+from fake_useragent import UserAgent
+ua = UserAgent(min_version=120.0)
+ua.random
+```
+
+---
+
+For backwards compability, a minimum usage percentage can still be specified with the `min_percentage` argument. However, the current list of useragents does
+not contain this statistic. Therefore all of the useragents will match.
+
+---
 
 _Hint:_ Of-course you can **combine all those arguments** to you liking!
 
@@ -138,7 +157,7 @@ from fake_useragent import UserAgent
 ua = UserAgent()
 print(ua.unknown)
 #Error occurred during getting browser: randm, but was suppressed with fallback.
-#Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+#Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0
 ```
 
 If you need to safe some attributes from overriding them in UserAgent by `__getattr__` method
