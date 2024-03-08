@@ -57,7 +57,7 @@ print(ua.safari)
 Additional features that fake-useragent now offers since v1.2.0.
 
 If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["chrome", "edge", "firefox", "safari"]`).  
-This example will only return random useragents from Edge and Chrome:
+This example will only return random user-agents from Edge and Chrome:
 
 ```py
 from fake_useragent import UserAgent
@@ -70,7 +70,7 @@ _Note:_ Fakeuser-agent knowns about: Chrome, Edge, Firefox and Safari. Other bro
 ---
 
 If you want to specify your own operating systems, you can do that via the `os` argument (default is: `["windows", "macos", "linux"]`).  
-In this example you will only get Linux useragents back:
+In this example you will only get Linux user-agents back:
 
 ```py
 from fake_useragent import UserAgent
@@ -81,7 +81,7 @@ ua.random
 ---
 
 You can also specify the type of platforms you want to use, you can do that via the `platforms` argument (default is `["pc", "mobile", "tablet"]`.
-This example will only return random useragents from a mobile device:
+This example will only return random user-agents from a mobile device:
 
 ```py
 from fake_useragent import UserAgent
@@ -91,8 +91,8 @@ ua.random
 
 ---
 
-If you want to return more recent useragent strings, you can play with the `min_version` argument (default is: `0.0`, meaning all useragents will match).  
-In this example you get only useragents that have a minimum version of 120.0:
+If you want to return more recent user-agent strings, you can play with the `min_version` argument (default is: `0.0`, meaning all user agents will match).  
+In this example you get only user agents that have a minimum version of 120.0:
 
 ```py
 from fake_useragent import UserAgent
@@ -102,8 +102,8 @@ ua.random
 
 ---
 
-For backwards compability, a minimum usage percentage can still be specified with the `min_percentage` argument. However, the current list of useragents does
-not contain this statistic. Therefore all of the useragents will match.
+For backwards compatibility, a minimum usage percentage can still be specified with the `min_percentage` argument. However, the current list of user agents does
+not contain this statistic. Therefore all of the user-agents will match.
 
 ---
 
