@@ -96,6 +96,10 @@ class TestFake(unittest.TestCase):
         with pytest.raises(AssertionError):
             UserAgent(os=23.4)
 
+    def test_fake_platform_str_or_list_types(self):
+        with pytest.raises(AssertionError):
+            UserAgent(platforms=5.0)
+
     def test_fake_percentage_float_types(self):
         with pytest.raises(AssertionError):
             UserAgent(min_percentage="")
