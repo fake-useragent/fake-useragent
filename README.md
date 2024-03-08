@@ -1,4 +1,4 @@
-[![Test & Deploy fake-useragent](https://github.com/fake-useragent/fake-useragent/actions/workflows/action.yml/badge.svg?branch=master)](https://github.com/fake-useragent/fake-useragent/actions/workflows/action.yml?query=branch%3Amaster)
+[![Test & Deploy fake-useragent](https://github.com/fake-useragent/fake-useragent/actions/workflows/action.yml/badge.svg?branch=main)](https://github.com/fake-useragent/fake-useragent/actions/workflows/action.yml?query=branch%3Amain)
 
 # fake-useragent
 
@@ -395,4 +395,4 @@ _Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instea
 
 ### Authors
 
-You can visit [authors page](https://github.com/fake-useragent/fake-useragent/blob/master/AUTHORS).
+You can visit [authors page](https://github.com/fake-useragent/fake-useragent/blob/main/AUTHORS).

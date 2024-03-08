@@ -1,5 +1,7 @@
 name: Dependabot auto-approve
-on: pull_request
+  pull_request:
+    branches:
+      - main
 
 permissions:
   pull-requests: write
