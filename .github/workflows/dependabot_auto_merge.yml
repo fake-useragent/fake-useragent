@@ -1,4 +1,6 @@
 name: Dependabot auto-approve
+
+on:
   pull_request:
     branches:
       - main
