@@ -19,7 +19,7 @@ jmespath==1.0.1
 lxml==5.1.0
 mypy-extensions==1.0.0
 packaging==23.2
-parsel==1.8.1
+parsel==1.9.0
 pathspec==0.12.1
 platformdirs==4.2.0
 Protego==0.3.0
