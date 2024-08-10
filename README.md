@@ -80,17 +80,6 @@ ua.random
 
 ---
 
-You can also specify the type of platforms you want to use, you can do that via the `platforms` argument (default is `["pc", "mobile", "tablet"]`.
-This example will only return random user-agents from a mobile device:
-
-```py
-from fake_useragent import UserAgent
-ua = UserAgent(platforms='mobile')
-ua.random
-```
-
----
-
 If you want to return more recent user-agent strings, you can play with the `min_version` argument (default is: `0.0`, meaning all user agents will match).  
 In this example you get only user agents that have a minimum version of 120.0:
 
