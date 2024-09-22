@@ -1,4 +1,4 @@
-# https://beta.ruff.rs
+# https://docs.astral.sh/ruff/
 name: Ruff linter
 on:
   push:
