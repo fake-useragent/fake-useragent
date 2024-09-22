@@ -1,5 +1,7 @@
 import json
 import sys
+from enum import Enum
+from typing import TypedDict, Union
 
 # We need files() from Python 3.10 or higher
 if sys.version_info >= (3, 10):
@@ -13,10 +15,28 @@ from fake_useragent.log import logger
 str_types = (str,)
 
 
+class BrowserUserAgentData(TypedDict):
+    useragent: str
+    """The useragent string."""
+    percent: float
+    """Sampling probability for this useragent when random sampling. Currently has no effect."""
+    type: str
+    """The device type for this useragent."""
+    system: str
+    """System name for the useragent."""
+    browser: str
+    """Browser name for the useragent."""
+    version: float
+    """Version of the browser."""
+    os: str
+    """OS name for the useragent."""
+
+
 # Load all lines from browser.json file
 # Returns array of objects
-def load():
-    data, ret = [], None
+def load() -> list[BrowserUserAgentData]:
+    data = []
+    ret: Union[list[BrowserUserAgentData], None] = None
     try:
         json_lines = (
             ilr.files("fake_useragent.data").joinpath("browsers.json").read_text()
