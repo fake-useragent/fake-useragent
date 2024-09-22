@@ -33,7 +33,7 @@ jobs:
       - name: Upload code coverage (HTML)
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage
+          name: code-coverage-${{ matrix.python-version }}
           path: htmlcov/
 
   build_and_deploy:
