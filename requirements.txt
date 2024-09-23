@@ -1,4 +1,4 @@
-attrs==23.2.0
+attrs==24.2.0
 black==24.8.0
 build==1.2.2
 cachetools==5.3.3
@@ -7,11 +7,11 @@ click==8.1.7
 colorama==0.4.6
 coverage==7.6.1
 distlib==0.3.8
-exceptiongroup==1.2.0
-fastjsonschema==2.19.1
+exceptiongroup==1.2.2
+fastjsonschema==2.20.0
 filelock==3.16.1
 importlib-metadata==8.5.0
-importlib-resources==6.4.0
+importlib-resources==6.4.5
 iniconfig==2.0.0
 isort==5.13.2
 mypy-extensions==1.0.0
