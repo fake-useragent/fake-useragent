@@ -55,6 +55,3 @@ def load():
         raise FakeUserAgentError("Data is not a list ", ret)
     return ret
 
-
-from fake_useragent import settings  # noqa # isort:skip
-from fake_useragent.errors import FakeUserAgentError  # noqa # isort:skip

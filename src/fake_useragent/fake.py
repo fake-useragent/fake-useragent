@@ -124,23 +124,18 @@ class FakeUserAgent:
             # And return the full dict
             return random.choice(filtered_browsers)  # noqa: S311
         except (KeyError, IndexError):
-            if self.fallback is None:
-                raise FakeUserAgentError(
-                    f"Error occurred during getting browser: {request}"
-                )  # noqa
-            else:
-                logger.warning(
-                    f"Error occurred during getting browser: {request}, "
-                    "but was suppressed with fallback.",
-                )
-                # Return fallback object
-                return {
-                    "useragent": self.fallback,
-                    "system": "Chrome 122.0 Win10",
-                    "browser": "chrome",
-                    "version": 122.0,
-                    "os": "win10",
-                }
+            logger.warning(
+                f"Error occurred during getting browser: {request}, "
+                "but was suppressed with fallback.",
+            )
+            # Return fallback object
+            return {
+                "useragent": self.fallback,
+                "system": "Chrome 122.0 Win10",
+                "browser": "chrome",
+                "version": 122.0,
+                "os": "win10",
+            }
 
     # This method will use the method below, returning a string
     # Usage: ua['random']
@@ -177,17 +172,11 @@ class FakeUserAgent:
             # And return the useragent string.
             return random.choice(filtered_browsers).get("useragent")  # noqa: S311
         except (KeyError, IndexError):
-            if self.fallback is None:
-                raise FakeUserAgentError(
-                    f"Error occurred during getting browser: {attr}"
-                )  # noqa
-            else:
-                logger.warning(
-                    f"Error occurred during getting browser: {attr}, "
-                    "but was suppressed with fallback.",
-                )
-
-                return self.fallback
+            logger.warning(
+                f"Error occurred during getting browser: {attr}, "
+                "but was suppressed with fallback.",
+            )
+            return self.fallback
 
     @property
     def chrome(self):
