@@ -7,8 +7,8 @@ if sys.version_info >= (3, 10):
 else:
     import importlib_resources as ilr
 
-from fake_useragent.errors import FakeUserAgentError
 from fake_useragent.log import logger
+from fake_useragent.errors import FakeUserAgentError
 
 str_types = (str,)
 
@@ -55,3 +55,4 @@ def load():
     if not isinstance(ret, list):
         raise FakeUserAgentError("Data is not a list ", ret)
     return ret
+
