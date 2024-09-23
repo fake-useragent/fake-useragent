@@ -8,6 +8,7 @@ else:
     import importlib_resources as ilr
 
 from fake_useragent.log import logger
+from fake_useragent.errors import FakeUserAgentError
 
 str_types = (str,)
 
