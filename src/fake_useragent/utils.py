@@ -16,19 +16,19 @@ str_types = (str,)
 
 class BrowserUserAgentData(TypedDict):
     useragent: str
-    """The useragent string."""
+    """The user agent string."""
     percent: float
     """Sampling probability for this useragent when random sampling. Currently has no effect."""
     type: str
-    """The device type for this useragent."""
+    """The device type for this user agent."""
     system: str
-    """System name for the useragent."""
+    """System name for the user agent."""
     browser: str
-    """Browser name for the useragent."""
+    """Browser name for the user agent."""
     version: float
     """Version of the browser."""
     os: str
-    """OS name for the useragent."""
+    """OS name for the user agent."""
 
 
 # Load all lines from browser.json file
