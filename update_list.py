@@ -1,4 +1,3 @@
-# %%
 import argparse
 import json
 import re
@@ -259,7 +258,6 @@ class UserAgentUpdater:
             return float(".".join(version_groups[:2]))
 
 
-# %%
 if __name__ == "__main__":
     updater = UserAgentUpdater(".")
 
@@ -306,9 +304,7 @@ if __name__ == "__main__":
     else:
         # If no commmand line arguments are given (so if you just run this script),
         # use some sensible values for the parameters.
-        # new_safari_useragents = updater.get_user_agents(browser_type="safari", max_version_lag=0.1, limit=200, remember=True)
         new_opera_useragents = updater.get_user_agents(browser_type="edge", max_version_lag=1.0, limit=200, remember=True)
         new_firefox_useragents = updater.get_user_agents(browser_type="firefox", max_version_lag=1.0, limit=200, remember=True)
     # write the new user agents to disk
     updater.write_useragents()
-# %%
