@@ -1,6 +1,5 @@
 import json
 import sys
-from enum import Enum
 from typing import TypedDict, Union
 
 # We need files() from Python 3.10 or higher
