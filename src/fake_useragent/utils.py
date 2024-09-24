@@ -18,7 +18,7 @@ class BrowserUserAgentData(TypedDict):
     useragent: str
     """The user agent string."""
     percent: float
-    """Sampling probability for this useragent when random sampling. Currently has no effect."""
+    """Sampling probability for this user agent when random sampling. Currently has no effect."""
     type: str
     """The device type for this user agent."""
     system: str
