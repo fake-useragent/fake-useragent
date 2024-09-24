@@ -2,9 +2,9 @@ import argparse
 import json
 import re
 from enum import Enum
-from pathlib import Path
-from typing import List, Union
 from itertools import cycle
+from pathlib import Path
+from typing import Union
 
 import requests
 from user_agents.parsers import UserAgent, parse
@@ -57,7 +57,9 @@ class UserAgentUpdater:
         self.edge_pattern = re.compile(r"edge", re.IGNORECASE)
 
         self.ios_pattern = re.compile(r"ios", re.IGNORECASE)
-        self.linux_pattern = re.compile(r"Linux|Ubuntu|Arch|Fedora|OpenSuse|Debian", re.IGNORECASE)
+        self.linux_pattern = re.compile(
+            r"Linux|Ubuntu|Arch|Fedora|OpenSuse|Debian", re.IGNORECASE
+        )
         self.macos_pattern = re.compile(r"Mac", re.IGNORECASE)
         self.windows_pattern = re.compile(r"Windows|win10|win11|win7", re.IGNORECASE)
         self.android_pattern = re.compile(r"android", re.IGNORECASE)
@@ -88,18 +90,29 @@ class UserAgentUpdater:
         return version
 
     def get_user_agents(
-        self, browser_type: str, version: Union[float, None] = None, max_version_lag: float = 0.0, limit: int = 200, remember: bool = False
-    ) -> List[dict]:
+        self,
+        browser_type: str,
+        version: Union[float, None] = None,
+        max_version_lag: float = 0.0,
+        limit: int = 200,
+        remember: bool = False,
+    ) -> list[dict]:
         """Send an API request and return a list of user agent dictionaries."""
         browser = Browser(browser_type)
 
         if not version:
             version = self.send_version_request(browser)
 
-        user_agents = self.send_user_agent_request(browser=browser, version=version, limit=limit)
+        user_agents = self.send_user_agent_request(
+            browser=browser, version=version, limit=limit
+        )
         parsed_user_agents = self.parse_user_agents(user_agents=user_agents)
         filtered_user_agents = self.filter_user_agents(
-            user_agents=parsed_user_agents, browser=browser, version=version, max_version_lag=max_version_lag, limit=limit
+            user_agents=parsed_user_agents,
+            browser=browser,
+            version=version,
+            max_version_lag=max_version_lag,
+            limit=limit,
         )
 
         if remember:
@@ -113,7 +126,7 @@ class UserAgentUpdater:
         browser: Browser,
         version: float,
         limit: int,
-    ) -> List[str]:
+    ) -> list[str]:
         """Send an API request to get the specified user agents."""
 
         if browser == Browser.SAFARI:
@@ -135,11 +148,13 @@ class UserAgentUpdater:
                 "download": "json",
             }
 
-        user_agents = self.send_post_request(self.UPDATE_USERAGENT_URL, input_query_parameters)
+        user_agents = self.send_post_request(
+            self.UPDATE_USERAGENT_URL, input_query_parameters
+        )
 
         return user_agents
 
-    def parse_user_agents(self, user_agents: List[str]) -> List[dict]:
+    def parse_user_agents(self, user_agents: list[str]) -> list[dict]:
         """Parse a list of user agent strings and return them as dictionaries."""
         parsed_user_agents = []
 
@@ -157,7 +172,9 @@ class UserAgentUpdater:
                 browser = self._get_browser(user_agent)
                 version = self._get_version(user_agent)
                 os = self._get_os(user_agent)
-                system = " ".join([user_agent.browser.family, str(version), user_agent.os.family])
+                system = " ".join(
+                    [user_agent.browser.family, str(version), user_agent.os.family]
+                )
                 ua_parsed = {
                     "useragent": user_agent_string,
                     "percent": 100.0,
@@ -174,10 +191,19 @@ class UserAgentUpdater:
 
         return parsed_user_agents
 
-    def filter_user_agents(self, user_agents: List[dict], browser: Browser, version: float, max_version_lag: float, limit: int) -> List[dict]:
+    def filter_user_agents(
+        self,
+        user_agents: list[dict],
+        browser: Browser,
+        version: float,
+        max_version_lag: float,
+        limit: int,
+    ) -> list[dict]:
         """Filter the user agents based on the version and browser type."""
         filter_criteria = lambda x: (  # noqa: E731
-            x["version"] >= (version - max_version_lag) and x["version"] <= version and x["browser"] == browser.value
+            x["version"] >= (version - max_version_lag)
+            and x["version"] <= version
+            and x["browser"] == browser.value
         )
         filtered_useragents = list(filter(filter_criteria, user_agents))
         return filtered_useragents[:limit]
@@ -262,7 +288,9 @@ if __name__ == "__main__":
     updater = UserAgentUpdater(".")
 
     # Parse the command line arguments, if provided.
-    parser = argparse.ArgumentParser(description="Script to update the list of user agents.")
+    parser = argparse.ArgumentParser(
+        description="Script to update the list of user agents."
+    )
     parser.add_argument(
         "browser_args",
         nargs="*",
@@ -291,20 +319,33 @@ if __name__ == "__main__":
         "samsung-browser",
     ]
 
-    requested_browsers = [browser for browser in args.browser_args if browser in possible_browsers]
+    requested_browsers = [
+        browser for browser in args.browser_args if browser in possible_browsers
+    ]
     max_version_lags = args.max_version_lag
     if not isinstance(max_version_lags, list):
         max_version_lags = [max_version_lags]
     limit = args.limit
 
     if len(requested_browsers) > 0:
-        for requested_browser, max_version_lag in zip(requested_browsers, cycle(max_version_lags)):
-            updater.get_user_agents(browser_type=requested_browser, limit=limit, remember=True, max_version_lag=max_version_lag)
+        for requested_browser, max_version_lag in zip(
+            requested_browsers, cycle(max_version_lags)
+        ):
+            updater.get_user_agents(
+                browser_type=requested_browser,
+                limit=limit,
+                remember=True,
+                max_version_lag=max_version_lag,
+            )
 
     else:
         # If no commmand line arguments are given (so if you just run this script),
         # use some sensible values for the parameters.
-        new_opera_useragents = updater.get_user_agents(browser_type="edge", max_version_lag=1.0, limit=200, remember=True)
-        new_firefox_useragents = updater.get_user_agents(browser_type="firefox", max_version_lag=1.0, limit=200, remember=True)
+        new_opera_useragents = updater.get_user_agents(
+            browser_type="edge", max_version_lag=1.0, limit=200, remember=True
+        )
+        new_firefox_useragents = updater.get_user_agents(
+            browser_type="firefox", max_version_lag=1.0, limit=200, remember=True
+        )
     # write the new user agents to disk
     updater.write_useragents()
