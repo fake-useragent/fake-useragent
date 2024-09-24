@@ -1,24 +1,25 @@
 import random
+from typing import Any, Union
 
 from fake_useragent import settings
 from fake_useragent.log import logger
-from fake_useragent.utils import load, str_types
+from fake_useragent.utils import BrowserUserAgentData, load, str_types
 
 
 class FakeUserAgent:
     def __init__(  # noqa: PLR0913
         self,
-        browsers=["chrome", "edge", "firefox", "safari"],
-        os=["windows", "macos", "linux", "android", "ios"],
-        min_version=0.0,
-        min_percentage=0.0,
-        platforms=["pc", "mobile", "tablet"],
-        fallback=(
+        browsers: Union[list[str], str] = ["chrome", "edge", "firefox", "safari"],
+        os: Union[list[str], str] = ["windows", "macos", "linux", "android", "ios"],
+        min_version: float = 0.0,
+        min_percentage: float = 0.0,
+        platforms: Union[list[str], str] = ["pc", "mobile", "tablet"],
+        fallback: str = (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 (KHTML, like Gecko) "
             "Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
         ),
-        safe_attrs=tuple(),
+        safe_attrs: Union[tuple[str], list[str], set[str]] = tuple(),
     ):
         # Check inputs
         assert isinstance(browsers, (list, str)), "browsers must be list or string"
@@ -30,7 +31,7 @@ class FakeUserAgent:
         if isinstance(os, str):
             os = [os]
         # OS replacement (windows -> [win10, win7])
-        self.os = []
+        self.os: list[str] = []
         for os_name in os:
             if os_name in settings.OS_REPLACEMENTS:
                 self.os.extend(settings.OS_REPLACEMENTS[os_name])
@@ -54,7 +55,7 @@ class FakeUserAgent:
         assert isinstance(platforms, (list, str)), "platforms must be list or string"
         if isinstance(platforms, str):
             platforms = [platforms]
-        self.platforms = platforms
+        self.platforms: list[str] = platforms
 
         assert isinstance(fallback, str), "fallback must be string"
         self.fallback = fallback
@@ -69,14 +70,16 @@ class FakeUserAgent:
             assert all(
                 str_types_safe_attrs
             ), "safe_attrs must be list\\tuple\\set of strings or unicode"
-        self.safe_attrs = set(safe_attrs)
+        self.safe_attrs: set[str] = set(safe_attrs)
 
         # Next, load our local data file into memory (browsers.json)
         self.data_browsers = load()
 
     # This method will return a filtered list of user agents.
     # The request parameter can be used to specify a browser.
-    def _filter_useragents(self, request=None):
+    def _filter_useragents(
+        self, request: Union[str, None] = None
+    ) -> list[BrowserUserAgentData]:
         # filter based on browser, os, platform and version.
         filtered_useragents = list(
             filter(
@@ -98,7 +101,7 @@ class FakeUserAgent:
 
     # This method will return an object
     # Usage: ua.getBrowser('firefox')
-    def getBrowser(self, request):
+    def getBrowser(self, request: str) -> BrowserUserAgentData:
         try:
             # Handle request value
             for value, replacement in settings.REPLACEMENTS.items():
@@ -130,6 +133,8 @@ class FakeUserAgent:
             # Return fallback object
             return {
                 "useragent": self.fallback,
+                "percent": 100.0,
+                "type": "pc",
                 "system": "Chrome 122.0 Win10",
                 "browser": "chrome",
                 "version": 122.0,
@@ -138,12 +143,12 @@ class FakeUserAgent:
 
     # This method will use the method below, returning a string
     # Usage: ua['random']
-    def __getitem__(self, attr):
+    def __getitem__(self, attr: str) -> Union[str, Any]:
         return self.__getattr__(attr)
 
     # This method will returns a string
     # Usage: ua.random
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Union[str, Any]:
         if attr in self.safe_attrs:
             return super(UserAgent, self).__getattribute__(attr)
 
@@ -178,52 +183,52 @@ class FakeUserAgent:
             return self.fallback
 
     @property
-    def chrome(self):
+    def chrome(self) -> str:
         return self.__getattr__("chrome")
 
     @property
-    def googlechrome(self):
+    def googlechrome(self) -> str:
         return self.chrome
 
     @property
-    def edge(self):
+    def edge(self) -> str:
         return self.__getattr__("edge")
 
     @property
-    def firefox(self):
+    def firefox(self) -> str:
         return self.__getattr__("firefox")
 
     @property
-    def ff(self):
+    def ff(self) -> str:
         return self.firefox
 
     @property
-    def safari(self):
+    def safari(self) -> str:
         return self.__getattr__("safari")
 
     @property
-    def random(self):
+    def random(self) -> str:
         return self.__getattr__("random")
 
     # The following 'get' methods return an object rather than only the UA string
     @property
-    def getFirefox(self):
+    def getFirefox(self) -> BrowserUserAgentData:
         return self.getBrowser("firefox")
 
     @property
-    def getChrome(self):
+    def getChrome(self) -> BrowserUserAgentData:
         return self.getBrowser("chrome")
 
     @property
-    def getEdge(self):
+    def getEdge(self) -> BrowserUserAgentData:
         return self.getBrowser("edge")
 
     @property
-    def getSafari(self):
+    def getSafari(self) -> BrowserUserAgentData:
         return self.getBrowser("safari")
 
     @property
-    def getRandom(self):
+    def getRandom(self) -> BrowserUserAgentData:
         return self.getBrowser("random")
 
 
