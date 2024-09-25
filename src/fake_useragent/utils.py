@@ -11,8 +11,6 @@ else:
 from fake_useragent.errors import FakeUserAgentError
 from fake_useragent.log import logger
 
-str_types = (str,)
-
 
 class BrowserUserAgentData(TypedDict):
     useragent: str

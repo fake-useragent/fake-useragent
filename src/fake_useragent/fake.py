@@ -65,7 +65,7 @@ class FakeUserAgent:
         ), "safe_attrs must be list\\tuple\\set of strings or unicode"
 
         if safe_attrs:
-            str_types_safe_attrs = [isinstance(attr, str_types) for attr in safe_attrs]
+            str_types_safe_attrs = [isinstance(attr, str) for attr in safe_attrs]
 
             assert all(
                 str_types_safe_attrs
