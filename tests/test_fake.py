@@ -85,30 +85,31 @@ class TestFake(unittest.TestCase):
         self.assertEqual(ua.getBrowser("non_existing").get("useragent"), fallback)
 
     def test_fake_fallback_str_types(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(TypeError):
             UserAgent(fallback=True)
 
     def test_fake_browser_str_or_list_types(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(TypeError):
             UserAgent(browsers=52)
 
     def test_fake_os_str_or_list_types(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(TypeError):
             UserAgent(os=23.4)
 
     def test_fake_platform_str_or_list_types(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(TypeError):
             UserAgent(platforms=5.0)
 
     def test_fake_percentage_float_types(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             UserAgent(min_percentage="")
 
-    def test_fake_safe_attrs_iterable_str_types(self):
-        with pytest.raises(AssertionError):
-            UserAgent(safe_attrs={})
+    def test_fake_min_version_float_types(self):
+        with pytest.raises(ValueError):
+            UserAgent(min_version="")
 
-        with pytest.raises(AssertionError):
+    def test_fake_safe_attrs_iterable_str_types(self):
+        with pytest.raises(TypeError):
             UserAgent(safe_attrs=[66])
 
     def test_fake_safe_attrs(self):
