@@ -1,7 +1,7 @@
 attrs==24.2.0
 black==24.8.0
 build==1.2.2
-cachetools==5.3.3
+cachetools==5.5.0
 chardet==5.2.0
 click==8.1.7
 colorama==0.4.6
