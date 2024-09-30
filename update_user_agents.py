@@ -71,14 +71,12 @@ class UserAgentUpdater:
     def send_get_request(self, url: str):
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
-        result = response.text
-        return json.loads(result)
+        return response.json()
 
     def send_post_request(self, url: str, query_parameters: dict):
         response = requests.post(url, data=query_parameters, timeout=self.timeout)
         response.raise_for_status()
-        result = response.text
-        return json.loads(result)
+        return response.json()
 
     def send_version_request(self, browser: Browser) -> float:
         current_browser_versions = self.send_get_request(self.USERAGENT_VERSION_URL)
