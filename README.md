@@ -205,21 +205,27 @@ Please do not forget to mention the version that you are using.
 
 ### For Developers
 
-Since GitHub Actions is unable to reach willshouse.com and has Cloudflare protection. We can run the script below to automatically scrape the user-agent strings from the external data source. The script will copy the [JSONlines](https://jsonlines.org/) file to the `src/fake_useragent/data` directory. Execute:
+#### User-agent Data
 
-```sh
-./update_data_file.sh
-```
+The user-agent data we retrieve from [user-agents.net](https://user-agents.net). Data is stored in [JSONlines](https://jsonlines.org/) format. File is located in the: `src/fake_useragent/data` directory.
+
+To update the data, you can use the `update_user_agents.py` script.
 
 The data JSON file is part of the Python package, see [pyproject.toml](pyproject.toml). Read more about [Data files support](https://setuptools.pypa.io/en/latest/userguide/datafiles.html).
 
-### Python Virtual Environment
+#### Python Virtual Environment
 
 We encourage to use Python virtual environment before installing Pip packages, like so:
 
 ```sh
 python -m virtualenv env
 source env/bin/activate
+```
+
+#### Local Install
+
+```sh
+pip install -e .
 ```
 
 #### Tests
