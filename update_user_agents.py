@@ -43,6 +43,8 @@ class UserAgentUpdater:
         self.ua_list = []
         self.output_name = output_name
         self.append = append
+        # An unique list of user agents to avoid adding any duplicates.
+        self.seen_useragents = set()
 
         if isinstance(output_folder, str):
             output_folder = Path(output_folder)
@@ -163,7 +165,7 @@ class UserAgentUpdater:
         for user_agent_string in user_agents:
             try:
                 # replace extra info between square brackets
-                # (usually ip adress) and slashes
+                # (usually ip address) and slashes
                 # and remove trailing whitespace
                 user_agent_string = re.sub(r"\[.*?\]|\\", "", user_agent_string)
                 user_agent_string = user_agent_string.strip()
@@ -214,20 +216,24 @@ class UserAgentUpdater:
         """Write all the user agents downloaded so far to disk at the specified path."""
         full_path = self.output_folder.joinpath(self.output_name)
 
-        # remove duplicates
-        self.ua_list = list(set(self.ua_list))
-        ua_list = [json.dumps(ua) for ua in self.ua_list]
+        # A list of JSON objects, also known as JSONlines format
+        unique_ua_list = []
+        # Check for duplicates and only add unique user agents to the list
+        # Add the user agents to a set, which is very efficient for checking uniqueness O(1)
+        for ua in self.ua_list:
+            if 'useragent' in ua and ua['useragent'] not in self.seen_useragents:
+                unique_ua_list.append(json.dumps(ua))
+                self.seen_useragents.add(ua['useragent'])
 
-        # Check that some user agents have been found before writing.
-        if len(self.ua_list) == 0:
-            return
-
-        if self.append:
-            with open(full_path, "a") as writer:
-                writer.write("\n".join(ua_list))
-        else:
-            with open(full_path, "w") as writer:
-                writer.write("\n".join(ua_list))
+        # Check that some user agents have been found before writing
+        if len(unique_ua_list) > 0:
+            print(f"Writing {len(unique_ua_list)} user agents to {full_path}")
+            if self.append:
+                with open(full_path, "a") as writer:
+                    writer.write("\n".join(unique_ua_list))
+            else:
+                with open(full_path, "w") as writer:
+                    writer.write("\n".join(unique_ua_list))
 
     @staticmethod
     def _get_platform(user_agent: UserAgent):
@@ -343,7 +349,7 @@ if __name__ == "__main__":
             time.sleep(5)
 
     else:
-        # If no commmand line arguments are given (so if you just run this script),
+        # If no command line arguments are given (so if you just run this script),
         # only run the update script for Firefox.
         new_firefox_useragents = updater.get_user_agents(
             browser_type="firefox", max_version_lag=1.0, limit=200, remember=True
