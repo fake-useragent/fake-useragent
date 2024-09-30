@@ -219,9 +219,9 @@ class UserAgentUpdater:
         # Check for duplicates and only add unique user agents to the list
         # Add the user agents to a set, which is very efficient for checking uniqueness O(1)
         for ua in self.ua_list:
-            if 'useragent' in ua and ua['useragent'] not in self.seen_useragents:
+            if "useragent" in ua and ua["useragent"] not in self.seen_useragents:
                 unique_ua_list.append(json.dumps(ua))
-                self.seen_useragents.add(ua['useragent'])
+                self.seen_useragents.add(ua["useragent"])
 
         # Check that some user agents have been found before writing
         if len(unique_ua_list) > 0:
