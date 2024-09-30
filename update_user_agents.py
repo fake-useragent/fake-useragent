@@ -312,6 +312,7 @@ if __name__ == "__main__":
         type=float,
         nargs="*",
         default=0.0,
+        help="The max version lag for the user agents, older versions will be excluded",
     )
 
     args = parser.parse_args()
