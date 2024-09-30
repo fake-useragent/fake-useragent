@@ -34,7 +34,6 @@ class UserAgentUpdater:
 
     def __init__(
         self,
-        output_folder: Union[str, Path],
         timeout: float = 100.0,
         output_name: str = "browsers.json",
         append: bool = True,
@@ -45,14 +44,6 @@ class UserAgentUpdater:
         self.append = append
         # An unique list of user agents to avoid adding any duplicates.
         self.seen_useragents = set()
-
-        if isinstance(output_folder, str):
-            output_folder = Path(output_folder)
-        if not output_folder.exists():
-            raise NameError("The specified folder does not exist.")
-        if not output_folder.is_dir():
-            raise TypeError("The specified path should be a folder.")
-        self.output_folder = output_folder
 
         # Regex patterns
         self.chrome_pattern = re.compile(r"chrome", re.IGNORECASE)
@@ -210,9 +201,9 @@ class UserAgentUpdater:
         filtered_useragents = list(filter(filter_criteria, user_agents))
         return filtered_useragents[:limit]
 
-    def write_useragents(self) -> None:
+    def write_useragents(self, file_path: Path) -> None:
         """Write all the user agents downloaded so far to disk at the specified path."""
-        full_path = self.output_folder.joinpath(self.output_name)
+        full_path = file_path.joinpath(self.output_name)
 
         # A list of JSON objects, also known as JSONlines format
         unique_ua_list = []
@@ -291,11 +282,18 @@ class UserAgentUpdater:
 
 
 if __name__ == "__main__":
-    updater = UserAgentUpdater(".")
+    updater = UserAgentUpdater()
 
     # Parse the command line arguments, if provided.
     parser = argparse.ArgumentParser(
         description="Script to update the list of user agents."
+    )
+    # File storage path
+    parser.add_argument(
+        "--output_folder",
+        type=str,
+        default=".",
+        help="The path to the folder where the user agents will be stored",
     )
     parser.add_argument(
         "browser_args",
@@ -325,6 +323,16 @@ if __name__ == "__main__":
         "samsung-browser",
     ]
 
+    output_folder = args.output_folder
+    if not isinstance(output_folder, str):
+        raise TypeError("The specified output folder should be a string.")
+    else:
+        output_folder = Path(output_folder)
+    if not output_folder.exists():
+        raise NameError("The specified folder does not exist.")
+    if not output_folder.is_dir():
+        raise TypeError("The specified path should be a folder.")
+
     requested_browsers = [
         browser for browser in args.browser_args if browser in possible_browsers
     ]
@@ -353,4 +361,4 @@ if __name__ == "__main__":
             browser_type="firefox", max_version_lag=1.0, limit=200, remember=True
         )
     # write the new user agents to disk
-    updater.write_useragents()
+    updater.write_useragents(output_folder)
