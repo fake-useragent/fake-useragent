@@ -2,6 +2,7 @@
 import argparse
 import json
 import re
+import time
 from enum import Enum
 from itertools import cycle
 from pathlib import Path
@@ -338,13 +339,12 @@ if __name__ == "__main__":
                 remember=True,
                 max_version_lag=max_version_lag,
             )
+            # Sleep on purpose for 5 sec to avoid being blocked or rate limited.
+            time.sleep(5)
 
     else:
         # If no commmand line arguments are given (so if you just run this script),
-        # use some sensible values for the parameters.
-        new_opera_useragents = updater.get_user_agents(
-            browser_type="edge", max_version_lag=1.0, limit=200, remember=True
-        )
+        # only run the update script for Firefox.
         new_firefox_useragents = updater.get_user_agents(
             browser_type="firefox", max_version_lag=1.0, limit=200, remember=True
         )
