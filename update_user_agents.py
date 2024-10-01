@@ -3,7 +3,7 @@ import argparse
 import json
 import re
 import time
-from enum import Enum
+from enum import StrEnum, auto
 from itertools import cycle
 from pathlib import Path
 from typing import Union
@@ -12,16 +12,16 @@ import requests
 from user_agents.parsers import UserAgent, parse
 
 
-class Browser(Enum):
-    CHROME = "chrome"
-    FIREFOX = "firefox"
-    EDGE = "edge"
-    SAFARI = "safari"
+class Browser(StrEnum):
+    CHROME = auto()
+    FIREFOX = auto()
+    EDGE = auto()
+    SAFARI = auto()
 
     @classmethod
     def _missing_(cls, value):
         """This method makes the Enum case-insensitive."""
-        value = str(value).lower()
+        value = value.lower()
         for member in cls:
             if member.value == value:
                 return member
