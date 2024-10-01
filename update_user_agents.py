@@ -71,7 +71,7 @@ class UserAgentUpdater:
 
     def send_version_request(self, browser: Browser) -> float:
         current_browser_versions = self.send_get_request(self.USERAGENT_VERSION_URL)
-        version = current_browser_versions.get(browser.value).get("version")
+        version = current_browser_versions.get(browser).get("version")
 
         try:
             version = float(version)
@@ -135,7 +135,7 @@ class UserAgentUpdater:
             }
         else:
             input_query_parameters = {
-                "browser": browser.value,
+                "browser": browser,
                 "version": str(version),
                 "limit": str(limit),
                 "download": "json",
@@ -196,7 +196,7 @@ class UserAgentUpdater:
         filter_criteria = lambda x: (  # noqa: E731
             x["version"] >= (version - max_version_lag)
             and x["version"] <= version
-            and x["browser"] == browser.value
+            and x["browser"] == browser
         )
         filtered_useragents = list(filter(filter_criteria, user_agents))
         return filtered_useragents[:limit]
