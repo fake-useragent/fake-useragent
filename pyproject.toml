@@ -61,7 +61,6 @@ max-complexity = 13
 
 [tool.ruff.lint.per-file-ignores]
 "src/fake_useragent/__init__.py" = ["F401"]
-"src/fake_useragent/fake.py" = ["B006", "S101"]
 "tests/*" = ["S", "SIM", "UP015"]
 
 [tool.ruff.lint.pylint]
