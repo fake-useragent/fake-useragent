@@ -1,3 +1,5 @@
+"""General library settings."""
+
 from importlib import metadata
 
 __version__ = metadata.version("fake-useragent")
