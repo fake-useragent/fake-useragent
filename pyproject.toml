@@ -45,23 +45,13 @@ content-type = "text/markdown"
 Homepage = "https://github.com/fake-useragent/fake-useragent"
 
 [tool.ruff]
-line-length = 142
-lint.select = [
-    "B",
-    "C4",
-    "C9",
-    "E",
-    "F",
-    "I",
-    "PL",
-    "S",
-    "SIM",
-    "U",
-    "W",
-    "YTT",
-]
-lint.ignore = ["B904", "C408", "PLW2901", "SIM105", "SIM108"]
 target-version = "py39"
+line-length = 142
+
+[tool.ruff.lint]
+select = ["B", "C4", "C9", "E", "F", "I", "PL", "S", "SIM", "W", "YTT"]
+
+ignore = ["B904", "C408", "PLW2901", "SIM105", "SIM108"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["fake_useragent"]
@@ -71,8 +61,7 @@ max-complexity = 13
 
 [tool.ruff.lint.per-file-ignores]
 "src/fake_useragent/__init__.py" = ["F401"]
-"src/fake_useragent/fake.py" = ["B006", "S101"]
-"tests/*" = ["S", "SIM", "UP015"]
+"tests/**/*" = ["S", "SIM", "UP015"]
 
 [tool.ruff.lint.pylint]
 max-args = 7
