@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""This script will update the user agents list with the lastest user-agents in JSON Lines format."""
+
 import argparse
 import json
 import re
@@ -13,6 +15,8 @@ from user_agents.parsers import UserAgent, parse
 
 
 class Browser(StrEnum):
+    """CLass for the supported browsers using the Enum class."""
+
     CHROME = auto()
     FIREFOX = auto()
     EDGE = auto()
@@ -29,6 +33,8 @@ class Browser(StrEnum):
 
 
 class UserAgentUpdater:
+    """Class to update the list of user agents."""
+
     UPDATE_USERAGENT_URL = r"https://user-agents.net/download"
     USERAGENT_VERSION_URL = r"https://www.browsers.fyi/api/"
 
@@ -60,16 +66,19 @@ class UserAgentUpdater:
         self.android_pattern = re.compile(r"android", re.IGNORECASE)
 
     def send_get_request(self, url: str):
+        """Send a GET request to the specified URL and response in JSON format."""
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
         return response.json()
 
     def send_post_request(self, url: str, query_parameters: dict):
+        """Send a POST request to the specified URL and response in JSON format."""
         response = requests.post(url, data=query_parameters, timeout=self.timeout)
         response.raise_for_status()
         return response.json()
 
     def send_version_request(self, browser: Browser) -> float:
+        """Fetches the current version of the specified browser and return the version number."""
         current_browser_versions = self.send_get_request(self.USERAGENT_VERSION_URL)
         version = current_browser_versions.get(browser).get("version")
 
