@@ -121,7 +121,6 @@ class UserAgentUpdater:
         limit: int,
     ) -> list[str]:
         """Send an API request to get the specified user agents."""
-
         if browser == Browser.SAFARI:
             # Specifying a version of a browser does
             # not work well for Safari. Therefore for
@@ -271,7 +270,7 @@ class UserAgentUpdater:
 
     @staticmethod
     def _get_version(user_agent: UserAgent) -> float:
-        "Get the browser version as a float."
+        """Get the browser version as a float."""
         version_groups = user_agent.browser.version_string.split(".")
         if len(version_groups) == 0 or version_groups[0] == "":
             return 0.0
