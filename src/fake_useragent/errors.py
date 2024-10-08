@@ -1,5 +1,8 @@
+"""All specific exceptions for the library."""
+
+
 class FakeUserAgentError(Exception):
-    pass
+    """Exception for any problems that are library specific."""
 
 
 # common alias

@@ -1,3 +1,5 @@
+"""General utils for the fake_useragent package."""
+
 import json
 import sys
 from typing import TypedDict, Union
@@ -13,6 +15,8 @@ from fake_useragent.log import logger
 
 
 class BrowserUserAgentData(TypedDict):
+    """The schema for the browser user agent data that the `browsers.json` file must follow."""
+
     useragent: str
     """The user agent string."""
     percent: float
@@ -29,9 +33,16 @@ class BrowserUserAgentData(TypedDict):
     """OS name for the user agent."""
 
 
-# Load all lines from browser.json file
-# Returns array of objects
 def load() -> list[BrowserUserAgentData]:
+    """Load the included `browser.json` file into memory..
+
+    Raises:
+        FakeUserAgentError: If unable to find the data.
+
+    Returns:
+        list[BrowserUserAgentData]: The list of browser user agent data, following the
+            `BrowserUserAgentData` schema.
+    """
     data = []
     ret: Union[list[BrowserUserAgentData], None] = None
     try:
