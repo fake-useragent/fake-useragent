@@ -49,9 +49,30 @@ target-version = "py39"
 line-length = 142
 
 [tool.ruff.lint]
-select = ["B", "C4", "C9", "E", "F", "I", "PL", "S", "SIM", "W", "YTT"]
+select = [
+    "B",
+    "C4",
+    "C9",
+    "E",
+    "F",
+    "I",
+    "PL",
+    "S",
+    "SIM",
+    "W",
+    "YTT",
+    "DOC", # Ensure docstrings are consistent with signatures.
+    "D",   # Check compliance with Python docstring conventions.
+]
 
-ignore = ["B904", "C408", "PLW2901", "SIM105", "SIM108"]
+ignore = [
+    "B904",
+    "C408",
+    "PLW2901",
+    "SIM105",
+    "SIM108",
+    "D107",    # Allow no docstring in __init__, we document it in the class docstring.
+]
 
 [tool.ruff.lint.isort]
 known-first-party = ["fake_useragent"]
@@ -61,11 +82,15 @@ max-complexity = 13
 
 [tool.ruff.lint.per-file-ignores]
 "src/fake_useragent/__init__.py" = ["F401"]
-"tests/**/*" = ["S", "SIM", "UP015"]
+"tests/**/*" = ["S", "SIM", "UP015", "D", "DOC"]
+"docs/**/*" = ["D", "DOC"]
 
 [tool.ruff.lint.pylint]
 max-args = 7
 max-branches = 13
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.setuptools]
 zip-safe = false
