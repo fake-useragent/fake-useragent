@@ -1,6 +1,6 @@
 attrs==24.2.0
 black==24.8.0
-build==1.2.2
+build==1.2.2.post1
 cachetools==5.5.0
 chardet==5.2.0
 click==8.1.7
