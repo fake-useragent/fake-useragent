@@ -32,4 +32,4 @@ tox==4.14.1
 typing_extensions==4.12.2
 validate-pyproject==0.22
 virtualenv==20.25.1
-zipp==3.20.2
+zipp==3.21.0
