@@ -27,7 +27,7 @@ pytest==8.3.3
 pytest-cov==6.0.0
 ruff==0.7.3
 six==1.16.0
-tomli==2.0.2
+tomli==2.1.0
 tox==4.14.1
 typing_extensions==4.12.2
 validate-pyproject==0.22
