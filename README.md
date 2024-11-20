@@ -209,7 +209,7 @@ Please do not forget to mention the version that you are using.
 
 The user-agent data we retrieve from [user-agents.net](https://user-agents.net). Data is stored in [JSONlines](https://jsonlines.org/) format. File is located in the: `src/fake_useragent/data` directory.
 
-To update the data, you can use the `update_user_agents.py` script.
+We are currently working on a new automation script (see issue [#333](https://github.com/fake-useragent/fake-useragent/issues/333)) to fetch user-agent scripts from user-agents.net and up date the user-agents once in a while.
 
 The data JSON file is part of the Python package, see [pyproject.toml](pyproject.toml). Read more about [Data files support](https://setuptools.pypa.io/en/latest/userguide/datafiles.html).
 
