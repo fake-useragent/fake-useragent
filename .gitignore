@@ -28,3 +28,4 @@ python-env
 
 ua-converter/user-agents.json
 ua-converter/browsers.jsonl
+test_script.py

@@ -4,7 +4,6 @@ import random
 from collections.abc import Iterable
 from typing import Any, Optional, Union
 
-from fake_useragent import settings
 from fake_useragent.log import logger
 from fake_useragent.utils import BrowserUserAgentData, load
 
@@ -75,15 +74,14 @@ class FakeUserAgent:
             `["Google", "Firefox", "Mobile Safari", "Samsung Internet", "Chrome Mobile", "Chrome Mobile iOS", "Amazon Silk","]`.
             Defaults to None.
         os (Optional[Iterable[str]], optional): If given, will only ever return user agents from
-            these operating systems. You can pass values in the data file or those in
-            `settings.OS_REPLACEMENTS`. If None, set to `["Windows", "Linux", "Android", "iOS"]`. Defaults to
+            these operating systems. If None, set to `["Windows", "Linux", "Mac OS X", "Android", "iOS"]`. Defaults to
             None.
         min_version (float, optional): Will only ever return user agents with versions greater than
             this one. Defaults to 0.0.
         min_percentage (float, optional): Filter user agents based on usage.
             Defaults to 0.0.
         platforms (Optional[Iterable[str]], optional): If given, will only return the user-agents with
-            the provided platform type. If None, set to `["pc", "mobile", "tablet"]`. Defaults to None.
+            the provided platform type. If None, set to `["desktop", "mobile", "tablet"]`. Defaults to None.
         fallback (str, optional): User agent to use if there are any issues retrieving a user agent.
             Defaults to `"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like
             Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"`.
@@ -114,6 +112,7 @@ class FakeUserAgent:
             browsers=browsers,
             default=[
                 "Google",
+                "Chrome",
                 "Firefox",
                 "Mobile Safari",
                 "Samsung Internet",
@@ -123,12 +122,14 @@ class FakeUserAgent:
             ],
         )
 
-        self.os = _ensure_iterable(os=os, default=["Windows", "Linux", "Android", "iOS"])
+        self.os = _ensure_iterable(
+            os=os, default=["Windows", "Linux", "Mac OS X", "Android", "iOS"]
+        )
         self.min_percentage = _ensure_float(min_percentage)
         self.min_version = _ensure_float(min_version)
 
         self.platforms = _ensure_iterable(
-            platforms=platforms, default=["pc", "mobile", "tablet"]
+            platforms=platforms, default=["desktop", "mobile", "tablet"]
         )
 
         if not isinstance(fallback, str):
@@ -149,61 +150,17 @@ class FakeUserAgent:
         # Next, load our local data file into memory (browsers.json)
         self.data_browsers = load()
 
-    # This method will return a filtered list of user agents.
-    # The request parameter can be used to specify a browser.
-    def _filter_useragents(
-        self, request: Union[str, None] = None
-    ) -> list[BrowserUserAgentData]:
-        """Filter the user agents based on filters set in the instance, and an optional request.
-
-        User agents from the data file are filtered based on the attributes passed upon
-        instantiation.
+    def getBrowser(self, browsers: Union[str, list[str]]) -> BrowserUserAgentData:
+        """Get a browser user agent based on the filters.
 
         Args:
-            request (Union[str, None], optional): A specific browser name you want results for in
-                this particular call. If None, don't apply extra filters. Defaults to None.
-
-        Returns:
-            list[BrowserUserAgentData]: A list of browser user agent data filtered down to match
-                all criteria.
-        """
-        # filter based on browser, os, platform and version.
-        filtered_useragents = list(
-            filter(
-                lambda x: x["browser"] in self.browsers
-                and x["os"] in self.os
-                and x["type"] in self.platforms
-                and x["browser_version_major_minor"] >= self.min_version
-                and x["percent"] >= self.min_percentage,
-                self.data_browsers,
-            )
-        )
-        # filter based on a specific browser request
-        if request:
-            filtered_useragents = list(
-                filter(lambda x: x["browser"] == request, filtered_useragents)
-            )
-
-        return filtered_useragents
-
-    def getBrowser(self, request: str) -> BrowserUserAgentData:
-        """Get a random browser user agent with additional data.
-
-        Args:
-            request (str): The browser name to get. Special keyword "random" will return a user
-                agent from any browser allowed by the instance's `self.browsers` filter.
+            browsers (str): The browser name(s) to get. Special keyword "random" will return a random user-agent string.
 
         Returns:
             BrowserUserAgentData: The user agent with additional data.
         """
         try:
-            # Handle request value
-            for value, replacement in settings.REPLACEMENTS.items():
-                request = request.replace(value, replacement)
-            request = request.lower()
-            request = settings.SHORTCUTS.get(request, request)
-
-            if request == "random":
+            if browsers == "random":
                 # Filter the browser list based on the browsers array using lambda
                 # And based on OS list
                 # And percentage is bigger then min percentage
@@ -214,14 +171,14 @@ class FakeUserAgent:
                 # And based on OS list
                 # And percentage is bigger then min percentage
                 # And convert the iterator back to a list
-                filtered_browsers = self._filter_useragents(request=request)
+                filtered_browsers = self._filter_useragents(browsers_to_filter=browsers)
 
             # Pick a random browser user-agent from the filtered browsers
             # And return the full dict
             return random.choice(filtered_browsers)  # noqa: S311
         except (KeyError, IndexError):
             logger.warning(
-                f"Error occurred during getting browser: {request}, "
+                f"Error occurred during getting browser(s): {browsers}, "
                 "but was suppressed with fallback.",
             )
             # Return fallback object
@@ -238,6 +195,49 @@ class FakeUserAgent:
                 "platform": "Win32",
             }
 
+    def _filter_useragents(
+        self, browsers_to_filter: Optional[Union[str, list[str]]] = None
+    ) -> list[BrowserUserAgentData]:
+        """Filter the user agents based on filters set in the instance, and an optional browser name.
+
+        User agents from the data file are filtered based on the attributes passed upon
+        instantiation.
+
+        Args:
+            browsers_to_filter (Union[str, None], optional): A specific browser name you want results for in
+                this particular call. If None, don't apply extra filters. Defaults to None.
+
+        Returns:
+            list[BrowserUserAgentData]: A filtered list of user agents.
+        """
+        # Filter based on browser, os, platform and version.
+        filtered_useragents = list(
+            filter(
+                lambda x: x["browser"] in self.browsers
+                and x["os"] in self.os
+                and x["type"] in self.platforms
+                and x["browser_version_major_minor"] >= self.min_version
+                and x["percent"] >= self.min_percentage,
+                self.data_browsers,
+            )
+        )
+        # Filter based on a specific browser name(s), if set.
+        if browsers_to_filter:
+            # Ensure browsers_to_filter is always a list.
+            if isinstance(browsers_to_filter, str):
+                browsers_to_filter = [browsers_to_filter]
+            
+            print("Filtering on: ", browsers_to_filter)
+            filtered_useragents = list(
+                filter(
+                    lambda x: x["browser"] in browsers_to_filter, filtered_useragents
+                )
+            )
+            print("Found: ", len(filtered_useragents))
+
+        return filtered_useragents
+
+
     def __getitem__(self, attr: str) -> Union[str, Any]:
         """Get a user agent by key lookup, as if it were a dictionary (i.e., `ua['random']`).
 
@@ -250,7 +250,7 @@ class FakeUserAgent:
         """
         return self.__getattr__(attr)
 
-    def __getattr__(self, attr: str) -> Union[str, Any]:
+    def __getattr__(self, attr: Union[str, list[str]]) -> Union[str, Any]:
         """Get a user agent by attribute lookup.
 
         Args:
@@ -261,43 +261,20 @@ class FakeUserAgent:
             Union[str, Any]: The user agent string if not a `self.safe_attr`, otherwise the
                 attribute value.
         """
-        if attr in self.safe_attrs:
-            return super(UserAgent, self).__getattribute__(attr)
+        if isinstance(attr, str):
+            if attr in self.safe_attrs:
+                return super(UserAgent, self).__getattribute__(attr)
+        elif isinstance(attr, list):
+            for a in attr:
+                if a in self.safe_attrs:
+                    return super(UserAgent, self).__getattribute__(a)
 
-        try:
-            # Handle input value
-            for value, replacement in settings.REPLACEMENTS.items():
-                attr = attr.replace(value, replacement)
-            attr = attr.lower()
-            attr = settings.SHORTCUTS.get(attr, attr)
-
-            if attr == "random":
-                # Filter the browser list based on the browsers array using lambda
-                # And based on OS list
-                # And percentage is bigger then min percentage
-                # And convert the iterator back to a list
-                filtered_browsers = self._filter_useragents()
-            else:
-                # Or when random isn't select, we filter the browsers array based on the 'attr' using lamba
-                # And based on OS list
-                # And percentage is bigger then min percentage
-                # And convert the iterator back to a list
-                filtered_browsers = self._filter_useragents(request=attr)
-
-            # Pick a random browser user-agent from the filtered browsers
-            # And return the useragent string.
-            return random.choice(filtered_browsers).get("useragent")  # noqa: S311
-        except (KeyError, IndexError):
-            logger.warning(
-                f"Error occurred during getting browser: {attr}, "
-                "but was suppressed with fallback.",
-            )
-            return self.fallback
+        return self.getBrowser(attr)
 
     @property
     def chrome(self) -> str:
         """Get a random Chrome user agent."""
-        return self.__getattr__("chrome")
+        return self.__getattr__(["Chrome"]) #, "Chrome Mobile", "Chrome Mobile iOS"
 
     @property
     def googlechrome(self) -> str:
@@ -307,12 +284,12 @@ class FakeUserAgent:
     @property
     def edge(self) -> str:
         """Get a random Edge user agent."""
-        return self.__getattr__("edge")
+        return self.__getattr__("Edge")
 
     @property
     def firefox(self) -> str:
         """Get a random Firefox user agent."""
-        return self.__getattr__("firefox")
+        return self.__getattr__("Firefox")
 
     @property
     def ff(self) -> str:
@@ -322,7 +299,7 @@ class FakeUserAgent:
     @property
     def safari(self) -> str:
         """Get a random Safari user agent."""
-        return self.__getattr__("safari")
+        return self.__getattr__(["Safari", "Mobile Safari"])
 
     @property
     def random(self) -> str:
@@ -332,22 +309,22 @@ class FakeUserAgent:
     @property
     def getFirefox(self) -> BrowserUserAgentData:
         """Get a random Firefox user agent, with additional data."""
-        return self.getBrowser("firefox")
+        return self.getBrowser("Firefox")
 
     @property
     def getChrome(self) -> BrowserUserAgentData:
         """Get a random Chrome user agent, with additional data."""
-        return self.getBrowser("chrome")
+        return self.getBrowser(["Chrome", "Chrome Mobile", "Chrome Mobile iOS"])
 
     @property
     def getEdge(self) -> BrowserUserAgentData:
         """Get a random Edge user agent, with additional data."""
-        return self.getBrowser("edge")
+        return self.getBrowser("Edge")
 
     @property
     def getSafari(self) -> BrowserUserAgentData:
         """Get a random Safari user agent, with additional data."""
-        return self.getBrowser("safari")
+        return self.getBrowser(["Safari", "Mobile Safari"])
 
     @property
     def getRandom(self) -> BrowserUserAgentData:

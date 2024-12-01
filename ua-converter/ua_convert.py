@@ -15,6 +15,16 @@ def process_item(item):
     """Process a single item and return the transformed item."""
     # Parse the user agent string
     ua_result = parse(item["userAgent"])
+    # Example output:
+    # Result(
+    #     user_agent=UserAgent(
+    #         family="Mobile Safari", major="16", minor="2", patch=None, patch_minor=None
+    #     ),
+    #     os=OS(family="iOS", major="16", minor="2", patch=None, patch_minor=None),
+    #     device=Device(family="iPhone", brand="Apple", model="iPhone"),
+    #     string="Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X)
+    #       AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Mobile/15E148 Safari/604.1",
+    # )
 
     if not ua_result.user_agent:
         return None
