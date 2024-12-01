@@ -1,4 +1,4 @@
-"""General library settings."""
+"""Simple helper file to retrieve the version."""
 
 try:
     from importlib import metadata
