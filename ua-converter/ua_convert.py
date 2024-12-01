@@ -29,34 +29,29 @@ def process_item(item):
     if not ua_result.user_agent:
         return None
 
-    if ua_result.user_agent:
-        browser_version = ".".join(
-            part
-            for part in [
-                ua_result.user_agent.major,
-                ua_result.user_agent.minor,
-                ua_result.user_agent.patch,
-                ua_result.user_agent.patch_minor,
-            ]
-            if part is not None
-        )
-        try:
-            browser_version_major_minor = float(
-                ".".join(
-                    part
-                    for part in [
-                        ua_result.user_agent.major,
-                        ua_result.user_agent.minor,
-                    ]
-                    if part is not None
-                )
-            )
-        except TypeError:
-            return None
+    browser_version = ".".join(
+        part
+        for part in [
+            ua_result.user_agent.major,
+            ua_result.user_agent.minor,
+            ua_result.user_agent.patch,
+            ua_result.user_agent.patch_minor,
+        ]
+        if part is not None
+    )
+    major_minor_version = ".".join(
+        part
+        for part in [
+            ua_result.user_agent.major,
+            ua_result.user_agent.minor,
+        ]
+        if part is not None
+    )
+    if major_minor_version:
+        browser_version_major_minor = float(browser_version_major_minor)
     else:
-        browser_version = None
-        browser_version_major_minor = 0.0
-
+        return None # Skip this user-agent string
+  
     if ua_result.os:
         os_version = ".".join(
             part
