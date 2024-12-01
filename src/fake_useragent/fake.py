@@ -123,13 +123,7 @@ class FakeUserAgent:
             ],
         )
 
-        os = _ensure_iterable(os=os, default=["Windows", "Linux", "Android", "iOS"])
-        self.os = [
-            item
-            for os_name in os
-            for item in settings.OS_REPLACEMENTS.get(os_name, [os_name])
-        ]
-
+        self.os = _ensure_iterable(os=os, default=["Windows", "Linux", "Android", "iOS"])
         self.min_percentage = _ensure_float(min_percentage)
         self.min_version = _ensure_float(min_version)
 
