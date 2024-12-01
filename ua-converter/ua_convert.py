@@ -3,12 +3,13 @@
 # Author: Melroy van den Berg
 
 """Description: Convert the user-agents.json file to JSONlines and directly remaps the keys."""
+import argparse
 import json
+from pathlib import Path
 
 from ua_parser import parse
 
-data = []
-new_data = []
+from fake_useragent.utils import find_browser_json_path
 
 
 def process_item(item):
@@ -81,33 +82,50 @@ def process_item(item):
     }
 
 
-# Load data into memory
-print("Reading data from disk")
-with open("user-agents.json", "r") as f:
-    data = json.load(f)
+def convert_useragents_file_format(source: Path, destination: Path) -> None:
+    """Convert the `source` file in Intoli's format to a JSONL file in our format in `destination`.
 
-# Process data in parallel is for some reason slower!?
-# with ThreadPoolExecutor() as executor:
-#     futures = {executor.submit(process_item, item) for item in data}
-#     print("Processing data...")
-#     for future in as_completed(futures):
-#         try:
-#             result = future.result()
-#             if result is not None:
-#                 new_data.append(result)
-#         except Exception as exc:
-#             print(f"Generated an exception: {exc}")
-#             raise
-print("Processing data...")
-for item in data:
-    result = process_item(item)
-    if result is not None:
-        new_data.append(result)
+    Args:
+        source (Path): The path to the file with updated user agent data. We use Intoli's
+            [user-agents](https://github.com/intoli/user-agents) library, so this file must comply
+            with their format.
+        destination (Path): Where to output the JSONL converted to our format.
+    """
+    print(f"Reading data from {source}.")
+    with open(source, "r") as f:
+        data = json.load(f)
 
-# Write JSONlines to new file
-print("Writing data to disk")
-with open("browsers.jsonl", "w") as f:
-    for item in new_data:
-        f.write(json.dumps(item) + "\n")
+    # Process data. For some reason, ThreadPoolExecutor parallel execution is slower.
+    print("Processing data...")
+    new_data = [result for item in data if (result := process_item(item)) if not None]
 
-print("Done!")
+    print(f"Writing data to {destination}")
+    with open(destination, "w") as f:
+        for item in new_data:
+            f.write(json.dumps(item) + "\n")
+
+    print("Done!")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Convert Intoli's user agent data to our JSONL format.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="Input JSON file.",
+        default=Path("user-agents.json"),
+        type=Path,
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="Output JSONL file.",
+        default=find_browser_json_path(),
+        type=Path,
+    )
+    args = parser.parse_args()
+
+    convert_useragents_file_format(args.input, args.output)
