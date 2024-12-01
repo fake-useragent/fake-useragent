@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-# Description: Convert the user-agents.json file to JSONlines and directly remaps the keys
+# -*- coding: UTF-8 -*-
 # Author: Melroy van den Berg
+
+"""Description: Convert the user-agents.json file to JSONlines and directly remaps the keys."""
 import json
-from ua_parser import parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+from ua_parser import parse
 
 data = []
 new_data = []
@@ -28,17 +31,19 @@ def process_item(item):
             ]
             if part is not None
         )
-
-        browser_version_major_minor = float(
-            ".".join(
-                part
-                for part in [
-                    ua_result.user_agent.major,
-                    ua_result.user_agent.minor,
-                ]
-                if part is not None
+        try:
+            browser_version_major_minor = float(
+                ".".join(
+                    part
+                    for part in [
+                        ua_result.user_agent.major,
+                        ua_result.user_agent.minor,
+                    ]
+                    if part is not None
+                )
             )
-        )
+        except TypeError:
+            return None
     else:
         browser_version = None
         browser_version_major_minor = 0.0
