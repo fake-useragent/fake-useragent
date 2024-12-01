@@ -90,7 +90,7 @@ print("Reading data from disk")
 with open("user-agents.json", "r") as f:
     data = json.load(f)
 
-# Process data in parallel is for some reason lower...!?
+# Process data in parallel is for some reason slower!?
 # with ThreadPoolExecutor() as executor:
 #     futures = {executor.submit(process_item, item) for item in data}
 #     print("Processing data...")

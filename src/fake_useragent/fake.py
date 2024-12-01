@@ -226,7 +226,7 @@ class FakeUserAgent:
             # Ensure browsers_to_filter is always a list.
             if isinstance(browsers_to_filter, str):
                 browsers_to_filter = [browsers_to_filter]
-            
+
             print("Filtering on: ", browsers_to_filter)
             filtered_useragents = list(
                 filter(
@@ -236,7 +236,6 @@ class FakeUserAgent:
             print("Found: ", len(filtered_useragents))
 
         return filtered_useragents
-
 
     def __getitem__(self, attr: str) -> Union[str, Any]:
         """Get a user agent by key lookup, as if it were a dictionary (i.e., `ua['random']`).
@@ -274,7 +273,7 @@ class FakeUserAgent:
     @property
     def chrome(self) -> str:
         """Get a random Chrome user agent."""
-        return self.__getattr__(["Chrome"]) #, "Chrome Mobile", "Chrome Mobile iOS"
+        return self.__getattr__(["Chrome"])  # , "Chrome Mobile", "Chrome Mobile iOS"
 
     @property
     def googlechrome(self) -> str:
