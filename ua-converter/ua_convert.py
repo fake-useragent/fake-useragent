@@ -48,7 +48,7 @@ def process_item(item):
         if part is not None
     )
     if major_minor_version:
-        browser_version_major_minor = float(browser_version_major_minor)
+        browser_version_major_minor = float(major_minor_version)
     else:
         return None # Skip this user-agent string
   
