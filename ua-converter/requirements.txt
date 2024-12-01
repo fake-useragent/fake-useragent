@@ -1,3 +1,5 @@
+-r ../requirements.txt
 ua-parser==1.0.0
 ua-parser-builtins==0.18.0
 ua-parser-rs==0.1.2
+requests==2.32.3
