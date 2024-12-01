@@ -6,13 +6,27 @@
 import argparse
 import json
 from pathlib import Path
+from typing import Optional, TypedDict
 
 from ua_parser import parse
 
-from fake_useragent.utils import find_browser_json_path
+from fake_useragent.utils import BrowserUserAgentData, find_browser_json_path
 
 
-def process_item(item):
+class SourceItem(TypedDict):
+    """The schema for the source item that the source file must (at least) follow."""
+
+    userAgent: str
+    """The user agent string."""
+    weight: float
+    """Sampling probability for this user agent when random sampling. Currently has no effect."""
+    deviceCategory: str
+    """The device type for this user agent."""
+    platform: str
+    """System name for the user agent."""
+
+
+def process_item(item: SourceItem) -> Optional[BrowserUserAgentData]:
     """Process a single item and return the transformed item."""
     # Parse the user agent string
     ua_result = parse(item["userAgent"])
