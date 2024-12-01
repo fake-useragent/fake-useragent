@@ -2,7 +2,7 @@ import unittest
 
 import pytest
 
-from fake_useragent import VERSION, FakeUserAgent, UserAgent, settings
+from fake_useragent import VERSION, FakeUserAgent, UserAgent, get_version
 
 
 class TestFake(unittest.TestCase):
@@ -119,7 +119,7 @@ class TestFake(unittest.TestCase):
             ua.__injections__  # noqa: B018
 
     def test_fake_version(self):
-        assert VERSION == settings.__version__
+        assert VERSION == get_version.__version__
 
     def test_fake_aliases(self):
         assert FakeUserAgent is UserAgent
