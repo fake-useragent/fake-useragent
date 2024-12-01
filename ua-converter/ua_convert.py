@@ -4,7 +4,6 @@
 
 """Description: Convert the user-agents.json file to JSONlines and directly remaps the keys."""
 import json
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from ua_parser import parse
 
@@ -81,18 +80,23 @@ print("Reading data from disk")
 with open("user-agents.json", "r") as f:
     data = json.load(f)
 
-# Process data in parallel
-with ThreadPoolExecutor() as executor:
-    futures = {executor.submit(process_item, item) for item in data}
-    print("Processing data...")
-    for future in as_completed(futures):
-        try:
-            result = future.result()
-            if result is not None:
-                new_data.append(result)
-        except Exception as exc:
-            print(f"Generated an exception: {exc}")
-            raise
+# Process data in parallel is for some reason lower...!?
+# with ThreadPoolExecutor() as executor:
+#     futures = {executor.submit(process_item, item) for item in data}
+#     print("Processing data...")
+#     for future in as_completed(futures):
+#         try:
+#             result = future.result()
+#             if result is not None:
+#                 new_data.append(result)
+#         except Exception as exc:
+#             print(f"Generated an exception: {exc}")
+#             raise
+print("Processing data...")
+for item in data:
+    result = process_item(item)
+    if result is not None:
+        new_data.append(result)
 
 # Write JSONlines to new file
 print("Writing data to disk")

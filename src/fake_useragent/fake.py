@@ -71,19 +71,19 @@ class FakeUserAgent:
 
     Args:
         browsers (Optional[Iterable[str]], optional): If given, will only ever return user agents
-            from these browsers. If None, set to `["chrome", "firefox", "safari", "edge"]`. Defaults
-            to None.
+            from these browsers. If None, set to:
+            `["Google", "Firefox", "Mobile Safari", "Samsung Internet", "Chrome Mobile", "Chrome Mobile iOS", "Amazon Silk","]`.
+            Defaults to None.
         os (Optional[Iterable[str]], optional): If given, will only ever return user agents from
             these operating systems. You can pass values in the data file or those in
-            `settings.OS_REPLACEMENTS`. If None, set to `["win10", "macos", "linux"]`. Defaults to
+            `settings.OS_REPLACEMENTS`. If None, set to `["Windows", "Linux", "Android", "iOS"]`. Defaults to
             None.
         min_version (float, optional): Will only ever return user agents with versions greater than
             this one. Defaults to 0.0.
-        min_percentage (float, optional): Legacy setting to filter user agents based on a sampling
-            probability. Current data has all percentages set to 100, so this should have no effect.
+        min_percentage (float, optional): Filter user agents based on usage.
             Defaults to 0.0.
-        platforms (Optional[Iterable[str]], optional): If given, will only ever return user agents
-            from these browsers. If None, set to `["pc", "mobile", "tablet"]`. Defaults to None.
+        platforms (Optional[Iterable[str]], optional): If given, will only return the user-agents with
+            the provided platform type. If None, set to `["pc", "mobile", "tablet"]`. Defaults to None.
         fallback (str, optional): User agent to use if there are any issues retrieving a user agent.
             Defaults to `"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like
             Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"`.
@@ -111,10 +111,19 @@ class FakeUserAgent:
         safe_attrs: Optional[Iterable[str]] = None,
     ):
         self.browsers = _ensure_iterable(
-            browsers=browsers, default=["chrome", "firefox", "safari", "edge"]
+            browsers=browsers,
+            default=[
+                "Google",
+                "Firefox",
+                "Mobile Safari",
+                "Samsung Internet",
+                "Chrome Mobile",
+                "Chrome Mobile iOS",
+                "Amazon Silk",
+            ],
         )
 
-        os = _ensure_iterable(os=os, default=["win10", "macos", "linux"])
+        os = _ensure_iterable(os=os, default=["Windows", "Linux", "Android", "iOS"])
         self.os = [
             item
             for os_name in os
@@ -170,7 +179,7 @@ class FakeUserAgent:
                 lambda x: x["browser"] in self.browsers
                 and x["os"] in self.os
                 and x["type"] in self.platforms
-                and x["version"] >= self.min_version
+                and x["browser_version_major_minor"] >= self.min_version
                 and x["percent"] >= self.min_percentage,
                 self.data_browsers,
             )
@@ -225,11 +234,14 @@ class FakeUserAgent:
             return {
                 "useragent": self.fallback,
                 "percent": 100.0,
-                "type": "pc",
-                "system": "Chrome 122.0 Win10",
-                "browser": "chrome",
-                "version": 122.0,
-                "os": "win10",
+                "type": "desktop",
+                "device_brand": None,
+                "browser": "Edge",
+                "browser_version": "122.0.0.0",
+                "browser_version_major_minor": 122.0,
+                "os": "win32",
+                "os_version": "10",
+                "platform": "Win32",
             }
 
     def __getitem__(self, attr: str) -> Union[str, Any]:
