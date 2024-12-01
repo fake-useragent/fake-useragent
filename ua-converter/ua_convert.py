@@ -50,8 +50,8 @@ def process_item(item):
     if major_minor_version:
         browser_version_major_minor = float(major_minor_version)
     else:
-        return None # Skip this user-agent string
-  
+        return None  # Skip this user-agent string
+
     if ua_result.os:
         os_version = ".".join(
             part
