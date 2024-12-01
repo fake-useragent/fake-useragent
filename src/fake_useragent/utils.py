@@ -25,17 +25,17 @@ class BrowserUserAgentData(TypedDict):
     """The usage percentage of the user agent."""
     type: str
     """The device type for this user agent (eg. mobile or desktop)."""
-    device_brand: str
+    device_brand: Union[str, None]
     """Brand name for the device (eg. Generic_Android)."""
-    browser: str
+    browser: Union[str, None]
     """Browser name for the user agent (eg. Chrome Mobile)."""
     browser_version: str
     """Version of the browser (eg. "100.0.4896.60")."""
     browser_version_major_minor: float
     """Major and minor version of the browser (eg. 100.0)."""
-    os: str
+    os: Union[str, None]
     """OS name for the user agent (eg. Android)."""
-    os_version: str
+    os_version: Union[str, None]
     """OS version (eg. 10)."""
     platform: str
     """Platform for the user agent (eg. Linux armv81)."""
