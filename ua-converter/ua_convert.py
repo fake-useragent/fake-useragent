@@ -27,7 +27,7 @@ def process_item(item):
     # )
 
     if not ua_result.user_agent:
-        return None
+        return None  # Skip this user-agent string
 
     browser_version = ".".join(
         part
@@ -47,6 +47,7 @@ def process_item(item):
         ]
         if part is not None
     )
+    # The major_minor_version gets converted to a float to make it easier to compare
     if major_minor_version:
         browser_version_major_minor = float(major_minor_version)
     else:
