@@ -71,10 +71,12 @@ class FakeUserAgent:
     Args:
         browsers (Optional[Iterable[str]], optional): If given, will only ever return user agents
             from these browsers. If None, set to:
-            `["Google", "Firefox", "Mobile Safari", "Samsung Internet", "Chrome Mobile", "Chrome Mobile iOS", "Amazon Silk","]`.
+            `["Google", "Chrome", "Firefox", "Edge", "Opera"," Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile",
+              "Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView",
+              "Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"]`.
             Defaults to None.
         os (Optional[Iterable[str]], optional): If given, will only ever return user agents from
-            these operating systems. If None, set to `["Windows", "Linux", "Mac OS X", "Android", "iOS"]`. Defaults to
+            these operating systems. If None, set to `["Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X", "Android","iOS"]`. Defaults to
             None.
         min_version (float, optional): Will only ever return user agents with versions greater than
             this one. Defaults to 0.0.
@@ -114,16 +116,40 @@ class FakeUserAgent:
                 "Google",
                 "Chrome",
                 "Firefox",
-                "Mobile Safari",
+                "Edge",
+                "Opera",
+                "Safari",
+                "Android",
+                "Yandex Browser",
                 "Samsung Internet",
+                "Opera Mobile",
+                "Mobile Safari",
+                "Firefox Mobile",
+                "Firefox iOS",
                 "Chrome Mobile",
                 "Chrome Mobile iOS",
+                "Mobile Safari UI/WKWebView",
+                "Edge Mobile",
+                "DuckDuckGo Mobile",
+                "MiuiBrowser",
+                "Whale",
+                "Twitter",
+                "Facebook",
                 "Amazon Silk",
             ],
         )
 
         self.os = _ensure_iterable(
-            os=os, default=["Windows", "Linux", "Mac OS X", "Android", "iOS"]
+            os=os,
+            default=[
+                "Windows",
+                "Linux",
+                "Ubuntu",
+                "Chrome OS",
+                "Mac OS X",
+                "Android",
+                "iOS",
+            ],
         )
         self.min_percentage = _ensure_float(min_percentage)
         self.min_version = _ensure_float(min_version)
@@ -210,30 +236,31 @@ class FakeUserAgent:
         Returns:
             list[BrowserUserAgentData]: A filtered list of user agents.
         """
-        # Filter based on browser, os, platform and version.
+        # Filter based on browser, os, typem browser version and percentage (weight).
+
         filtered_useragents = list(
             filter(
                 lambda x: x["browser"] in self.browsers
                 and x["os"] in self.os
-                and x["type"] in self.platforms
+                and x["type"]
+                in self.platforms  # We check platform on type here (I know it's confusing)
                 and x["browser_version_major_minor"] >= self.min_version
                 and x["percent"] >= self.min_percentage,
                 self.data_browsers,
             )
         )
+
         # Filter based on a specific browser name(s), if set.
         if browsers_to_filter:
             # Ensure browsers_to_filter is always a list.
             if isinstance(browsers_to_filter, str):
                 browsers_to_filter = [browsers_to_filter]
 
-            print("Filtering on: ", browsers_to_filter)
             filtered_useragents = list(
                 filter(
                     lambda x: x["browser"] in browsers_to_filter, filtered_useragents
                 )
             )
-            print("Found: ", len(filtered_useragents))
 
         return filtered_useragents
 
@@ -250,7 +277,7 @@ class FakeUserAgent:
         return self.__getattr__(attr)
 
     def __getattr__(self, attr: Union[str, list[str]]) -> Union[str, Any]:
-        """Get a user agent by attribute lookup.
+        """Get a user agent string by attribute lookup.
 
         Args:
             attr (str): Browser name to get. Special keyword "random" will return a user agent from
@@ -268,12 +295,12 @@ class FakeUserAgent:
                 if a in self.safe_attrs:
                     return super(UserAgent, self).__getattribute__(a)
 
-        return self.getBrowser(attr)
+        return self.getBrowser(attr)["useragent"]
 
     @property
     def chrome(self) -> str:
         """Get a random Chrome user agent."""
-        return self.__getattr__(["Chrome"])  # , "Chrome Mobile", "Chrome Mobile iOS"
+        return self.__getattr__(["Chrome", "Chrome Mobile", "Chrome Mobile iOS"])
 
     @property
     def googlechrome(self) -> str:
@@ -281,19 +308,14 @@ class FakeUserAgent:
         return self.chrome
 
     @property
-    def edge(self) -> str:
-        """Get a random Edge user agent."""
-        return self.__getattr__("Edge")
+    def ff(self) -> str:
+        """Get a random Firefox user agent."""
+        return self.firefox
 
     @property
     def firefox(self) -> str:
         """Get a random Firefox user agent."""
-        return self.__getattr__("Firefox")
-
-    @property
-    def ff(self) -> str:
-        """Get a random Firefox user agent."""
-        return self.firefox
+        return self.__getattr__(["Firefox", "Firefox Mobile", "Firefox iOS"])
 
     @property
     def safari(self) -> str:
@@ -301,14 +323,24 @@ class FakeUserAgent:
         return self.__getattr__(["Safari", "Mobile Safari"])
 
     @property
+    def opera(self) -> str:
+        """Get a random Opera user agent."""
+        return self.__getattr__(["Opera", "Opera Mobile"])
+
+    @property
+    def google(self) -> str:
+        """Get a random Google user agent."""
+        return self.__getattr__(["Google"])
+
+    @property
+    def edge(self) -> str:
+        """Get a random Edge user agent."""
+        return self.__getattr__(["Edge", "Edge Mobile"])
+
+    @property
     def random(self) -> str:
         """Get a random user agent."""
         return self.__getattr__("random")
-
-    @property
-    def getFirefox(self) -> BrowserUserAgentData:
-        """Get a random Firefox user agent, with additional data."""
-        return self.getBrowser("Firefox")
 
     @property
     def getChrome(self) -> BrowserUserAgentData:
@@ -316,14 +348,29 @@ class FakeUserAgent:
         return self.getBrowser(["Chrome", "Chrome Mobile", "Chrome Mobile iOS"])
 
     @property
-    def getEdge(self) -> BrowserUserAgentData:
-        """Get a random Edge user agent, with additional data."""
-        return self.getBrowser("Edge")
+    def getFirefox(self) -> BrowserUserAgentData:
+        """Get a random Firefox user agent, with additional data."""
+        return self.getBrowser("Firefox")
 
     @property
     def getSafari(self) -> BrowserUserAgentData:
         """Get a random Safari user agent, with additional data."""
         return self.getBrowser(["Safari", "Mobile Safari"])
+
+    @property
+    def getOpera(self) -> BrowserUserAgentData:
+        """Get a random Safari user agent, with additional data."""
+        return self.getBrowser(["Opera", "Opera Mobile"])
+
+    @property
+    def getGoogle(self) -> BrowserUserAgentData:
+        """Get a random Google user agent, with additional data."""
+        return self.getBrowser(["Google"])
+
+    @property
+    def getEdge(self) -> BrowserUserAgentData:
+        """Get a random Edge user agent, with additional data."""
+        return self.getBrowser(["Edge", "Edge Mobile"])
 
     @property
     def getRandom(self) -> BrowserUserAgentData:
