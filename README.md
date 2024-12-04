@@ -260,6 +260,17 @@ _Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instea
 
 ### Changelog
 
+- 2.0.0 December 4, 2024
+
+  - Switch to new data source (again again)
+  - Possible browser options: `"Google", "Chrome", "Firefox", "Edge", "Opera"," Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile",
+"Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView",
+"Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"`
+  - Possible OS options: `"Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X", "Android","iOS"`
+  - Update fake.py to handle the new data key/value objects
+  - Updated the README
+  - Renamed browsers.json to browsers.jsonl. And other refactors.
+
 - 1.5.1 March 16, 2024
 
   - Remove trailing spaces in user agent strings
