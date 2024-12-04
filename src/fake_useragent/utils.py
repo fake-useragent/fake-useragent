@@ -15,26 +15,32 @@ from fake_useragent.log import logger
 
 
 class BrowserUserAgentData(TypedDict):
-    """The schema for the browser user agent data that the `browsers.json` file must follow."""
+    """The schema for the browser user agent data that the `browsers.jsonl` file must follow."""
 
     useragent: str
     """The user agent string."""
     percent: float
-    """Sampling probability for this user agent when random sampling. Currently has no effect."""
+    """The usage percentage of the user agent."""
     type: str
-    """The device type for this user agent."""
-    system: str
-    """System name for the user agent."""
+    """The device type for this user agent (eg. mobile or desktop)."""
+    device_brand: str
+    """Brand name for the device (eg. Generic_Android)."""
     browser: str
-    """Browser name for the user agent."""
-    version: float
-    """Version of the browser."""
+    """Browser name for the user agent (eg. Chrome Mobile)."""
+    browser_version: str
+    """Version of the browser (eg. "100.0.4896.60")."""
+    browser_version_major_minor: float
+    """Major and minor version of the browser (eg. 100.0)."""
     os: str
-    """OS name for the user agent."""
+    """OS name for the user agent (eg. Android)."""
+    os_version: str
+    """OS version (eg. 10)."""
+    platform: str
+    """Platform for the user agent (eg. Linux armv81)."""
 
 
 def load() -> list[BrowserUserAgentData]:
-    """Load the included `browser.json` file into memory..
+    """Load the included `browsers.jsonl` file into memory..
 
     Raises:
         FakeUserAgentError: If unable to find the data.
@@ -47,7 +53,7 @@ def load() -> list[BrowserUserAgentData]:
     ret: Union[list[BrowserUserAgentData], None] = None
     try:
         json_lines = (
-            ilr.files("fake_useragent.data").joinpath("browsers.json").read_text()
+            ilr.files("fake_useragent.data").joinpath("browsers.jsonl").read_text()
         )
         for line in json_lines.splitlines():
             data.append(json.loads(line))
@@ -63,7 +69,7 @@ def load() -> list[BrowserUserAgentData]:
             from pkg_resources import resource_filename
 
             with open(
-                resource_filename("fake_useragent", "data/browsers.json")
+                resource_filename("fake_useragent", "data/browsers.jsonl")
             ) as file:
                 json_lines = file.read()
                 for line in json_lines.splitlines():

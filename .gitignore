@@ -28,3 +28,6 @@ python-env
 
 ua-converter/user-agents.json
 ua-converter/browsers.jsonl
+
+# Personal workspace
+.personal_workspace

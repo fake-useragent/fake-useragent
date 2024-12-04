@@ -2,7 +2,7 @@ import unittest
 
 import pytest
 
-from fake_useragent import VERSION, FakeUserAgent, UserAgent, settings
+from fake_useragent import FakeUserAgent, UserAgent, __version__, get_version
 
 
 class TestFake(unittest.TestCase):
@@ -17,25 +17,31 @@ class TestFake(unittest.TestCase):
 
         self.assertTrue(ua.chrome)
         self.assertIsInstance(ua.chrome, str)
-        self.assertTrue(ua.edge)
-        self.assertIsInstance(ua.edge, str)
-        self.assertTrue(ua["internet explorer"])
-        self.assertIsInstance(ua["internet explorer"], str)
+        self.assertTrue(ua.google)
+        self.assertIsInstance(ua.google, str)
         self.assertTrue(ua.firefox)
         self.assertIsInstance(ua.firefox, str)
+        self.assertTrue(ua.edge)
+        self.assertIsInstance(ua.edge, str)
         self.assertTrue(ua.safari)
         self.assertIsInstance(ua.safari, str)
+        self.assertTrue(ua.opera)
+        self.assertIsInstance(ua.opera, str)
         self.assertTrue(ua.random)
         self.assertIsInstance(ua.random, str)
 
         self.assertTrue(ua.getChrome)
         self.assertIsInstance(ua.getChrome, dict)
-        self.assertTrue(ua.getEdge)
-        self.assertIsInstance(ua.getEdge, dict)
+        self.assertTrue(ua.getGoogle)
+        self.assertIsInstance(ua.getGoogle, dict)
         self.assertTrue(ua.getFirefox)
         self.assertIsInstance(ua.getFirefox, dict)
+        self.assertTrue(ua.getEdge)
+        self.assertIsInstance(ua.getEdge, dict)
         self.assertTrue(ua.getSafari)
         self.assertIsInstance(ua.getSafari, dict)
+        self.assertTrue(ua.getOpera)
+        self.assertIsInstance(ua.getOpera, dict)
         self.assertTrue(ua.getRandom)
         self.assertIsInstance(ua.getRandom, dict)
 
@@ -45,17 +51,17 @@ class TestFake(unittest.TestCase):
         ua.google  # noqa: B018
         ua.chrome  # noqa: B018
         ua.googlechrome  # noqa: B018
-        ua.google_chrome  # noqa: B018
-        ua["google chrome"]  # noqa: B018
         ua.firefox  # noqa: B018
         ua.ff  # noqa: B018
         ua.safari  # noqa: B018
+        ua.opera  # noqa: B018
         ua.random  # noqa: B018
         ua["random"]  # noqa: B018
         ua.getEdge  # noqa: B018
         ua.getChrome  # noqa: B018
         ua.getFirefox  # noqa: B018
         ua.getSafari  # noqa: B018
+        ua.getOpera  # noqa: B018
         ua.getRandom  # noqa: B018
 
     def test_fake_data_browser_type(self):
@@ -119,7 +125,7 @@ class TestFake(unittest.TestCase):
             ua.__injections__  # noqa: B018
 
     def test_fake_version(self):
-        assert VERSION == settings.__version__
+        assert __version__ == get_version.__version__
 
     def test_fake_aliases(self):
         assert FakeUserAgent is UserAgent

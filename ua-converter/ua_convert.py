@@ -4,7 +4,6 @@
 
 """Description: Convert the user-agents.json file to JSONlines and directly remaps the keys."""
 import json
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from ua_parser import parse
 
@@ -16,37 +15,43 @@ def process_item(item):
     """Process a single item and return the transformed item."""
     # Parse the user agent string
     ua_result = parse(item["userAgent"])
+    # Example output:
+    # Result(
+    #     user_agent=UserAgent(
+    #         family="Mobile Safari", major="16", minor="2", patch=None, patch_minor=None
+    #     ),
+    #     os=OS(family="iOS", major="16", minor="2", patch=None, patch_minor=None),
+    #     device=Device(family="iPhone", brand="Apple", model="iPhone"),
+    #     string="Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X)
+    #       AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Mobile/15E148 Safari/604.1",
+    # )
 
     if not ua_result.user_agent:
-        return None
+        return None  # Skip this user-agent string
 
-    if ua_result.user_agent:
-        browser_version = ".".join(
-            part
-            for part in [
-                ua_result.user_agent.major,
-                ua_result.user_agent.minor,
-                ua_result.user_agent.patch,
-                ua_result.user_agent.patch_minor,
-            ]
-            if part is not None
-        )
-        try:
-            browser_version_major_minor = float(
-                ".".join(
-                    part
-                    for part in [
-                        ua_result.user_agent.major,
-                        ua_result.user_agent.minor,
-                    ]
-                    if part is not None
-                )
-            )
-        except TypeError:
-            return None
+    browser_version = ".".join(
+        part
+        for part in [
+            ua_result.user_agent.major,
+            ua_result.user_agent.minor,
+            ua_result.user_agent.patch,
+            ua_result.user_agent.patch_minor,
+        ]
+        if part is not None
+    )
+    major_minor_version = ".".join(
+        part
+        for part in [
+            ua_result.user_agent.major,
+            ua_result.user_agent.minor,
+        ]
+        if part is not None
+    )
+    # The major_minor_version gets converted to a float to make it easier to compare
+    if major_minor_version:
+        browser_version_major_minor = float(major_minor_version)
     else:
-        browser_version = None
-        browser_version_major_minor = 0.0
+        return None  # Skip this user-agent string
 
     if ua_result.os:
         os_version = ".".join(
@@ -81,18 +86,23 @@ print("Reading data from disk")
 with open("user-agents.json", "r") as f:
     data = json.load(f)
 
-# Process data in parallel
-with ThreadPoolExecutor() as executor:
-    futures = {executor.submit(process_item, item) for item in data}
-    print("Processing data...")
-    for future in as_completed(futures):
-        try:
-            result = future.result()
-            if result is not None:
-                new_data.append(result)
-        except Exception as exc:
-            print(f"Generated an exception: {exc}")
-            raise
+# Process data in parallel is for some reason slower!?
+# with ThreadPoolExecutor() as executor:
+#     futures = {executor.submit(process_item, item) for item in data}
+#     print("Processing data...")
+#     for future in as_completed(futures):
+#         try:
+#             result = future.result()
+#             if result is not None:
+#                 new_data.append(result)
+#         except Exception as exc:
+#             print(f"Generated an exception: {exc}")
+#             raise
+print("Processing data...")
+for item in data:
+    result = process_item(item)
+    if result is not None:
+        new_data.append(result)
 
 # Write JSONlines to new file
 print("Writing data to disk")
