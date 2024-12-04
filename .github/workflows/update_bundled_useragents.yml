@@ -1,0 +1,41 @@
+name: Update Bundled User Agents
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-useragents:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+        cache: 'pip'
+        cache-dependency-path: requirements_converter.txt
+
+    - name: Install dependencies
+      run: pip install -r requirements_converter.txt
+
+    - name: Process source UA file and produce our JSONL
+      run: python ua-converter/ua_convert.py --download
+
+    - name: Create Pull Request
+      id: pr
+      uses: peter-evans/create-pull-request@v7
+      with:
+        commit-message: Update bundled user agents
+        branch: automated/ua-update
+        title: Update bundled user agents file
+        body: |
+          This PR updates the bundled user agents file. Thanks Intoli for the licence that permits us to use their data! Check their work at [`user-agents`](https://github.com/intoli/user-agents).
+        labels: ua-file
