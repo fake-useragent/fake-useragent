@@ -8,10 +8,10 @@ Up-to-date simple useragent faker with real world database.
 
 ## Features
 
-- Data is pre-downloaded from [https://user-agents.net/](https://user-agents.net/download) and the data is part of the package
-- The data consists of the current browser versions or one version lower
-- Retrieves user-agent strings locally (both desktop and mobile UAs)
-- Retrieve user-agent Python dictionary
+- Data is pre-downloaded & post-processed from [Intoli LLC](https://github.com/intoli/user-agents/tree/main/src) and the data is part of the package itself
+- The data consists of a wide range of browser agents and various browsers
+- Retrieves user-agent strings (both of type: `desktop`, `tablet` and/or `mobile` UAs)
+- Retrieve user-agent Python dictionary (aka object), with fields like `useragent`, `percent`, `type`, `device_brand`, `browser`, `browser_version`, `os`, `os_version` and `platform`
 - Supports Python 3.x
 
 ### Installation
