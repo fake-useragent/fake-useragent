@@ -173,7 +173,7 @@ class FakeUserAgent:
             raise TypeError(msg)
         self.safe_attrs = set(safe_attrs)
 
-        # Next, load our local data file into memory (browsers.json)
+        # Next, load our local data file into memory (browsers.jsonl)
         self.data_browsers = load()
 
     def getBrowser(self, browsers: Union[str, list[str]]) -> BrowserUserAgentData:
