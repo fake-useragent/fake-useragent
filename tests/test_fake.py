@@ -2,7 +2,7 @@ import unittest
 
 import pytest
 
-from fake_useragent import VERSION, FakeUserAgent, UserAgent, get_version
+from fake_useragent import __version__, FakeUserAgent, UserAgent, get_version
 
 
 class TestFake(unittest.TestCase):
@@ -51,17 +51,17 @@ class TestFake(unittest.TestCase):
         ua.google  # noqa: B018
         ua.chrome  # noqa: B018
         ua.googlechrome  # noqa: B018
-        ua.google_chrome  # noqa: B018
-        ua["google chrome"]  # noqa: B018
         ua.firefox  # noqa: B018
         ua.ff  # noqa: B018
         ua.safari  # noqa: B018
+        ua.opera  # noqa: B018
         ua.random  # noqa: B018
         ua["random"]  # noqa: B018
         ua.getEdge  # noqa: B018
         ua.getChrome  # noqa: B018
         ua.getFirefox  # noqa: B018
         ua.getSafari  # noqa: B018
+        ua.getOpera  # noqa: B018
         ua.getRandom  # noqa: B018
 
     def test_fake_data_browser_type(self):
@@ -125,7 +125,7 @@ class TestFake(unittest.TestCase):
             ua.__injections__  # noqa: B018
 
     def test_fake_version(self):
-        assert VERSION == get_version.__version__
+        assert __version__ == get_version.__version__
 
     def test_fake_aliases(self):
         assert FakeUserAgent is UserAgent

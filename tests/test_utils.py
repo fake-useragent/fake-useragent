@@ -22,9 +22,17 @@ class TestUtils(unittest.TestCase):
         data = utils.load()
 
         self.assertIsInstance(data, list)
-        self.assertGreater(len(data), 10)
+        self.assertGreater(len(data), 1000)
         self.assertIsInstance(data[0], object)
-        self.assertIsInstance(data[0]["useragent"], str)
+        self.assertIsInstance(data[0]["percent"], float)
+        self.assertIsInstance(data[0]["type"], str)
+        self.assertIsInstance(data[0]["device_brand"], str)
+        self.assertIsInstance(data[0]["browser"], str)
+        self.assertIsInstance(data[0]["browser_version"], str)
+        self.assertIsInstance(data[0]["browser_version_major_minor"], float)
+        self.assertIsInstance(data[0]["os"], str)
+        self.assertIsInstance(data[0]["os_version"], str)
+        self.assertIsInstance(data[0]["platform"], str)
 
     # https://github.com/python/cpython/issues/95299
     @unittest.skipIf(
@@ -39,5 +47,14 @@ class TestUtils(unittest.TestCase):
             data = utils.load()
 
         self.assertIsInstance(data, list)
+        self.assertGreater(len(data), 1000)
         self.assertIsInstance(data[0], object)
-        self.assertIsInstance(data[0]["useragent"], str)
+        self.assertIsInstance(data[0]["percent"], float)
+        self.assertIsInstance(data[0]["type"], str)
+        self.assertIsInstance(data[0]["device_brand"], str)
+        self.assertIsInstance(data[0]["browser"], str)
+        self.assertIsInstance(data[0]["browser_version"], str)
+        self.assertIsInstance(data[0]["browser_version_major_minor"], float)
+        self.assertIsInstance(data[0]["os"], str)
+        self.assertIsInstance(data[0]["os_version"], str)
+        self.assertIsInstance(data[0]["platform"], str)
