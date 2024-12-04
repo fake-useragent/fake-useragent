@@ -8,10 +8,10 @@ Up-to-date simple useragent faker with real world database.
 
 ## Features
 
-- Data is pre-downloaded from [https://user-agents.net/](https://user-agents.net/download) and the data is part of the package
-- The data consists of the current browser versions or one version lower
-- Retrieves user-agent strings locally (both desktop and mobile UAs)
-- Retrieve user-agent Python dictionary
+- Data is pre-downloaded & post-processed from [Intoli LLC](https://github.com/intoli/user-agents/tree/main/src) and the data is part of the package itself
+- The data consists of a wide range of browser agents and various browsers
+- Retrieves user-agent strings (both of type: `desktop`, `tablet` and/or `mobile` UAs)
+- Retrieve user-agent Python dictionary (aka object), with fields like `useragent`, `percent`, `type`, `device_brand`, `browser`, `browser_version`, `os`, `os_version` and `platform`
 - Supports Python 3.x
 
 ### Installation
@@ -61,7 +61,7 @@ print(ua.edge)
 
 Additional features that fake-useragent now offers since v1.2.0.
 
-If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["chrome", "edge", "firefox", "safari"]`).  
+If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["Google", "Chrome", "Firefox", "Edge", "Opera"," Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile", "Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView", "Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"]`).  
 This example will only return random user-agents from Edge and Chrome:
 
 ```py
@@ -74,7 +74,7 @@ _Note:_ Fakeuser-agent knowns about: Chrome, Edge, Firefox and Safari. Other bro
 
 ---
 
-If you want to specify your own operating systems, you can do that via the `os` argument (default is: `["windows", "macos", "linux"]`).  
+If you want to specify your own operating systems, you can do that via the `os` argument (default is: `["Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X", "Android", "iOS"]`).  
 In this example you will only get Linux user-agents back:
 
 ```py
@@ -85,7 +85,7 @@ ua.random
 
 ---
 
-You can also specify the type of platforms you want to use, you can do that via the `platforms` argument (default is `["pc", "mobile", "tablet"]`.
+You can also specify the type of platforms you want to use, you can do that via the `platforms` argument (default is `["desktop", "mobile", "tablet"]`.
 This example will only return random user-agents from a mobile device:
 
 ```py
@@ -266,7 +266,8 @@ _Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instea
   - Possible browser options: `"Google", "Chrome", "Firefox", "Edge", "Opera"," Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile",
 "Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView",
 "Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"`
-  - Possible OS options: `"Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X", "Android","iOS"`
+  - Possible OS options: `"Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X", "Android", "iOS"`
+  - Possible type options: `"desktop", "mobile", "tablet"`
   - Update fake.py to handle the new data key/value objects
   - Updated the README
   - Renamed browsers.json to browsers.jsonl. And other refactors.
