@@ -5,7 +5,7 @@ cachetools==5.5.0
 chardet==5.2.0
 click==8.1.7
 colorama==0.4.6
-coverage==7.6.4
+coverage==7.6.8
 distlib==0.3.9
 exceptiongroup==1.2.2
 fastjsonschema==2.20.0
@@ -25,11 +25,11 @@ pyproject-api==1.6.1
 pyproject_hooks==1.2.0
 pytest==8.3.3
 pytest-cov==6.0.0
-ruff==0.7.3
+ruff==0.8.1
 six==1.16.0
 tomli==2.2.1
 tox==4.14.1
 typing_extensions==4.12.2
-validate-pyproject==0.22
+validate-pyproject==0.23
 virtualenv==20.25.1
 zipp==3.21.0
