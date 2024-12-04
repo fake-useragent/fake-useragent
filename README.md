@@ -201,7 +201,7 @@ Check version via the Python console:
 ```py
 import fake_useragent
 
-print(fake_useragent.VERSION)
+print(fake_useragent.__version__)
 ```
 
 And you are always welcome to post [issues](https://github.com/fake-useragent/fake-useragent/issues).
