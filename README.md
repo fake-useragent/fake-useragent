@@ -267,6 +267,7 @@ _Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instea
 "Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView",
 "Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"`
   - Possible OS options: `"Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X", "Android","iOS"`
+  - Possible type options: `"desktop", "mobile", "tablet"`
   - Update fake.py to handle the new data key/value objects
   - Updated the README
   - Renamed browsers.json to browsers.jsonl. And other refactors.
