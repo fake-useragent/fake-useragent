@@ -61,7 +61,7 @@ print(ua.edge)
 
 Additional features that fake-useragent now offers since v1.2.0.
 
-If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["chrome", "edge", "firefox", "safari"]`).  
+If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["Google", "Chrome", "Firefox", "Edge", "Opera"," Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile", "Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView", "Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"]`).  
 This example will only return random user-agents from Edge and Chrome:
 
 ```py
@@ -74,7 +74,7 @@ _Note:_ Fakeuser-agent knowns about: Chrome, Edge, Firefox and Safari. Other bro
 
 ---
 
-If you want to specify your own operating systems, you can do that via the `os` argument (default is: `["windows", "macos", "linux"]`).  
+If you want to specify your own operating systems, you can do that via the `os` argument (default is: `["Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X", "Android","iOS"]`).  
 In this example you will only get Linux user-agents back:
 
 ```py
@@ -85,7 +85,7 @@ ua.random
 
 ---
 
-You can also specify the type of platforms you want to use, you can do that via the `platforms` argument (default is `["pc", "mobile", "tablet"]`.
+You can also specify the type of platforms you want to use, you can do that via the `platforms` argument (default is `["desktop", "mobile", "tablet"]`.
 This example will only return random user-agents from a mobile device:
 
 ```py
