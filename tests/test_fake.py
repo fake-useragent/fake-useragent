@@ -2,7 +2,7 @@ import unittest
 
 import pytest
 
-from fake_useragent import __version__, FakeUserAgent, UserAgent, get_version
+from fake_useragent import FakeUserAgent, UserAgent, __version__, get_version
 
 
 class TestFake(unittest.TestCase):
