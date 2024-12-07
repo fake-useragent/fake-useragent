@@ -9,7 +9,8 @@ authors = [
     { name = "Melroy van den Berg", email = "melroy@melroy.org" },
     { name = "Victor Kovtun", email = "hellysmile@gmail.com" },
 ]
-dependencies = ["importlib-resources >= 5.0; python_version > '3.8'"]
+requires-python = ">=3.9"
+dependencies = ["importlib-resources >= 6.0"]
 description = "Up-to-date simple useragent faker with real world database"
 keywords = [
     "user",
