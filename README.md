@@ -66,11 +66,12 @@ This example will only return random user-agents from Edge and Chrome:
 
 ```py
 from fake_useragent import UserAgent
-ua = UserAgent(browsers=['edge', 'chrome'])
+ua = UserAgent(browsers=['Edge', 'Chrome'])
 ua.random
 ```
 
-_Note:_ Fakeuser-agent knowns about: Chrome, Edge, Firefox and Safari. Other browsers are not popular enough and aren't part of our dataset we use.
+_Note:_ Fakeuser-agent knowns about browsers: Chrome, Edge, Firefox, Safari, Opera, Android, Opera Mobile, Mobile Safari, Firefox Mobile, Firefox iOS, Chrome Mobile, Chrome Mobile iOS and more (see again full list above).
+_Note #2:_ Since fakeuser-agent v2.0.0 the browser names are case-sensitive!
 
 ---
 
@@ -79,9 +80,11 @@ In this example you will only get Linux user-agents back:
 
 ```py
 from fake_useragent import UserAgent
-ua = UserAgent(os='linux')
+ua = UserAgent(os='Linux')
 ua.random
 ```
+
+_Note:_ Since fakeuser-agent v2.0.0 the OS names are case-sensitive!
 
 ---
 
@@ -90,7 +93,7 @@ This example will only return random user-agents from a mobile device:
 
 ```py
 from fake_useragent import UserAgent
-ua = UserAgent(platforms='mobile')
+ua = UserAgent(platforms='desktop')
 ua.random
 ```
 
