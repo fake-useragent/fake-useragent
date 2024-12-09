@@ -70,7 +70,7 @@ ua = UserAgent(browsers=['Edge', 'Chrome'])
 ua.random
 ```
 
-_Note:_ Fakeuser-agent knowns about browsers: Chrome, Edge, Firefox, Safari, Opera, Android, Opera Mobile, Mobile Safari, Firefox Mobile, Firefox iOS, Chrome Mobile, Chrome Mobile iOS and more (see again full list above).
+_Note:_ Fakeuser-agent knowns about browsers: Chrome, Edge, Firefox, Safari, Opera, Android, Opera Mobile, Mobile Safari, Firefox Mobile, Firefox iOS, Chrome Mobile, Chrome Mobile iOS and more (see again full list above).  
 _Note #2:_ Since fakeuser-agent v2.0.0 the browser names are case-sensitive!
 
 ---
