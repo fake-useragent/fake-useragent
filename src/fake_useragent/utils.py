@@ -45,8 +45,7 @@ def load() -> list[BrowserUserAgentData]:
     """
     path = Path(__file__, "../data/browsers.jsonl").resolve()
     try:
-        with path.open() as f:
-            return list(map(json.loads, f))
+        return json.loads(f"[{path.read_text().rstrip().replace('\n', ',')}]")
     except Exception as exc:
         if not path.is_file():
             logger.warning(
