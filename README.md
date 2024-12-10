@@ -263,11 +263,11 @@ _Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instea
 
 ### Changelog
 
-- 2.0.2 & 2.0.3
+- 2.0.2 & 2.0.3 December 10, 2024
 
   -  Fix project dependencies toml file & sync docs
 
-- 2.0.1
+- 2.0.1 December 7, 2024 (my birthday)
 
   - Add requires-python to toml config
 
