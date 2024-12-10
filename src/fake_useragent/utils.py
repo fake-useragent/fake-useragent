@@ -44,13 +44,16 @@ def load() -> list[BrowserUserAgentData]:
             `BrowserUserAgentData` schema.
     """
     path = Path(__file__, "../data/browsers.jsonl").resolve()
-    if not path.is_file():
-        raise FakeUserAgentError(f"Could not find the user agent data file at {path}")
-
     try:
-        json_lines = path.read_text()
-        return list(map(json.loads, json_lines.splitlines()))
+        with path.open() as f:
+            return list(map(json.loads, f))
     except Exception as exc:
-        logger.warning("Could not parse the contents.", exc_info=exc)
+        if not path.is_file():
+            logger.warning(
+                f"Could not find the user agent data file at {path}",
+                exc_info=exc,
+            )
+        else:
+            logger.warning("Could not parse the contents.", exc_info=exc)
 
     raise FakeUserAgentError("Failed to load the user agent data.")
