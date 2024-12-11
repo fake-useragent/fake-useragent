@@ -1,7 +1,7 @@
 """General utils for the fake_useragent package."""
 
 import json
-from pathlib import Path
+from pkgutil import get_data
 from typing import TypedDict
 
 from fake_useragent.errors import FakeUserAgentError
@@ -43,16 +43,10 @@ def load() -> list[BrowserUserAgentData]:
         list[BrowserUserAgentData]: The list of browser user agent data, following the
             `BrowserUserAgentData` schema.
     """
-    path = Path(__file__, "../data/browsers.jsonl").resolve()
     try:
-        return json.loads(f"[{path.read_text().rstrip().replace(chr(10), ',')}]")
+        return json.loads(
+            f"[{get_data('fake_useragent', 'data/browsers.jsonl').rstrip().decode().replace(chr(10), ',')}]"
+        )
     except Exception as exc:
-        if not path.is_file():
-            logger.warning(
-                f"Could not find the user agent data file at {path}",
-                exc_info=exc,
-            )
-        else:
-            logger.warning("Could not parse the contents.", exc_info=exc)
-
+        logger.warning("Could not find the user agent data file.", exc_info=exc)
     raise FakeUserAgentError("Failed to load the user agent data.")
