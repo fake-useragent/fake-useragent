@@ -10,7 +10,6 @@ distlib==0.3.9
 exceptiongroup==1.2.2
 fastjsonschema==2.20.0
 filelock==3.16.1
-importlib-resources==6.4.5
 iniconfig==2.0.0
 isort==5.13.2
 mypy-extensions==1.0.0
