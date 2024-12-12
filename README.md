@@ -88,7 +88,7 @@ _Note:_ Since fakeuser-agent v2.0.0 the OS names are case-sensitive!
 
 ---
 
-You can also specify the type of platforms you want to use, you can do that via the `platforms` argument (default is `["desktop", "mobile", "tablet"]`.
+You can also specify the type of platforms you want to use, you can do that via the `platforms` argument (default is `["desktop", "mobile", "tablet"]`).
 This example will only return random user-agents from a mobile device:
 
 ```py
