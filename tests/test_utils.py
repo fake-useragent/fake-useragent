@@ -34,25 +34,25 @@ class TestUtils(unittest.TestCase):
         self.assertIsInstance(data[0]["platform"], str)
 
     def test_utils_load_from_zipimport(self):
-        with TemporaryDirectory(ignore_cleanup_errors=True) as d:
-            filename = Path(d, "module.zip")
-            with ZipFile(filename, "w") as z:
-                for file in Path("src").rglob("*"):
-                    z.write(file, file.relative_to("src"))
+        d = TemporaryDirectory()
+        filename = Path(d.name, "module.zip")
+        with ZipFile(filename, "w") as z:
+            for file in Path("src").rglob("*"):
+                z.write(file, file.relative_to("src"))
 
-            unload_module("fake_useragent")  # cleanup previous imports
+        unload_module("fake_useragent")  # cleanup previous imports
 
-            sys.path.insert(0, str(filename))
+        sys.path.insert(0, str(filename))
 
-            from fake_useragent import utils
+        from fake_useragent import utils
 
-            self.assertIn(
-                "module.zip",
-                utils.__file__,
-                "utils should be imported from the zip file",
-            )
+        self.assertIn(
+            "module.zip",
+            utils.__file__,
+            "utils should be imported from the zip file",
+        )
 
-            data = utils.load()
+        data = utils.load()
 
         self.assertIsInstance(data, list)
         self.assertGreater(len(data), 1000)
@@ -71,14 +71,13 @@ class TestUtils(unittest.TestCase):
         unload_module("fake_useragent")
         sys.path.remove(str(filename))
 
-        if filename.exists():
+        try:
+            d.cleanup()
+        except PermissionError:
             # Windows users will fail to remove the temporary directory
             # because the module is still in use
             invalidate_caches()
-
-            @atexit.register
-            def _():
-                rmtree(d)
+            atexit.register(d.cleanup)
 
 
 def unload_module(name: str):
