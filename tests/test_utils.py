@@ -3,7 +3,6 @@ import sys
 import unittest
 from importlib import invalidate_caches
 from pathlib import Path
-from shutil import rmtree
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 
