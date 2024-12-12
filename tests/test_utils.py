@@ -1,6 +1,9 @@
+import atexit
 import sys
 import unittest
+from importlib import invalidate_caches
 from pathlib import Path
+from shutil import rmtree
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 
@@ -31,7 +34,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsInstance(data[0]["platform"], str)
 
     def test_utils_load_from_zipimport(self):
-        with TemporaryDirectory() as d:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as d:
             filename = Path(d, "module.zip")
             with ZipFile(filename, "w") as z:
                 for file in Path("src").rglob("*"):
@@ -64,8 +67,18 @@ class TestUtils(unittest.TestCase):
         self.assertIsInstance(data[0]["os_version"], str)
         self.assertIsInstance(data[0]["platform"], str)
 
-        unload_module("fake_useragent")  # cleanup
+        # cleanup
+        unload_module("fake_useragent")
         sys.path.remove(str(filename))
+
+        if filename.exists():
+            # Windows users will fail to remove the temporary directory
+            # because the module is still in use
+            invalidate_caches()
+
+            @atexit.register
+            def _():
+                rmtree(d)
 
 
 def unload_module(name: str):
