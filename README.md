@@ -93,6 +93,14 @@ This example will only return random user-agents from a mobile device:
 
 ```py
 from fake_useragent import UserAgent
+ua = UserAgent(platforms='mobile')
+ua.random
+```
+
+And a random user-agent from a desktop device:
+
+```py
+from fake_useragent import UserAgent
 ua = UserAgent(platforms='desktop')
 ua.random
 ```
