@@ -97,6 +97,14 @@ ua = UserAgent(platforms='mobile')
 ua.random
 ```
 
+And a random user-agent from a desktop device:
+
+```py
+from fake_useragent import UserAgent
+ua = UserAgent(platforms='desktop')
+ua.random
+```
+
 ---
 
 If you want to return more recent user-agent strings, you can play with the `min_version` argument (default is: `0.0`, meaning all user agents will match).  
