@@ -2,9 +2,7 @@ import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import TYPE_CHECKING
 from zipfile import ZipFile
-from zipimport import zipimporter
 
 from fake_useragent import utils
 
@@ -41,13 +39,15 @@ class TestUtils(unittest.TestCase):
 
             unload_module("fake_useragent")  # cleanup previous imports
 
-            importer = zipimporter(str(filename))
-            spec = importer.find_spec("fake_useragent")
-            self.assertIsNotNone(spec)
-            loader = spec.loader
-            self.assertIsNotNone(loader)
-            if not TYPE_CHECKING:
-                utils = loader.load_module("fake_useragent").utils
+            sys.path.insert(0, str(filename))
+
+            from fake_useragent import utils
+
+            self.assertIn(
+                "module.zip",
+                utils.__file__,
+                "utils should be imported from the zip file",
+            )
 
             data = utils.load()
 
@@ -65,6 +65,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsInstance(data[0]["platform"], str)
 
         unload_module("fake_useragent")  # cleanup
+        sys.path.remove(str(filename))
 
 
 def unload_module(name: str):
