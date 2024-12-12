@@ -93,7 +93,7 @@ This example will only return random user-agents from a mobile device:
 
 ```py
 from fake_useragent import UserAgent
-ua = UserAgent(platforms='desktop')
+ua = UserAgent(platforms='mobile')
 ua.random
 ```
 
