@@ -44,9 +44,10 @@ def load() -> list[BrowserUserAgentData]:
             `BrowserUserAgentData` schema.
     """
     try:
-        return json.loads(
-            f"[{get_data('fake_useragent', 'data/browsers.jsonl').rstrip().decode().replace(chr(10), ',')}]"
-        )
+        jsonl = get_data(__package__, "data/browsers.jsonl").rstrip().decode()
+        comma_joined_objects = jsonl.replace("\n", ",")
+        json_list_string = f"[{comma_joined_objects}]"
+        return json.loads(json_list_string)
     except Exception as exc:
         logger.warning("Could not find the user agent data file.", exc_info=exc)
     raise FakeUserAgentError("Failed to load the user agent data.")
