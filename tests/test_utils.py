@@ -34,14 +34,13 @@ class TestUtils(unittest.TestCase):
 
     def test_utils_load_from_zipimport(self):
         d = TemporaryDirectory()
-        filename = Path(d.name, "module.zip")
-        with ZipFile(filename, "w") as z:
-            for file in Path("src").rglob("*"):
-                z.write(file, file.relative_to("src"))
+        zip_filename = str(Path(d.name, "module.zip"))
+
+        make_zip("src", zip_filename)
 
         unload_module("fake_useragent")  # cleanup previous imports
 
-        sys.path.insert(0, str(filename))
+        sys.path.insert(0, zip_filename)
 
         from fake_useragent import utils
 
@@ -68,7 +67,7 @@ class TestUtils(unittest.TestCase):
 
         # cleanup
         unload_module("fake_useragent")
-        sys.path.remove(str(filename))
+        sys.path.remove(zip_filename)
 
         try:
             d.cleanup()
@@ -77,6 +76,12 @@ class TestUtils(unittest.TestCase):
             # because the module is still in use
             invalidate_caches()
             atexit.register(d.cleanup)
+
+
+def make_zip(source_dir: str, output_file: str):
+    with ZipFile(output_file, "w") as z:
+        for file in Path(source_dir).rglob("*"):
+            z.write(file, file.relative_to(source_dir))
 
 
 def unload_module(name: str):
