@@ -3,8 +3,8 @@ import sys
 import unittest
 from importlib import invalidate_caches
 from pathlib import Path
+from shutil import make_archive
 from tempfile import TemporaryDirectory
-from zipfile import ZipFile
 
 from fake_useragent import utils
 
@@ -36,7 +36,7 @@ class TestUtils(unittest.TestCase):
         d = TemporaryDirectory()
         zip_filename = str(Path(d.name, "module.zip"))
 
-        make_zip("src", zip_filename)
+        make_archive(zip_filename.removesuffix(".zip"), "zip", "src")
 
         unload_module("fake_useragent")  # cleanup previous imports
 
@@ -76,12 +76,6 @@ class TestUtils(unittest.TestCase):
             # because the module is still in use
             invalidate_caches()
             atexit.register(d.cleanup)
-
-
-def make_zip(source_dir: str, output_file: str):
-    with ZipFile(output_file, "w") as z:
-        for file in Path(source_dir).rglob("*"):
-            z.write(file, file.relative_to(source_dir))
 
 
 def unload_module(name: str):
