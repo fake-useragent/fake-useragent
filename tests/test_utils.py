@@ -21,13 +21,7 @@ class TestUtils(unittest.TestCase):
 
         self.assertGreater(len(data), 1000)
 
-        if sys.version_info >= (3, 12):
-            # pydantic only supports `typing_extensions.TypedDict` instead of `typing.TypedDict` on Python < 3.12.
-
-            from pydantic import TypeAdapter
-
-            validator = TypeAdapter(List[utils.BrowserUserAgentData])
-            validator.validate_python(data, strict=True)
+        validate_types(data)
 
     def test_utils_load_from_zipimport(self):
         with make_temporary_directory() as temp_dir:
@@ -50,6 +44,7 @@ class TestUtils(unittest.TestCase):
             data = utils.load()
 
         self.assertGreater(len(data), 1000)
+        validate_types(data)
 
         # cleanup
         unload_module("fake_useragent")
@@ -83,3 +78,12 @@ def make_temporary_directory():
                 importlib.invalidate_caches()
                 gc.collect()
                 d.cleanup()
+
+
+def validate_types(data: List[utils.BrowserUserAgentData]):
+    if sys.version_info < (3, 12):
+        return  # pydantic only supports `typing_extensions.TypedDict` instead of `typing.TypedDict` on Python < 3.12.
+
+    from pydantic import TypeAdapter
+
+    TypeAdapter(List[utils.BrowserUserAgentData]).validate_python(data, strict=True)
