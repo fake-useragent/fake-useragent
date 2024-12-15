@@ -1,6 +1,7 @@
 import atexit
 import sys
 import unittest
+from contextlib import contextmanager
 from importlib import invalidate_caches
 from pathlib import Path
 from shutil import make_archive
@@ -33,24 +34,24 @@ class TestUtils(unittest.TestCase):
         self.assertIsInstance(data[0]["platform"], str)
 
     def test_utils_load_from_zipimport(self):
-        d = TemporaryDirectory()
-        zip_filename = str(Path(d.name, "module.zip"))
+        with make_temporary_directory() as temp_dir:
+            zip_filename = str(Path(temp_dir, "module.zip"))
 
-        make_archive(zip_filename.removesuffix(".zip"), "zip", "src")
+            make_archive(zip_filename.removesuffix(".zip"), "zip", "src")
 
-        unload_module("fake_useragent")  # cleanup previous imports
+            unload_module("fake_useragent")  # cleanup previous imports
 
-        sys.path.insert(0, zip_filename)
+            sys.path.insert(0, zip_filename)
 
-        from fake_useragent import utils
+            from fake_useragent import utils
 
-        self.assertIn(
-            "module.zip",
-            utils.__file__,
-            "utils should be imported from the zip file",
-        )
+            self.assertIn(
+                "module.zip",
+                utils.__file__,
+                "utils should be imported from the zip file",
+            )
 
-        data = utils.load()
+            data = utils.load()
 
         self.assertIsInstance(data, list)
         self.assertGreater(len(data), 1000)
@@ -69,16 +70,21 @@ class TestUtils(unittest.TestCase):
         unload_module("fake_useragent")
         sys.path.remove(zip_filename)
 
-        try:
-            d.cleanup()
-        except PermissionError:
-            # Windows users will fail to remove the temporary directory
-            # because the module is still in use
-            invalidate_caches()
-            atexit.register(d.cleanup)
-
 
 def unload_module(name: str):
     for module in tuple(sys.modules):
         if name in module:
             del sys.modules[module]
+
+
+@contextmanager
+def make_temporary_directory():
+    d = TemporaryDirectory()
+    try:
+        yield d.name
+        d.cleanup()
+    except PermissionError:
+        # Windows users will fail to remove the temporary directory
+        # because the module is still in use
+        invalidate_caches()
+        atexit.register(d.cleanup)
