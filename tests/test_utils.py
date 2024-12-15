@@ -82,9 +82,11 @@ def make_temporary_directory():
     d = TemporaryDirectory()
     try:
         yield d.name
-        d.cleanup()
-    except PermissionError:
-        # Windows users will fail to remove the temporary directory
-        # because the module is still in use
-        invalidate_caches()
-        atexit.register(d.cleanup)
+    finally:
+        try:
+            d.cleanup()
+        except PermissionError:
+            # Windows users will fail to remove the temporary directory
+            # because the module is still in use
+            invalidate_caches()
+            atexit.register(d.cleanup)
