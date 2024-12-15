@@ -1,8 +1,6 @@
-import atexit
 import sys
 import unittest
 from contextlib import contextmanager
-from importlib import invalidate_caches
 from pathlib import Path
 from shutil import make_archive
 from tempfile import TemporaryDirectory
@@ -23,16 +21,13 @@ class TestUtils(unittest.TestCase):
 
         self.assertGreater(len(data), 1000)
 
-        if sys.version_info < (3, 12):
-            from pytest import skip
+        if sys.version_info >= (3, 12):
+            # pydantic only supports `typing_extensions.TypedDict` instead of `typing.TypedDict` on Python < 3.12.
 
-            skip(
-                "pydantic only supports `typing_extensions.TypedDict` instead of `typing.TypedDict` on Python < 3.12."
-            )
+            from pydantic import TypeAdapter
 
-        from pydantic import TypeAdapter
-
-        TypeAdapter(List[utils.BrowserUserAgentData]).validate_python(data, strict=True)
+            validator = TypeAdapter(List[utils.BrowserUserAgentData])
+            validator.validate_python(data, strict=True)
 
     def test_utils_load_from_zipimport(self):
         with make_temporary_directory() as temp_dir:
@@ -78,5 +73,13 @@ def make_temporary_directory():
         except PermissionError:
             # Windows users will fail to remove the temporary directory
             # because the module is still in use
-            invalidate_caches()
-            atexit.register(d.cleanup)
+
+            import atexit
+            import gc
+            import importlib
+
+            @atexit.register
+            def _():
+                importlib.invalidate_caches()
+                gc.collect()
+                d.cleanup()
