@@ -47,6 +47,7 @@ def load() -> list[BrowserUserAgentData]:
         jsonl = get_data(__package__ or "fake_useragent", "data/browsers.jsonl")
         if jsonl is None:
             raise FakeUserAgentError("Failed to find browsers.jsonl")
+        # Convert JSONL to single big JSON list to speed up loading by ~2x.
         comma_joined_objects = jsonl.rstrip().decode().replace("\n", ",")
         json_list_string = f"[{comma_joined_objects}]"
         return json.loads(json_list_string)
