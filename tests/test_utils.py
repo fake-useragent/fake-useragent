@@ -1,12 +1,10 @@
 import sys
-
-if sys.version_info >= (3, 10):
-    import importlib.resources as ilr
-else:
-    import importlib_resources as ilr
-
 import unittest
-from unittest.mock import patch
+from contextlib import contextmanager
+from pathlib import Path
+from shutil import make_archive
+from tempfile import TemporaryDirectory
+from typing import List
 
 from fake_useragent import utils
 
@@ -21,40 +19,71 @@ class TestUtils(unittest.TestCase):
     def test_utils_load(self):
         data = utils.load()
 
-        self.assertIsInstance(data, list)
         self.assertGreater(len(data), 1000)
-        self.assertIsInstance(data[0], object)
-        self.assertIsInstance(data[0]["percent"], float)
-        self.assertIsInstance(data[0]["type"], str)
-        self.assertIsInstance(data[0]["device_brand"], str)
-        self.assertIsInstance(data[0]["browser"], str)
-        self.assertIsInstance(data[0]["browser_version"], str)
-        self.assertIsInstance(data[0]["browser_version_major_minor"], float)
-        self.assertIsInstance(data[0]["os"], str)
-        self.assertIsInstance(data[0]["os_version"], str)
-        self.assertIsInstance(data[0]["platform"], str)
 
-    # https://github.com/python/cpython/issues/95299
-    @unittest.skipIf(
-        sys.version_info >= (3, 12), "not compatible with Python 3.12 (or higher)"
-    )
-    def test_utils_load_pkg_resource_fallback(self):
-        # By default use_local_file is also True during production
-        # We will not allow the default importlib resources to be used, by triggering an Exception
-        with patch.object(ilr, "files") as mocked_importlib_resources_files:
-            # This exception should trigger the alternative path, trying to use pkg_resource as fallback
-            mocked_importlib_resources_files.side_effect = Exception("Error")
+        validate_types(data)
+
+    def test_utils_load_from_zipimport(self):
+        with make_temporary_directory() as temp_dir:
+            zip_filename = str(Path(temp_dir, "module.zip"))
+
+            make_archive(zip_filename.removesuffix(".zip"), "zip", "src")
+
+            unload_module("fake_useragent")  # cleanup previous imports
+
+            sys.path.insert(0, zip_filename)
+
+            from fake_useragent import utils
+
+            self.assertIn(
+                "module.zip",
+                utils.__file__,
+                "utils should be imported from the zip file",
+            )
+
             data = utils.load()
 
-        self.assertIsInstance(data, list)
         self.assertGreater(len(data), 1000)
-        self.assertIsInstance(data[0], object)
-        self.assertIsInstance(data[0]["percent"], float)
-        self.assertIsInstance(data[0]["type"], str)
-        self.assertIsInstance(data[0]["device_brand"], str)
-        self.assertIsInstance(data[0]["browser"], str)
-        self.assertIsInstance(data[0]["browser_version"], str)
-        self.assertIsInstance(data[0]["browser_version_major_minor"], float)
-        self.assertIsInstance(data[0]["os"], str)
-        self.assertIsInstance(data[0]["os_version"], str)
-        self.assertIsInstance(data[0]["platform"], str)
+        validate_types(data)
+
+        # cleanup
+        unload_module("fake_useragent")
+        sys.path.remove(zip_filename)
+
+
+def unload_module(name: str):
+    for module in tuple(sys.modules):
+        if name in module:
+            del sys.modules[module]
+
+
+@contextmanager
+def make_temporary_directory():
+    d = TemporaryDirectory()
+    try:
+        yield d.name
+    finally:
+        try:
+            d.cleanup()
+        except PermissionError:
+            # Windows users will fail to remove the temporary directory
+            # because the module is still in use
+
+            import atexit
+            import gc
+            import importlib
+
+            @atexit.register
+            def _():
+                importlib.invalidate_caches()
+                gc.collect()
+                d.cleanup()
+
+
+def validate_types(data: List[utils.BrowserUserAgentData]):
+    if sys.version_info < (3, 12):
+        return  # pydantic only supports `typing_extensions.TypedDict` instead of `typing.TypedDict` on Python < 3.12.
+
+    from pydantic import TypeAdapter
+
+    TypeAdapter(List[utils.BrowserUserAgentData]).validate_python(data, strict=True)
