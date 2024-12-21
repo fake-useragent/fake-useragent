@@ -7,6 +7,7 @@ import argparse
 import gzip
 import json
 from collections.abc import Iterable
+from multiprocessing.pool import Pool
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Optional, TypedDict
@@ -142,8 +143,10 @@ def convert_useragents_formats(
     Returns:
         list[BrowserUserAgentData]: The user agent data in our format.
     """
-    # Process data. For some reason, ThreadPoolExecutor parallel execution is slower.
-    return [result for item in data if (result := process_item(item)) if not None]
+    with Pool() as pool:
+        print(f"Using pool with {pool._processes} processes.")  # type: ignore[reportAttributeAccessIssue]; Pool has this attribute.
+        results = pool.map(process_item, data)
+    return [result for result in results if result is not None]
 
 
 if __name__ == "__main__":
