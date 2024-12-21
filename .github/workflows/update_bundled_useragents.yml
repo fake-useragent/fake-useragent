@@ -1,9 +1,7 @@
 name: Update Bundled User Agents
 
 on:
-  schedule:
-    - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
-  workflow_dispatch:  # Allow manual trigger
+  push:
 
 permissions:
   contents: write
