@@ -47,7 +47,14 @@ Homepage = "https://github.com/fake-useragent/fake-useragent"
 
 [tool.ruff]
 target-version = "py39"
-line-length = 142
+line-length = 100
+indent-width = 4
+include = [
+    "src/**/*.py",
+    "ua-converter/**/*.py",
+    "tests/*.py",
+    "**/pyproject.toml",
+]
 
 [tool.ruff.lint]
 select = [

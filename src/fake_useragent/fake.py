@@ -8,9 +8,7 @@ from fake_useragent.log import logger
 from fake_useragent.utils import BrowserUserAgentData, load
 
 
-def _ensure_iterable(
-    *, default: Iterable[str], **kwarg: Optional[Iterable[str]]
-) -> list[str]:
+def _ensure_iterable(*, default: Iterable[str], **kwarg: Optional[Iterable[str]]) -> list[str]:
     """Ensure the given value is an Iterable and convert it to a list.
 
     Args:
@@ -71,19 +69,62 @@ class FakeUserAgent:
     Args:
         browsers (Optional[Iterable[str]], optional): If given, will only ever return user agents
             from these browsers. If None, set to:
-            `["Google", "Chrome", "Firefox", "Edge", "Opera"," Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile",
-              "Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView",
-              "Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"]`.
+                ```
+                [
+                    "Google",
+                    "Chrome",
+                    "Firefox",
+                    "Edge",
+                    "Opera",
+                    "Safari",
+                    "Android",
+                    "Yandex Browser",
+                    "Samsung Internet",
+                    "Opera Mobile",,
+                    "Mobile Safari",
+                    "Firefox Mobile",
+                    "Firefox iOS",
+                    "Chrome Mobile",
+                    "Chrome Mobile iOS",
+                    "Mobile Safari UI/WKWebView",
+                    "Edge Mobile",
+                    "DuckDuckGo Mobile",
+                    "MiuiBrowser",
+                    "Whale",
+                    "Twitter",
+                    "Facebook",
+                    "Amazon Silk",
+                ]
+                ```
             Defaults to None.
         os (Optional[Iterable[str]], optional): If given, will only ever return user agents from
-            these operating systems. If None, set to `["Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X", "Android","iOS"]`. Defaults to
-            None.
+            these operating systems. If None, set to
+            ```
+            [
+                "Windows",
+                "Linux",
+                "Ubuntu",
+                "Chrome OS",
+                "Mac OS X",
+                "Android",
+                "iOS",
+            ]
+            ```
+            Defaults to None.
         min_version (float, optional): Will only ever return user agents with versions greater than
             this one. Defaults to 0.0.
         min_percentage (float, optional): Filter user agents based on usage.
             Defaults to 0.0.
-        platforms (Optional[Iterable[str]], optional): If given, will only return the user-agents with
-            the provided platform type. If None, set to `["desktop", "mobile", "tablet"]`. Defaults to None.
+        platforms (Optional[Iterable[str]], optional): If given, will only return the user-agents
+            with the provided platform type. If None, set to
+            ```
+            [
+                "desktop",
+                "mobile",
+                "tablet",
+            ]
+            ```
+            Defaults to None.
         fallback (str, optional): User agent to use if there are any issues retrieving a user agent.
             Defaults to `"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like
             Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"`.
@@ -166,9 +207,7 @@ class FakeUserAgent:
         safe_attrs = _ensure_iterable(safe_attrs=safe_attrs, default=set())
         str_safe_attrs = [isinstance(attr, str) for attr in safe_attrs]
         if not all(str_safe_attrs):
-            bad_indices = [
-                idx for idx, is_str in enumerate(str_safe_attrs) if not is_str
-            ]
+            bad_indices = [idx for idx, is_str in enumerate(str_safe_attrs) if not is_str]
             msg = f"safe_attrs must be an iterable of str but indices {bad_indices} are not."
             raise TypeError(msg)
         self.safe_attrs = set(safe_attrs)
@@ -180,23 +219,16 @@ class FakeUserAgent:
         """Get a browser user agent based on the filters.
 
         Args:
-            browsers (str): The browser name(s) to get. Special keyword "random" will return a random user-agent string.
+            browsers (str): The browser name(s) to get. Special keyword "random" will return a
+                random user-agent string.
 
         Returns:
             BrowserUserAgentData: The user agent with additional data.
         """
         try:
             if browsers == "random":
-                # Filter the browser list based on the browsers array using lambda
-                # And based on OS list
-                # And percentage is bigger then min percentage
-                # And convert the iterator back to a list
                 filtered_browsers = self._filter_useragents()
             else:
-                # Or when random isn't select, we filter the browsers array based on the 'request' using lamba
-                # And based on OS list
-                # And percentage is bigger then min percentage
-                # And convert the iterator back to a list
                 filtered_browsers = self._filter_useragents(browsers_to_filter=browsers)
 
             # Pick a random browser user-agent from the filtered browsers
@@ -224,14 +256,15 @@ class FakeUserAgent:
     def _filter_useragents(
         self, browsers_to_filter: Optional[Union[str, list[str]]] = None
     ) -> list[BrowserUserAgentData]:
-        """Filter the user agents based on filters set in the instance, and an optional browser name.
+        """Filter the user agents given filters set in the instance, and an optional browser name.
 
         User agents from the data file are filtered based on the attributes passed upon
         instantiation.
 
         Args:
-            browsers_to_filter (Union[str, None], optional): A specific browser name you want results for in
-                this particular call. If None, don't apply extra filters. Defaults to None.
+            browsers_to_filter (Union[str, None], optional): A specific browser name you want
+                results for in this particular call. If None, don't apply extra filters. Defaults to
+                None.
 
         Returns:
             list[BrowserUserAgentData]: A filtered list of user agents.
@@ -257,9 +290,7 @@ class FakeUserAgent:
                 browsers_to_filter = [browsers_to_filter]
 
             filtered_useragents = list(
-                filter(
-                    lambda x: x["browser"] in browsers_to_filter, filtered_useragents
-                )
+                filter(lambda x: x["browser"] in browsers_to_filter, filtered_useragents)
             )
 
         return filtered_useragents

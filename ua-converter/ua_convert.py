@@ -3,6 +3,7 @@
 # Author: Melroy van den Berg
 
 """Description: Convert the user-agents.json file to JSONlines and directly remaps the keys."""
+
 import argparse
 import gzip
 import json
@@ -17,9 +18,7 @@ from ua_parser import parse
 
 from fake_useragent.utils import BrowserUserAgentData, find_browser_json_path
 
-DEFAULT_URL = (
-    "https://raw.githubusercontent.com/intoli/user-agents/main/src/user-agents.json.gz"
-)
+DEFAULT_URL = "https://raw.githubusercontent.com/intoli/user-agents/main/src/user-agents.json.gz"
 
 
 class SourceItem(TypedDict):
