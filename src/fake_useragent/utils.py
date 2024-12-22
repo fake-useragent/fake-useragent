@@ -1,16 +1,8 @@
 """General utils for the fake_useragent package."""
 
 import json
-import sys
-from typing import TypedDict, Union
-
-# We need files() from Python 3.10 or higher
-if sys.version_info >= (3, 10):
-    import importlib.resources as ilr
-else:
-    import importlib_resources as ilr
-
-from pathlib import Path
+from pkgutil import get_data
+from typing import Optional, TypedDict
 
 from fake_useragent.errors import FakeUserAgentError
 from fake_useragent.log import logger
@@ -25,53 +17,24 @@ class BrowserUserAgentData(TypedDict):
     """The usage percentage of the user agent."""
     type: str
     """The device type for this user agent (eg. mobile or desktop)."""
-    device_brand: Union[str, None]
+    device_brand: Optional[str]
     """Brand name for the device (eg. Generic_Android)."""
-    browser: Union[str, None]
+    browser: Optional[str]
     """Browser name for the user agent (eg. Chrome Mobile)."""
     browser_version: str
     """Version of the browser (eg. "100.0.4896.60")."""
     browser_version_major_minor: float
     """Major and minor version of the browser (eg. 100.0)."""
-    os: Union[str, None]
+    os: Optional[str]
     """OS name for the user agent (eg. Android)."""
-    os_version: Union[str, None]
+    os_version: Optional[str]
     """OS version (eg. 10)."""
     platform: str
     """Platform for the user agent (eg. Linux armv81)."""
 
 
-def find_browser_json_path() -> Path:
-    """Find the path to the browsers.json file.
-
-    Returns:
-        Path: Path to the browsers.json file.
-
-    Raises:
-        FakeUserAgentError: If unable to find the file.
-    """
-    try:
-        file_path = ilr.files("fake_useragent.data").joinpath("browsers.jsonl")
-        return Path(str(file_path))
-    except Exception as exc:
-        logger.warning(
-            "Unable to find local data/jsonl file using importlib-resources. Try pkg-resource.",
-            exc_info=exc,
-        )
-        try:
-            from pkg_resources import resource_filename
-
-            return Path(resource_filename("fake_useragent", "data/browsers.jsonl"))
-        except Exception as exc2:
-            logger.warning(
-                "Could not find local data/jsonl file using pkg-resource.",
-                exc_info=exc2,
-            )
-            raise FakeUserAgentError("Could not locate browsers.jsonl file") from exc2
-
-
 def load() -> list[BrowserUserAgentData]:
-    """Load the included `browser.json` file into memory.
+    """Load the included `browser.jsonl` file into memory.
 
     Raises:
         FakeUserAgentError: If unable to load or parse the data.
@@ -80,17 +43,14 @@ def load() -> list[BrowserUserAgentData]:
         list[BrowserUserAgentData]: The list of browser user agent data, following the
             `BrowserUserAgentData` schema.
     """
-    data = []
     try:
-        json_path = find_browser_json_path()
-        for line in json_path.read_text().splitlines():
-            data.append(json.loads(line))
+        jsonl = get_data(__package__ or "fake_useragent", "data/browsers.jsonl")
+        if jsonl is None:
+            raise FakeUserAgentError("Failed to find browsers.jsonl")
+        # Convert JSONL to single big JSON list to speed up loading by ~2x.
+        comma_joined_objects = jsonl.rstrip().decode().replace("\n", ",")
+        json_list_string = f"[{comma_joined_objects}]"
+        return json.loads(json_list_string)
     except Exception as exc:
-        raise FakeUserAgentError("Failed to load or parse browsers.json") from exc
-
-    if not data:
-        raise FakeUserAgentError("Data list is empty", data)
-
-    if not isinstance(data, list):
-        raise FakeUserAgentError("Data is not a list", data)
-    return data
+        logger.warning("Could not find or parse browsers.jsonl", exc_info=exc)
+    raise FakeUserAgentError("Failed to load the user agent data.")
