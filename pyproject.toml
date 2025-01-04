@@ -111,7 +111,6 @@ convention = "google"
 [tool.setuptools]
 zip-safe = false
 
-
 [tool.setuptools.package-data]
 "fake_useragent.data" = ["*.jsonl"]
 "fake_useragent" = ["py.typed"]
