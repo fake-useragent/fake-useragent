@@ -28,6 +28,8 @@ jobs:
           cache: "pip"
       - name: Install dependencies
         run: pip install .[dev]
+      - name: Test import
+        run: python -c "import fake_useragent"
       - name: Run tests + lint check
         run: tox
       - name: Upload code coverage (HTML)
