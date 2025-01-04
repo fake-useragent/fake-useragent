@@ -27,7 +27,7 @@ jobs:
           check-latest: true
           cache: "pip"
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install .[dev]
       - name: Run tests + lint check
         run: tox
       - name: Upload code coverage (HTML)

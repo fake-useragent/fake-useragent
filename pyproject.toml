@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["pip", "setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,9 +9,9 @@ authors = [
     { name = "Melroy van den Berg", email = "melroy@melroy.org" },
     { name = "Victor Kovtun", email = "hellysmile@gmail.com" },
 ]
-requires-python = ">=3.9"
-dependencies = ["importlib-resources >= 6.0; python_version < '3.10'"]
 description = "Up-to-date simple useragent faker with real world database"
+requires-python = ">=3.9"
+license = {text = "Apache-2.0 license"}
 keywords = [
     "user",
     "agent",
@@ -36,6 +36,23 @@ classifiers = [
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities",
+]
+
+dependencies = [
+    "importlib-resources >= 6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "requests",
+    "ruff",
+    "tox",
+    "ua-parser",
+    "virtualenv",
+    "black",
+    "validate-pyproject",
 ]
 
 [project.readme]
@@ -95,7 +112,10 @@ convention = "google"
 
 [tool.setuptools]
 zip-safe = false
+packages = ["fake_useragent"]
+
+[tool.setuptools.package-dir]
+fake_useragent = "src/fake_useragent"
 
 [tool.setuptools.package-data]
-"fake_useragent.data" = ["*.jsonl"]
-"fake_useragent" = ["py.typed"]
+"fake_useragent" = ["data/*.jsonl", "*py.typed"]

@@ -245,7 +245,7 @@ pip install -e .
 #### Tests
 
 ```sh
-pip install -r requirements.txt
+pip install .[dev]
 tox
 ```
 
@@ -254,14 +254,14 @@ tox
 To fix imports using ruff:
 
 ```sh
-pip install -r requirements.txt
+pip install .[dev]
 ruff check --select="I" --fix .
 ```
 
 Fix black code formatting errors:
 
 ```sh
-pip install -r requirements.txt
+pip install .[dev]
 black .
 ```
 
