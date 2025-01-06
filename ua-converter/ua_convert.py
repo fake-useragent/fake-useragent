@@ -15,7 +15,7 @@ from typing import Optional, TypedDict
 import requests
 from ua_parser import parse
 
-from fake_useragent.utils import BrowserUserAgentData, find_browser_json_path
+from fake_useragent.utils import BrowserUserAgentData
 
 DEFAULT_URL = (
     "https://raw.githubusercontent.com/intoli/user-agents/main/src/user-agents.json.gz"
@@ -182,7 +182,9 @@ if __name__ == "__main__":
         "-o",
         "--output",
         help="Output JSONL file. Default overwirtes current package file (default: %(default)s)",
-        default=find_browser_json_path(),
+        default=Path(
+            __file__, "../../src/fake_useragent/data/browsers.jsonl"
+        ).resolve(),
         type=Path,
     )
 

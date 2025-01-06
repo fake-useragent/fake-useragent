@@ -10,7 +10,7 @@ authors = [
     { name = "Victor Kovtun", email = "hellysmile@gmail.com" },
 ]
 requires-python = ">=3.9"
-dependencies = ["importlib-resources >= 6.0; python_version < '3.10'"]
+dependencies = []
 description = "Up-to-date simple useragent faker with real world database"
 keywords = [
     "user",
