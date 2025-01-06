@@ -16,4 +16,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Ruff Check
-        run: ruff check .
+        run: ruff check --diff  # Don't change code, check and exit non-0 if checks fail.
+      - name: Ruff Format
+        run: ruff format --check  # Don't change code, check and exit non-0 if formattig is needed.
