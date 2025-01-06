@@ -38,7 +38,10 @@ classifiers = [
     "Topic :: Utilities",
 ]
 
-dependencies = ["importlib-resources >= 6.0; python_version < '3.10'"]
+dependencies = [
+    "importlib-resources >= 6.0; python_version < '3.10'",
+    "setuptools<=70.3.0",
+]
 
 [project.optional-dependencies]
 dev = [
