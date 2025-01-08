@@ -40,7 +40,7 @@ classifiers = [
 
 dependencies = [
     "importlib-resources >= 6.0; python_version < '3.10'",
-    "setuptools<=70.3.0",
+    "setuptools",
 ]
 
 [project.optional-dependencies]
@@ -54,6 +54,7 @@ dev = [
     "virtualenv",
     "black",
     "validate-pyproject",
+    "setuptools<=70.3.0",
 ]
 
 [project.readme]
