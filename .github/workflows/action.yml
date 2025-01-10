@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest # [macos-latest, windows-latest]
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "pypy-3.9"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "pypy-3.9"]
     name: Python ${{ matrix.python-version }} Test
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +27,9 @@ jobs:
           check-latest: true
           cache: "pip"
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install .[dev]
+      - name: Test import
+        run: python -c "import fake_useragent; print(fake_useragent.UserAgent().random)"
       - name: Run tests + lint check
         run: tox
       - name: Upload code coverage (HTML)
