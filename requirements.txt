@@ -1,5 +1,4 @@
 attrs==24.2.0
-black==24.10.0
 build==1.2.2.post1
 cachetools==5.5.0
 chardet==5.2.0
@@ -12,7 +11,6 @@ fastjsonschema==2.20.0
 filelock==3.16.1
 importlib-resources==6.4.5
 iniconfig==2.0.0
-isort==5.13.2
 mypy-extensions==1.0.0
 packaging==24.2
 pathspec==0.12.1

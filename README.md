@@ -251,21 +251,12 @@ tox
 
 #### Linting
 
-To fix imports using ruff:
+To format code and sort imports, use:
 
 ```sh
 pip install -r requirements.txt
-ruff check --select="I" --fix .
+ruff format .
 ```
-
-Fix black code formatting errors:
-
-```sh
-pip install -r requirements.txt
-black .
-```
-
-_Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instead of `black`.
 
 ### Changelog
 
