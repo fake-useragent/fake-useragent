@@ -1,4 +1,4 @@
-attrs==24.2.0
+attrs==24.3.0
 black==24.10.0
 build==1.2.2.post1
 cachetools==5.5.0
