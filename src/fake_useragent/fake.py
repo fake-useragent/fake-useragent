@@ -108,7 +108,7 @@ class FakeUserAgent:
         safe_attrs (Optional[Iterable[str]], optional): `FakeUserAgent` uses a custom `__getattr__`
             to facilitate retrieval of user agents by browser. If you need to prevent some
             attributes from being treated as browsers, pass them here. If None, all attributes will
-            be treated as browsers. Defaults to None.
+            be treated as browsers. Defaults to ["shape"] to prevent unintended calls in IDEs like PyCharm.
 
     Raises:
         TypeError: If `fallback` isn't a `str` or `safe_attrs` contains non-`str` values.
@@ -181,6 +181,8 @@ class FakeUserAgent:
             raise TypeError(msg)
         self.fallback = fallback
 
+        if safe_attrs is None:
+            safe_attrs = ["shape"]
         safe_attrs = _ensure_iterable(safe_attrs=safe_attrs, default=set())
         str_safe_attrs = [isinstance(attr, str) for attr in safe_attrs]
         if not all(str_safe_attrs):
