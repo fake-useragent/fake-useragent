@@ -65,6 +65,24 @@ def _ensure_float(value: Any) -> float:
         raise ValueError(msg) from ve
 
 
+def _is_magic_name(attribute_name: str) -> bool:
+    """Judge whether the given attribute name is the name of a magic method(e.g. __iter__).
+
+    Args:
+        attribute_name (str): The attribute name to check.
+
+    Returns:
+        bool: Whether the given attribute name is magic.
+    """
+    magic_min_length = 2 * len("__") + 1
+    return (
+        len(attribute_name) >= magic_min_length
+        and attribute_name.isascii()
+        and attribute_name.startswith("__")
+        and attribute_name.endswith("__")
+    )
+
+
 class FakeUserAgent:
     """Fake User Agent retriever.
 
@@ -288,7 +306,7 @@ class FakeUserAgent:
                 attribute value.
         """
         if isinstance(attr, str):
-            if attr in self.safe_attrs:
+            if _is_magic_name(attr) or attr in self.safe_attrs:
                 return super(UserAgent, self).__getattribute__(attr)
         elif isinstance(attr, list):
             for a in attr:
