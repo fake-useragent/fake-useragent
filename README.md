@@ -61,7 +61,7 @@ print(ua.edge)
 
 Additional features that fake-useragent now offers since v1.2.0.
 
-If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["Google", "Chrome", "Firefox", "Edge", "Opera"," Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile", "Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView", "Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"]`).  
+If you want to specify your own browser list, you can do that via the `browsers` argument (default is: `["Google", "Chrome", "Firefox", "Edge", "Opera", "Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile", "Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView", "Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"]`).  
 This example will only return random user-agents from Edge and Chrome:
 
 ```py
@@ -280,7 +280,7 @@ _Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instea
 - 2.0.0 December 4, 2024
 
   - Switch to new data source (again again)
-  - Possible browser options: `"Google", "Chrome", "Firefox", "Edge", "Opera"," Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile",
+  - Possible browser options: `"Google", "Chrome", "Firefox", "Edge", "Opera", "Safari", "Android", "Yandex Browser", "Samsung Internet", "Opera Mobile",
 "Mobile Safari", "Firefox Mobile", "Firefox iOS", "Chrome Mobile", "Chrome Mobile iOS", "Mobile Safari UI/WKWebView",
 "Edge Mobile", "DuckDuckGo Mobile", "MiuiBrowser", "Whale", "Twitter", "Facebook", "Amazon Silk"`
   - Possible OS options: `"Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X", "Android", "iOS"`
