@@ -269,6 +269,14 @@ _Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instea
 
 ### Changelog
 
+- 2.1.0 March 12, 2025
+
+  - Speed up the UA converter script and add it to workflow via cronjob
+  - Dump up dependencies versions
+  - Updated user agents file (JSONB)
+  - Improved safe attrs checker and added `shape` as safe attr by default (for IDE).
+ 
+
 - 2.0.2 & 2.0.3 December 10, 2024
 
   -  Fix project dependencies toml file & sync docs
