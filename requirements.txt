@@ -9,7 +9,7 @@ coverage==7.6.10
 distlib==0.3.9
 exceptiongroup==1.2.2
 fastjsonschema==2.21.1
-filelock==3.16.1
+filelock==3.17.0
 importlib-resources==6.5.2
 iniconfig==2.0.0
 isort==5.13.2
@@ -21,11 +21,11 @@ platformdirs==4.3.6
 pluggy==1.5.0
 py==1.11.0
 pyparsing==3.2.1
-pyproject-api==1.6.1
+pyproject-api==1.9.0
 pyproject_hooks==1.2.0
 pytest==8.3.4
 pytest-cov==6.0.0
-ruff==0.8.6
+ruff==0.9.10
 six==1.17.0
 tomli==2.2.1
 tox==4.14.1
