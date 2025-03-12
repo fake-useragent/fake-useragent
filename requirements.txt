@@ -21,7 +21,7 @@ platformdirs==4.3.6
 pluggy==1.5.0
 py==1.11.0
 pyparsing==3.2.0
-pyproject-api==1.6.1
+pyproject-api==1.9.0
 pyproject_hooks==1.2.0
 pytest==8.3.4
 pytest-cov==6.0.0
