@@ -8,6 +8,10 @@ on:
   schedule:
     - cron: "15 19 * * 0"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
 jobs:
   analyze:
     name: Analyze
