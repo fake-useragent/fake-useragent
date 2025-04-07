@@ -1,5 +1,5 @@
 attrs==24.3.0
-black==24.10.0
+black==25.1.0
 build==1.2.2.post1
 cachetools==5.5.0
 chardet==5.2.0
