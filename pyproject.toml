@@ -1,11 +1,12 @@
 [build-system]
 build-backend = "setuptools.build_meta"
 
-requires = [ "setuptools" ]
+requires = [ "setuptools>=77.0" ]
 
 [project]
 name = "fake-useragent"
 version = "2.1.0"
+license = "Apache-2.0"
 description = "Up-to-date simple useragent faker with real world database"
 readme.content-type = "text/markdown"
 readme.file = "README.md"
@@ -26,7 +27,6 @@ requires-python = ">=3.9"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: Apache Software License",
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: Microsoft :: Windows",
   "Operating System :: OS Independent",
