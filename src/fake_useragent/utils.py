@@ -55,19 +55,10 @@ def find_browser_json_path() -> Path:
         return Path(str(file_path))
     except Exception as exc:
         logger.warning(
-            "Unable to find local data/jsonl file using importlib-resources. Try pkg-resource.",
+            "Unable to find local data/jsonl file using importlib-resources.",
             exc_info=exc,
         )
-        try:
-            from pkg_resources import resource_filename
-
-            return Path(resource_filename("fake_useragent", "data/browsers.jsonl"))
-        except Exception as exc2:
-            logger.warning(
-                "Could not find local data/jsonl file using pkg-resource.",
-                exc_info=exc2,
-            )
-            raise FakeUserAgentError("Could not locate browsers.jsonl file") from exc2
+        raise FakeUserAgentError("Could not locate browsers.jsonl file") from exc
 
 
 def load() -> list[BrowserUserAgentData]:
