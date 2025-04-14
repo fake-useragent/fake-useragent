@@ -29,7 +29,7 @@ ruff==0.11.4
 six==1.17.0
 tomli==2.2.1
 tox==4.14.1
-typing_extensions==4.12.2
+typing_extensions==4.13.2
 validate-pyproject==0.24.1
 virtualenv==20.25.1
 zipp==3.21.0
