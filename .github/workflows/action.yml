@@ -31,7 +31,9 @@ jobs:
           check-latest: true
           cache: "pip"
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install .[dev]
+      - name: Test import
+        run: python -c "import fake_useragent; print(fake_useragent.UserAgent().random)"
       - name: Run tests + lint check
         run: tox
       - name: Upload code coverage (HTML)
