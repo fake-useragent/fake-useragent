@@ -8,7 +8,7 @@ from typing import TypedDict, Union
 if sys.version_info >= (3, 10):
     import importlib.resources as ilr
 else:
-    import importlib_resources as ilr
+    import importlib_resources as ilr  # noqa: F401
 
 from pathlib import Path
 
