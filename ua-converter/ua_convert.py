@@ -181,7 +181,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-o",
         "--output",
-        help="Output JSONL file. Default overwirtes current package file (default: %(default)s)",
+        help="Output JSONL file. Default overwrites current package file (default: %(default)s)",
         default=find_browser_json_path(),
         type=Path,
     )
