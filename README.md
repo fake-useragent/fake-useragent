@@ -12,7 +12,7 @@ Up-to-date simple useragent faker with real world database.
 - The data consists of a wide range of browser agents and various browsers
 - Retrieves user-agent strings (both of type: `desktop`, `tablet` and/or `mobile` UAs)
 - Retrieve user-agent Python dictionary (aka object), with fields like `useragent`, `percent`, `type`, `device_brand`, `browser`, `browser_version`, `os`, `os_version` and `platform`
-- Supports Python 3.x
+- Supports Python 3.9 or higher
 
 ### Installation
 
