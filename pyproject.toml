@@ -5,7 +5,7 @@ requires = [ "setuptools>=77.0" ]
 
 [project]
 name = "fake-useragent"
-version = "2.1.0"
+version = "2.2.0"
 license = "Apache-2.0"
 description = "Up-to-date simple useragent faker with real world database"
 readme.content-type = "text/markdown"
