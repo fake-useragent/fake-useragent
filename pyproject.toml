@@ -101,5 +101,4 @@ dev = [
     "virtualenv",
     "black",
     "validate-pyproject",
-    "setuptools<=70.3.0",
 ]
