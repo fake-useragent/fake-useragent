@@ -269,6 +269,14 @@ _Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instea
 
 ### Changelog
 
+- 2.2.0 April 14, 2025
+
+  - Updated user agents file (JSONL)
+  - Updated dependencies
+  - Python 3.8 support is officially dropped
+  - Python 3.11 support is added
+  - Improved `pyproject.toml` file
+
 - 2.1.0 March 12, 2025
 
   - Speed up the UA converter script and add it to workflow via cronjob
