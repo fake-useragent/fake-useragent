@@ -89,3 +89,17 @@ lint.mccabe.max-complexity = 13
 lint.pydocstyle.convention = "google"
 lint.pylint.max-args = 7
 lint.pylint.max-branches = 13
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "requests",
+    "ruff",
+    "tox",
+    "ua-parser",
+    "virtualenv",
+    "black",
+    "validate-pyproject",
+    "setuptools<=70.3.0",
+]
