@@ -274,7 +274,7 @@ _Note:_ When ruff v1.0 releases, we most likely move fully towards `ruff` instea
   - Updated user agents file (JSONL)
   - Updated dependencies
   - Python 3.8 support is officially dropped
-  - Python 3.11 support is added
+  - Python 3.13 support is added
   - Improved `pyproject.toml` file
 
 - 2.1.0 March 12, 2025
