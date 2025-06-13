@@ -11,7 +11,7 @@ exceptiongroup==1.2.2
 fastjsonschema==2.21.1
 filelock==3.18.0
 importlib-resources==6.5.2
-iniconfig==2.0.0
+iniconfig==2.1.0
 isort==5.13.2
 mypy-extensions==1.0.0
 packaging==24.2
