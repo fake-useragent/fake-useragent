@@ -25,11 +25,11 @@ pyproject-api==1.9.0
 pyproject_hooks==1.2.0
 pytest==8.3.5
 pytest-cov==6.0.0
-ruff==0.11.4
+ruff==0.11.13
 six==1.17.0
 tomli==2.2.1
 tox==4.14.1
 typing_extensions==4.13.2
 validate-pyproject==0.24.1
-virtualenv==20.25.1
+virtualenv==20.27.0
 zipp==3.21.0
