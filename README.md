@@ -118,6 +118,19 @@ ua.random
 
 ---
 
+The randomness can be seeded by providing a pre-seeded instance of Random as the `randomizer` argument.  
+In this example the randomizer is seeded with an integer with a value of zero.
+
+```py
+from random import Random
+from fake_useragent import UserAgent
+ua = UserAgent(randomizer=Random(0))
+ua2 = UserAgent(randomizer=Random(0))
+ua.random == ua2.random
+```
+
+---
+
 For backwards compatibility, a minimum usage percentage can still be specified with the `min_percentage` argument. However, the current list of user agents does
 not contain this statistic. Therefore all of the user-agents will match.
 
