@@ -2,6 +2,8 @@ import unittest
 
 import pytest
 
+from random import Random
+
 from fake_useragent import FakeUserAgent, UserAgent, __version__, get_version
 
 
@@ -129,3 +131,12 @@ class TestFake(unittest.TestCase):
 
     def test_fake_aliases(self):
         assert FakeUserAgent is UserAgent
+
+    def test_seeded_randomizer(self):
+        ua = UserAgent(randomizer=Random(0))
+        ua2 = UserAgent(randomizer=Random(0))
+        assert ua.random == ua2.random
+
+    def test_randomizer_is_instance_random(self):
+        with pytest.raises(TypeError):
+            UserAgent(randomizer=[66])

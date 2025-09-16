@@ -1,7 +1,7 @@
 """Fake User Agent retriever."""
 
-import random
 from collections.abc import Iterable
+from random import Random
 from typing import Any, Optional, Union
 
 from fake_useragent.log import logger
@@ -109,12 +109,14 @@ class FakeUserAgent:
             to facilitate retrieval of user agents by browser. If you need to prevent some
             attributes from being treated as browsers, pass them here. If None, all attributes will
             be treated as browsers. Defaults to ["shape"] to prevent unintended calls in IDEs like PyCharm.
+        random (Optional[Random]): `FakeUserAgent` allows you to use your own instance of random to enable
+            seeding the randomness. Defaults to the default random instance.
 
     Raises:
         TypeError: If `fallback` isn't a `str` or `safe_attrs` contains non-`str` values.
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         browsers: Optional[Iterable[str]] = None,
         os: Optional[Iterable[str]] = None,
@@ -127,6 +129,7 @@ class FakeUserAgent:
             "Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
         ),
         safe_attrs: Optional[Iterable[str]] = None,
+        randomizer: Optional[Random] = None,
     ):
         self.browsers = _ensure_iterable(
             browsers=browsers,
@@ -193,6 +196,13 @@ class FakeUserAgent:
             raise TypeError(msg)
         self.safe_attrs = set(safe_attrs)
 
+        # random module not used for cryptographic purpose, therefore noqa
+        self.randomizer = randomizer or Random()  # noqa: S311
+
+        if not isinstance(self.randomizer, Random):
+            msg = f"random must be of type Random but got {type(randomizer).__name__}."
+            raise TypeError(msg)
+
         # Next, load our local data file into memory (browsers.jsonl)
         self.data_browsers = load()
 
@@ -213,7 +223,7 @@ class FakeUserAgent:
                 # And convert the iterator back to a list
                 filtered_browsers = self._filter_useragents()
             else:
-                # Or when random isn't select, we filter the browsers array based on the 'request' using lamba
+                # Or when random isn't selected, we filter the browsers array based on the 'request' using lamba
                 # And based on OS list
                 # And percentage is bigger then min percentage
                 # And convert the iterator back to a list
@@ -221,7 +231,7 @@ class FakeUserAgent:
 
             # Pick a random browser user-agent from the filtered browsers
             # And return the full dict
-            return random.choice(filtered_browsers)  # noqa: S311
+            return self.randomizer.choice(filtered_browsers)  # noqa: S311
         except (KeyError, IndexError):
             logger.warning(
                 f"Error occurred during getting browser(s): {browsers}, "
