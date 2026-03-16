@@ -110,9 +110,15 @@ class TestFake(unittest.TestCase):
         with pytest.raises(ValueError):
             UserAgent(min_percentage="")
 
+        with pytest.raises(ValueError):
+            UserAgent(min_percentage=None)
+
     def test_fake_min_version_float_types(self):
         with pytest.raises(ValueError):
             UserAgent(min_version="")
+
+        with pytest.raises(ValueError):
+            UserAgent(min_version=None)
 
     def test_fake_safe_attrs_iterable_str_types(self):
         with pytest.raises(TypeError):

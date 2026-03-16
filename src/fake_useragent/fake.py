@@ -60,9 +60,9 @@ def _ensure_float(value: Any) -> float:
     """
     try:
         return float(value)
-    except ValueError as ve:
-        msg = f"Value must be convertible to float but got {value}."
-        raise ValueError(msg) from ve
+    except (ValueError, TypeError) as exc:
+        msg = f"Value must be convertible to float but got {value!r}."
+        raise ValueError(msg) from exc
 
 
 def _is_magic_name(attribute_name: str) -> bool:
