@@ -109,6 +109,10 @@ class FakeUserAgent:
             to facilitate retrieval of user agents by browser. If you need to prevent some
             attributes from being treated as browsers, pass them here. If None, all attributes will
             be treated as browsers. Defaults to ["shape"] to prevent unintended calls in IDEs like PyCharm.
+        randomizer (Optional[random.Random], optional): Custom ``random.Random`` instance used
+            when picking user agents. Pass ``random.Random(seed)`` for deterministic results
+            (useful in tests or reproducible pipelines). Defaults to None, which uses the
+            module-level ``random``.
 
     Raises:
         TypeError: If `fallback` isn't a `str` or `safe_attrs` contains non-`str` values.
@@ -127,6 +131,7 @@ class FakeUserAgent:
             "Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
         ),
         safe_attrs: Optional[Iterable[str]] = None,
+        randomizer: Optional[random.Random] = None,
     ):
         self.browsers = _ensure_iterable(
             browsers=browsers,
@@ -193,6 +198,8 @@ class FakeUserAgent:
             raise TypeError(msg)
         self.safe_attrs = set(safe_attrs)
 
+        self._rng = randomizer if randomizer is not None else random
+
         # Next, load our local data file into memory (browsers.jsonl)
         self.data_browsers = load()
 
@@ -221,7 +228,7 @@ class FakeUserAgent:
 
             # Pick a random browser user-agent from the filtered browsers
             # And return the full dict
-            return random.choice(filtered_browsers)  # noqa: S311
+            return self._rng.choice(filtered_browsers)  # noqa: S311
         except (KeyError, IndexError):
             logger.warning(
                 f"Error occurred during getting browser(s): {browsers}, "
